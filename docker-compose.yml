@@ -1,0 +1,25 @@
+version: "3.4"
+services:
+  queue:
+    image: nats:2.1.0-scratch
+    hostname: queue
+    ports:
+      - "4222:4222"
+      - "8222:8222"
+  webserver:
+    image: nginx:1.17.5
+    ports:
+      - "80:80"
+  app:
+    build:
+      context: .
+      target: development
+    ports:
+      - "8080:8080"
+    depends_on:
+      - queue
+    volumes:
+      - ./src:/home/node/app/src:ro,consistent
+    cap_add:
+      - SYS_PTRACE
+      #- ./config:/home/node/app/config:ro,consistent
