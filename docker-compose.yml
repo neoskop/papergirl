@@ -1,4 +1,4 @@
-version: "3.4"
+version: "2.4"
 services:
   queue:
     image: nats:2.1.0-scratch
@@ -9,17 +9,42 @@ services:
   webserver:
     image: nginx:1.17.5
     ports:
-      - "80:80"
+      - "8081:8081"
+    user: "nginx"
+    volumes:
+      - nginx-config:/home/papergirl/nginx
+      - nginx-pid:/home/papergirl/nginx-pid
+      - nginx-html:/var/www
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+  s3:
+    image: minio/minio:RELEASE.2019-10-12T01-39-57Z
+    command: server /data
+    environment:
+      MINIO_ACCESS_KEY: minio
+      MINIO_SECRET_KEY: minio123
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./s3-data:/data
   app:
     build:
       context: .
       target: development
+    environment:
+      CONFIG: docker-compose
     ports:
       - "8080:8080"
     depends_on:
       - queue
+      - webserver
+    pid: "service:webserver"
     volumes:
-      - ./src:/home/node/app/src:ro,consistent
-    cap_add:
-      - SYS_PTRACE
-      #- ./config:/home/node/app/config:ro,consistent
+      - ./src:/home/papergirl/app/src:ro,consistent
+      - nginx-config:/home/papergirl/nginx
+      - nginx-pid:/home/papergirl/nginx-pid
+      - nginx-html:/var/www
+volumes:
+  nginx-config:
+  nginx-pid:
+  nginx-html:

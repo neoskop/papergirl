@@ -6,7 +6,7 @@ import { ConfigService } from './config.service';
     {
       provide: ConfigService,
       useValue: new ConfigService(
-        `config/${process.env.CONFIG || 'development'}.env`,
+        `config/${process.env.CONFIG || 'local'}.env`,
       ),
     },
   ],

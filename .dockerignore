@@ -6,3 +6,5 @@ release.sh
 helm
 *.md
 dist
+s3-data
+nginx
