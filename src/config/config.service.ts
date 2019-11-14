@@ -36,7 +36,10 @@ export class ConfigService {
       S3_SECRETKEY: Joi.string().required(),
       S3_BUCKETNAME: Joi.string().default('papergirl'),
       NGINX_ROOT_DIR: Joi.string().required(),
+      NGINX_DIR_BLACK: Joi.string().default('black'),
+      NGINX_DIR_RED: Joi.string().default('red'),
       NGINX_PID_PATH: Joi.string().required(),
+      NGINX_CONFIG_FILE_PATH: Joi.string().required(),
     });
 
     const { error, value: validatedEnvConfig } = envVarsSchema.validate(
@@ -92,5 +95,17 @@ export class ConfigService {
 
   get nginxPidPath(): string {
     return this.envConfig.NGINX_PID_PATH;
+  }
+
+  get nginxConfigFilePath(): string {
+    return this.envConfig.NGINX_CONFIG_FILE_PATH;
+  }
+
+  get nginxDirBlack(): string {
+    return this.envConfig.NGINX_DIR_BLACK;
+  }
+
+  get nginxDirRed(): string {
+    return this.envConfig.NGINX_DIR_RED;
   }
 }

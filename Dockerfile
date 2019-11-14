@@ -2,10 +2,12 @@ FROM node:12.13.0-buster as base
 RUN adduser --uid 101 --system papergirl
 USER papergirl
 WORKDIR /home/papergirl
-RUN mkdir nginx-pid && \
-    mkdir nginx && \
-    echo "root /var/www/black;" > root.conf
-VOLUME [ "/var/www", "/home/papergirl/nginx-pid", "/home/papergirl/nginx" ]
+RUN mkdir -p nginx/pid && \
+    mkdir -p nginx/conf.d && \
+    mkdir -p nginx/www/black && \
+    mkdir -p nginx/www/red && \
+    echo "root /home/papergirl/nginx/www/black;" > root.conf
+VOLUME [ "/home/papergirl/nginx" ]
 
 FROM base AS build
 USER root
