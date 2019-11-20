@@ -31,7 +31,7 @@ export class NginxService implements OnApplicationBootstrap {
     const configFileContents = (
       await fs.promises.readFile(this.config.nginxConfigFilePath)
     ).toString();
-    const match = /root (.+);/.exec(configFileContents);
+    const match = /root (.+?);/.exec(configFileContents);
 
     if (!match) {
       throw new Error(
@@ -39,7 +39,8 @@ export class NginxService implements OnApplicationBootstrap {
       );
     }
 
-    return match[0];
+    Logger.debug(`Active root dir of NGINX is ${match[1]}`);
+    return match[1];
   }
 
   public async switchRootDir(path: string) {
@@ -48,6 +49,7 @@ export class NginxService implements OnApplicationBootstrap {
       `root ${path};`,
     );
     await this.reload();
+    Logger.debug(`Switched NGINX root dir to ${path}`);
   }
 
   private async reload() {

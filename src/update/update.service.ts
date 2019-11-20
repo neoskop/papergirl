@@ -1,11 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import * as fs from 'fs';
+import { ncp } from 'ncp';
 import * as path from 'path';
 import { ConfigService } from '../config/config.service';
 import { NginxService } from './nginx/nginx.service';
 import { S3Service } from './s3/s3.service';
-import rimraf = require('rimraf');
-import ncp = require('ncp');
 
 @Injectable()
 export class UpdateService {
