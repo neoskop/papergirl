@@ -23,6 +23,7 @@ RUN mkdir -p /home/papergirl/app
 WORKDIR /home/papergirl/app
 COPY --from=build --chown=node /home/papergirl/app ./
 CMD yarn start:nodemon
+EXPOSE 8080
 
 FROM base as production
 RUN mkdir -p /home/papergirl/app
@@ -34,3 +35,4 @@ COPY src ./src
 RUN yarn build
 COPY config ./config
 CMD ["node", "dist/main.js"]
+EXPOSE 8080
