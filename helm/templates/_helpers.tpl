@@ -25,6 +25,21 @@ If release name contains chart name it will be used as a full name.
 {{- end -}}
 
 {{/*
+Create a prefix for all minio cluster resources
+*/}}
+{{- define "papergirl.minio.name" -}}
+{{- include "papergirl.fullname" . }}-minio
+{{- end -}}
+
+{{/*
+Create a prefix for all NATS cluster resources
+*/}}
+{{- define "papergirl.nats.name" -}}
+{{- include "papergirl.fullname" . }}-nats
+{{- end -}}
+
+
+{{/*
 Create chart name and version as used by the chart label.
 */}}
 {{- define "papergirl.chart" -}}

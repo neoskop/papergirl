@@ -46,6 +46,10 @@ export class S3Service {
       }
     }
 
+    if (!(await this.s3Client.bucketExists(this.config.s3BucketName))) {
+      throw new Error(`Bucket ${this.config.s3BucketName} does not exist.`);
+    }
+
     Logger.debug('Start download files');
     const objectsStream = this.s3Client.listObjectsV2(
       this.config.s3BucketName,

@@ -39,15 +39,15 @@ export class UpdateService {
           });
         });
       }
-    } catch (err) {
-      Logger.debug(err.message);
-    }
 
-    await this.nginxService.switchRootDir(this.dirBlack);
-    await fs.promises.rmdir(this.dirRed, { recursive: true });
-    await fs.promises.mkdir(this.dirRed);
-    await this.s3service.download(this.dirRed);
-    Logger.debug('Download complete');
-    await this.nginxService.switchRootDir(this.dirRed);
+      await this.nginxService.switchRootDir(this.dirBlack);
+      await fs.promises.rmdir(this.dirRed, { recursive: true });
+      await fs.promises.mkdir(this.dirRed);
+      await this.s3service.download(this.dirRed);
+      Logger.debug('Download complete');
+      await this.nginxService.switchRootDir(this.dirRed);
+    } catch (err) {
+      Logger.error(err.message);
+    }
   }
 }

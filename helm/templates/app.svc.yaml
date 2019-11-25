@@ -5,9 +5,9 @@ metadata:
   labels:
 {{ include "papergirl.labels" . | indent 4 }}
 spec:
-  type: {{ .Values.service.type }}
+  type: ClusterIP
   ports:
-    - port: {{ .Values.service.port }}
+    - port: 8081
       targetPort: http
       protocol: TCP
       name: http

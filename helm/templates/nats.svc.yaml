@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "papergirl.fullname" . }}-nats
+  labels:
+{{ include "papergirl.labels" . | indent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: 4222
+      targetPort: 4222
+      protocol: TCP
+  selector:
+    app: nats
+    nats_cluster: {{ include "papergirl.fullname" . }}-nats

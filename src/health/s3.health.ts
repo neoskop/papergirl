@@ -8,7 +8,7 @@ export class S3HealthIndicator extends HealthIndicator {
   async isHealthy(
     key: string,
     clientOptions: Minio.ClientOptions,
-    bucketName: string,
+    bucketName?: string,
   ): Promise<HealthIndicatorResult> {
     let isHealthy: boolean = false;
     let data: any;
@@ -17,7 +17,7 @@ export class S3HealthIndicator extends HealthIndicator {
       const client = new Minio.Client(clientOptions);
 
       if (client !== null) {
-        if (bucketName !== null) {
+        if (bucketName) {
           isHealthy = await client.bucketExists(bucketName);
 
           if (!isHealthy) {

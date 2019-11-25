@@ -1,0 +1,57 @@
+{{- if .Values.minio.enabled -}}
+apiVersion: miniocontroller.min.io/v1beta1
+kind: MinIOInstance
+metadata:
+  name: {{ include "papergirl.minio.name" . }}
+  labels:
+{{ include "papergirl.labels" . | indent 4 }}
+spec:
+  metadata:
+    labels:
+      app.kubernetes.io/name: {{ include "papergirl.minio.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+    annotations:
+      prometheus.io/path: /minio/prometheus/metrics
+      prometheus.io/port: "9000"
+      prometheus.io/scrape: "true"
+  image: "{{ .Values.minio.image.repository }}:{{ .Values.minio.image.tag }}"
+  imagePullPolicy: {{ .Values.minio.image.pullPolicy }}
+  {{- with .Values.minio.image.pullSecrets }}
+  imagePullSecrets:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  credsSecret:
+    name: {{ include "papergirl.minio.name" . }}-credentials
+  replicas: {{ .Values.minio.replicaCount }}
+  podManagementPolicy: Parallel
+  requestAutoCert: false
+  certConfig:
+    commonName: ""
+    organizationName: []
+    dnsNames: []
+  env:
+    - name: MINIO_BROWSER
+      value: "on"
+    # - name: MINIO_STORAGE_CLASS_RRS
+    #   value: "EC:2"
+  resources:
+    requests:
+      memory: 128Mi
+      cpu: 50m
+  liveness:
+    httpGet:
+      path: /minio/health/live
+      port: 9000
+    initialDelaySeconds: 120
+    periodSeconds: 20
+  volumeClaimTemplate:
+    metadata:
+      name: data
+    spec:
+      accessModes:
+        - ReadWriteOnce
+      storageClassName: {{ .Values.minio.storageClass }}
+      resources:
+        requests:
+          storage: 5Gi
+{{- end }}

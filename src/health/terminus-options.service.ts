@@ -23,11 +23,7 @@ export class TerminusOptionsService implements TerminusOptionsFactory {
         async () =>
           this.queueHealthIndicator.isHealthy('queue', this.config.queueUri),
         async () =>
-          this.s3HealthIndicator.isHealthy(
-            's3',
-            this.config.s3ClientOptions,
-            this.config.s3BucketName,
-          ),
+          this.s3HealthIndicator.isHealthy('s3', this.config.s3ClientOptions),
       ],
     };
     return {

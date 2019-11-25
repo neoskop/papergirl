@@ -1,0 +1,110 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "papergirl.fullname" . }}
+  labels:
+{{ include "papergirl.labels" . | indent 4 }}
+spec:
+  serviceName: "papergirl"
+  replicas: {{ .Values.replicaCount }}
+  volumeClaimTemplates:
+    - metadata:
+        name: website-cache
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        storageClassName: {{ .Values.websiteCache.storageClass }}
+        resources:
+          requests:
+            storage: {{ .Values.websiteCache.size }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "papergirl.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "papergirl.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      volumes:
+        - name: config
+          configMap:
+            name: {{ include "papergirl.fullname" . }}-nginx-config
+      initContainers:
+        - name: volume-setup
+          image: "{{ .Values.volumeSetup.image.repository }}:{{ .Values.volumeSetup.image.tag }}"
+          imagePullPolicy: {{ .Values.volumeSetup.image.pullPolicy }}
+          command: ['sh', '-c', 'cd /home/papergirl/nginx && mkdir -p pid && mkdir -p conf.d && mkdir -p www/black && mkdir -p www/red && echo "root /home/papergirl/nginx/www/black;" > conf.d/root.conf && chown -R 101 .']
+          volumeMounts:
+            - name: website-cache
+              mountPath: /home/papergirl/nginx
+          resources:
+            {{- toYaml .Values.volumeSetup.resources | nindent 12 }}
+      containers:
+        - name: nginx
+          image: "{{ .Values.nginx.image.repository }}:{{ .Values.nginx.image.tag }}"
+          imagePullPolicy: {{ .Values.nginx.image.pullPolicy }}
+          volumeMounts:
+            - name: config
+              mountPath: /etc/nginx/nginx.conf
+              subPath: "nginx.conf"
+            - name: config
+              mountPath: /etc/nginx/conf.d/papergirl.conf
+              subPath: "papergirl.conf"
+            - name: website-cache
+              mountPath: /home/papergirl/nginx
+          ports:
+            - name: http
+              containerPort: 8081
+              protocol: TCP
+          livenessProbe:
+            tcpSocket:
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          resources:
+            {{- toYaml .Values.nginx.resources | nindent 12 }}
+        - name: papergirl
+          image: "{{ .Values.papergirl.image.repository }}:{{ .Values.papergirl.image.tag }}"
+          imagePullPolicy: {{ .Values.papergirl.image.pullPolicy }}
+          env:
+            - name: CONFIG
+              value: kubernetes
+          volumeMounts:
+            - name: config
+              mountPath: /home/papergirl/app/config/kubernetes.env
+              subPath: "kubernetes.env"
+            - name: website-cache
+              mountPath: /home/papergirl/nginx
+          ports:
+            - name: papergirl-http
+              containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: papergirl-http
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: papergirl-http
+          resources:
+            {{- toYaml .Values.papergirl.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
