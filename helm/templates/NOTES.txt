@@ -11,8 +11,7 @@ To access the MinIO cluster run:
 
   $ kubectl port-forward svc/{{ include "papergirl.minio.name" . }} 9000:9000 &>/dev/null &
   $ google-chrome http://{{ .Values.minio.accesskey }}:{{ .Values.minio.secretkey }}@localhost:9000
-
-{{ end -}}
+{{- end -}}
 
 {{- if .Values.nats.enabled }}
 
@@ -20,7 +19,8 @@ To access the Nats cluster run:
 
   $ kubectl port-forward svc/{{ include "papergirl.nats.name" . }} 4222:4222 &>/dev/null &
 
-{{ end -}}
+{{- end }}
+
 You trigger a rebuild via the nats cli:
 
   $ which nats &>/dev/null || npm install -g nats-cli
