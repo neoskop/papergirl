@@ -5,6 +5,11 @@ To show the logs use the following command:
   $ kubectl logs -l app.kubernetes.io/name={{ include "papergirl.name" . }} \
                  -c papergirl
 
+To access the webserver execute:
+
+  $ kubectl port-forward svc/{{ include "papergirl.fullname" . }} 8081:8081 &>/dev/null &
+  $ google-chrome http://localhost:8081
+
 {{- if .Values.minio.enabled }}
 
 To access the MinIO cluster run:
