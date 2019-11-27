@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "papergirl.fullname" . }}-nginx-config
+  name: {{ include "papergirl.fullname" . }}-config
 data:
   kubernetes.env: |
     QUEUE_URI=nats://{{ include "papergirl.fullname" . }}-nats:4222
@@ -13,6 +13,12 @@ data:
     NGINX_ROOT_DIR=/home/papergirl/nginx/www
     NGINX_PID_PATH=/home/papergirl/nginx/pid/nginx.pid
     NGINX_CONFIG_FILE_PATH=/home/papergirl/nginx/conf.d/root.conf
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "papergirl.fullname" . }}-nginx-config
+data:
   nginx.conf: |
     pid /home/papergirl/nginx/pid/nginx.pid;
     worker_processes  auto;
@@ -38,6 +44,12 @@ data:
         keepalive_timeout  65;
         include /etc/nginx/conf.d/*.conf;
     }
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "papergirl.fullname" . }}-nginx-config-snippets
+data:
   papergirl.conf: |
     server {
       listen       8081;

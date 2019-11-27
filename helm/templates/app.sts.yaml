@@ -34,7 +34,13 @@ spec:
       volumes:
         - name: config
           configMap:
+            name: {{ include "papergirl.fullname" . }}-config
+        - name: nginx-config
+          configMap:
             name: {{ include "papergirl.fullname" . }}-nginx-config
+        - name: nginx-config-snippets
+          configMap:
+            name: {{ include "papergirl.fullname" . }}-nginx-config-snippets
       initContainers:
         - name: volume-setup
           image: "{{ .Values.volumeSetup.image.repository }}:{{ .Values.volumeSetup.image.tag }}"
@@ -49,13 +55,15 @@ spec:
         - name: nginx
           image: "{{ .Values.nginx.image.repository }}:{{ .Values.nginx.image.tag }}"
           imagePullPolicy: {{ .Values.nginx.image.pullPolicy }}
+          securityContext:
+            runAsUser: 101
+            runAsGroup: 101
           volumeMounts:
-            - name: config
+            - name: nginx-config
               mountPath: /etc/nginx/nginx.conf
               subPath: "nginx.conf"
-            - name: config
-              mountPath: /etc/nginx/conf.d/papergirl.conf
-              subPath: "papergirl.conf"
+            - name: nginx-config-snippets
+              mountPath: /etc/nginx/conf.d
             - name: website-cache
               mountPath: /home/papergirl/nginx
           ports:

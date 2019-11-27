@@ -54,6 +54,15 @@ export class NginxService implements OnApplicationBootstrap {
 
   private async reload() {
     const pid = Number(await fs.promises.readFile(this.config.nginxPidPath));
-    process.kill(pid, 'SIGHUP');
+
+    try {
+      process.kill(pid, 'SIGHUP');
+    } catch (err) {
+      if (err.code === 'EPERM') {
+        throw new Error(
+          `Sending a signal to NGINX is not permitted - is it running with UID ${process.getuid()}?`,
+        );
+      }
+    }
   }
 }
