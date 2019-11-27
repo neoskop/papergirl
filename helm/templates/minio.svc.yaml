@@ -1,7 +1,8 @@
+{{- if .Values.minio.enabled -}}
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "papergirl.fullname" . }}-minio
+  name: {{ include "papergirl.minio.name" . }}
   labels:
 {{ include "papergirl.labels" . | indent 4 }}
 spec:
@@ -11,4 +12,5 @@ spec:
       targetPort: 9000
       protocol: TCP
   selector:
-    app.kubernetes.io/name: {{ include "papergirl.fullname" . }}-minio
+    app.kubernetes.io/name: {{ include "papergirl.minio.name" . }}
+{{- end -}}
