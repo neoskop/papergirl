@@ -1,0 +1,13 @@
+apiVersion: v1
+entries:
+  papergirl:
+  - apiVersion: v1
+    appVersion: 0.0.1
+    created: "2020-01-24T16:24:02.334858582+01:00"
+    description: A Helm chart for Kubernetes
+    digest: 4b198e6ef2f9307c1ec09e541976422ff0edaf0fcbeb97553e60d10bef491c9c
+    name: papergirl
+    urls:
+    - https://github.com/neoskop/papergirl/releases/download/papergirl-0.0.1/papergirl-0.0.1.tgz
+    version: 0.0.1
+generated: "2020-01-24T16:24:01.821489454+01:00"
