@@ -31,13 +31,15 @@ npm version --no-git-tag-version $1
 version=`cat package.json | jq -r .version`
 sed -i "s/appVersion: .*/appVersion: \"$version\"/" helm/Chart.yaml
 sed -i "s/version: .*/version: $version/" helm/Chart.yaml
-npm publish
 git add .
 git commit -m "chore: Bump version to ${version}."
 git tag ${version}
 git push origin $version
 git pull --rebase
 git push
+
+docker build -t neoskop/papergirl:$version .
+docker push neoskop/papergirl:$version
 
 helm package helm --destination .deploy
 cr upload -o neoskop -r papergirl -p .deploy
