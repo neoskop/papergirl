@@ -29,6 +29,8 @@ yarn
 yarn build
 npm version --no-git-tag-version $1
 version=`cat package.json | jq -r .version`
+sed -i "s/appVersion: .*/appVersion: \"$version\"/" helm/Chart.yaml
+sed -i "s/version: .*/version: $version/" helm/Chart.yaml
 npm publish
 git add .
 git commit -m "chore: Bump version to ${version}."
@@ -36,3 +38,12 @@ git tag ${version}
 git push origin $version
 git pull --rebase
 git push
+
+helm package helm --destination .deploy
+cr upload -o neoskop -r papergirl -p .deploy
+git checkout gh-pages
+cr index -i ./index.yaml -p .deploy -o neoskop -r papergirl -c https://neoskop.github.io/papergirl/
+git add index.yaml
+git commit -m "chore: Bump version to ${version}."
+git push
+git checkout master
