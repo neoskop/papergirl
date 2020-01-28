@@ -48,3 +48,4 @@ git add index.yaml
 git commit -m "chore: Bump version to ${version}."
 git push
 git checkout master
+rm -rf .deploy/
