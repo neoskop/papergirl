@@ -10,17 +10,17 @@ To access the webserver execute:
   $ kubectl port-forward svc/{{ include "papergirl.fullname" . }} 8081:8081 &>/dev/null &
   $ google-chrome http://localhost:8081
 
-{{- if .Values.minio.enabled }}
+{{- if .Values.minio.createCluster }}
 
-To access the MinIO cluster run:
+To access the created MinIO cluster run:
 
   $ kubectl port-forward svc/{{ include "papergirl.minio.name" . }} 9000:9000 &>/dev/null &
   $ google-chrome http://{{ .Values.minio.accesskey }}:{{ .Values.minio.secretkey }}@localhost:9000
 {{- end -}}
 
-{{- if .Values.nats.enabled }}
+{{- if .Values.nats.createCluster }}
 
-To access the Nats cluster run:
+To access the created NATS cluster run:
 
   $ kubectl port-forward svc/{{ include "papergirl.nats.name" . }} 4222:4222 &>/dev/null &
 

@@ -47,7 +47,8 @@ papergirl:
       memory: 128Mi
 
 minio:
-  enabled: true
+  createCluster: true
+  endpoint: null
   accesskey: minio
   secretkey: minio123
   storageClass: ""
@@ -66,7 +67,8 @@ minio:
       cpu: 250m
 
 nats:
-  enabled: true
+  createCluster: true
+  url: null
   size: 3
   version: 2.1.2
 

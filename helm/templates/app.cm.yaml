@@ -4,8 +4,8 @@ metadata:
   name: {{ include "papergirl.fullname" . }}-config
 data:
   kubernetes.env: |
-    QUEUE_URI=nats://{{ include "papergirl.fullname" . }}-nats:4222
-    S3_ENDPOINT={{ include "papergirl.fullname" . }}-minio
+    QUEUE_URI={{ include "papergirl.nats.url" . }}
+    S3_ENDPOINT={{ include "papergirl.minio.endpoint" . }}
     S3_USESSL=false
     S3_ACCESSKEY={{ .Values.minio.accesskey }}
     S3_SECRETKEY={{ .Values.minio.secretkey }}

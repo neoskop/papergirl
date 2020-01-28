@@ -32,12 +32,25 @@ Create a prefix for all minio cluster resources
 {{- end -}}
 
 {{/*
+Endpoint for the S3 bucket to use
+*/}}
+{{- define "papergirl.minio.endpoint" -}}
+{{- default (printf "%s-minio" (include "papergirl.fullname" .)) .Values.minio.endpoint -}}
+{{- end -}}
+
+{{/*
 Create a prefix for all NATS cluster resources
 */}}
 {{- define "papergirl.nats.name" -}}
 {{- include "papergirl.fullname" . }}-nats
 {{- end -}}
 
+{{/*
+URL for the NATS instance to use
+*/}}
+{{- define "papergirl.nats.url" -}}
+{{- default (printf "nats://%s-nats:4222" (include "papergirl.fullname" .)) .Values.nats.url -}}
+{{- end -}}
 
 {{/*
 Create chart name and version as used by the chart label.
