@@ -33,9 +33,6 @@ sed -i "s/appVersion: .*/appVersion: \"$version\"/" helm/Chart.yaml
 sed -i "s/version: .*/version: $version/" helm/Chart.yaml
 git add .
 git commit -m "chore: Bump version to ${version}."
-git tag ${version}
-git push origin $version
-git pull --rebase
 git push
 
 docker build -t neoskop/papergirl:$version .
