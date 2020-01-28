@@ -21,7 +21,7 @@ volumeSetup:
 nginx:
   image:
     repository: nginx
-    tag: 1.17.6
+    tag: 1.17.8
     pullPolicy: IfNotPresent
     pullSecrets: []
   resources: 
@@ -55,7 +55,7 @@ minio:
   replicaCount: 4
   image:
     repository: minio/minio
-    tag: RELEASE.2019-09-11T19-53-16Z
+    tag: RELEASE.2020-01-25T02-50-51Z
     pullPolicy: IfNotPresent
     pullSecrets: []
   resources: 
