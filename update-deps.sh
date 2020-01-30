@@ -43,6 +43,8 @@ yarn-check -u
 echo "Will use the following new image versions:"
 NGINX_LATEST_TAG=`get_tags library/nginx | grep '^[0-9]*\.[0-9]*\.[0-9]*$' | sort -V | tail -n 1`
 echo "  - NGINX: $(bold $NGINX_LATEST_TAG)"
+NGINX_PROMETHEUS_EXPORTER_LATEST_TAG=`get_tags nginx/nginx-prometheus-exporter | grep '^[0-9]*\.[0-9]*\.[0-9]*$' | sort -V | tail -n 1`
+echo "  - NGINX Prometheus Exporter: $(bold $NGINX_PROMETHEUS_EXPORTER_LATEST_TAG)"
 NATS_LATEST_TAG=`get_tags library/nats | grep '^[0-9]*\.[0-9]*\.[0-9]*-scratch$' | sort -V | tail -n 1`
 echo "  - NATS: $(bold $NATS_LATEST_TAG)"
 NATS_LATEST_VERSION=`get_tags library/nats | grep '^[0-9]*\.[0-9]*\.[0-9]*$' | sort -V | tail -n 1`
@@ -54,6 +56,7 @@ yq w -i docker-compose.yml services.webserver.image nginx:$NGINX_LATEST_TAG
 yq w -i docker-compose.yml services.queue.image nats:$NATS_LATEST_TAG
 yq w -i docker-compose.yml services.s3.image minio/minio:$MINIO_LATEST_TAG
 yq w -i helm/values.yaml nginx.image.tag $NGINX_LATEST_TAG
+yq w -i helm/values.yaml prometheus.nginxExporterImage.tag $NGINX_PROMETHEUS_EXPORTER_LATEST_TAG
 yq w -i helm/values.yaml minio.image.tag $MINIO_LATEST_TAG
 yq w -i helm/values.yaml nats.version $NATS_LATEST_VERSION
 yq w -i helm/values.yaml volumeSetup.image.tag $BUSYBOX_LATEST_TAG

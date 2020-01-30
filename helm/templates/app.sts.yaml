@@ -7,6 +7,11 @@ metadata:
 spec:
   serviceName: "papergirl"
   replicas: {{ .Values.replicaCount }}
+  revisionHistoryLimit: 1
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
   volumeClaimTemplates:
     - metadata:
         name: website-cache
@@ -25,6 +30,10 @@ spec:
       labels:
         app.kubernetes.io/name: {{ include "papergirl.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
+        {{- if .Values.prometheus.enabled }}
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9113"
+        {{- end }}
     spec:
     {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -105,6 +114,33 @@ spec:
               port: papergirl-http
           resources:
             {{- toYaml .Values.papergirl.resources | nindent 12 }}
+        {{- if .Values.prometheus.enabled }}
+        - name: nginx-prometheus-exporter
+          image: "{{ .Values.prometheus.nginxExporterImage.repository }}:{{ .Values.prometheus.nginxExporterImage.tag }}"
+          imagePullPolicy: {{ .Values.prometheus.nginxExporterImage.pullPolicy }}
+          livenessProbe:
+            tcpSocket:
+              port: stats
+            initialDelaySeconds: 15
+          ports:
+            - name: stats
+              containerPort: 9113
+              protocol: TCP
+          command:
+            - /bin/ash
+            - -c
+            - "sleep 10 && /usr/bin/exporter $@"
+          args:
+            - -nginx.scrape-uri
+            - http://localhost:8082/stub_status
+          resources:
+            requests:
+              memory: 10Mi
+              cpu: "0.01"
+            limits:
+              memory: 24Mi
+              cpu: "0.01"
+          {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

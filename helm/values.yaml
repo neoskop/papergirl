@@ -28,6 +28,13 @@ nginx:
     requests:
       cpu: 100m
       memory: 128Mi
+prometheus:
+  enabled: false
+  nginxExporterImage:
+    repository: nginx/nginx-prometheus-exporter
+    tag: 0.5.0
+    pullPolicy: IfNotPresent
+    pullSecrets: []
 papergirl:
   image:
     repository: neoskop/papergirl

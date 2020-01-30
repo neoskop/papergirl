@@ -1,0 +1,12 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "papergirl.fullname" . }}
+  labels:
+{{ include "papergirl.labels" . | indent 4 }}
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "papergirl.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
