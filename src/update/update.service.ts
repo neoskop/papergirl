@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
 import * as fs from 'fs';
 import { ncp } from 'ncp';
 import * as path from 'path';
@@ -7,7 +7,7 @@ import { NginxService } from './nginx/nginx.service';
 import { S3Service } from './s3/s3.service';
 
 @Injectable()
-export class UpdateService {
+export class UpdateService implements OnApplicationBootstrap {
   private dirBlack: string;
   private dirRed: string;
 
@@ -21,6 +21,10 @@ export class UpdateService {
       this.config.nginxDirBlack,
     );
     this.dirRed = path.join(this.config.nginxRootDir, this.config.nginxDirRed);
+  }
+
+  async onApplicationBootstrap() {
+    await this.perform();
   }
 
   public async perform() {
