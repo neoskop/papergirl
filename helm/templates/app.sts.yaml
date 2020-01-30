@@ -79,6 +79,10 @@ spec:
             - name: http
               containerPort: 8081
               protocol: TCP
+          lifecycle:
+            preStop:
+              exec:
+                command: ["/usr/sbin/nginx", "-s", "quit"]
           livenessProbe:
             tcpSocket:
               port: http
