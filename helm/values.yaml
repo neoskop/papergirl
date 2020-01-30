@@ -2,6 +2,13 @@ replicaCount: 2
 websiteCache:
   storageClass: ""
   size: 1Gi
+ingress:
+  enabled: false
+  hostnames:
+    - papergirl.local
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    cert-manager.io/cluster-issuer: letsencrypt-prod
 volumeSetup:
   image:
     repository: busybox

@@ -8,10 +8,6 @@ spec:
   serviceName: "papergirl"
   replicas: {{ .Values.replicaCount }}
   revisionHistoryLimit: 1
-  strategy:
-    rollingUpdate:
-      maxUnavailable: 1
-      maxSurge: 1
   volumeClaimTemplates:
     - metadata:
         name: website-cache

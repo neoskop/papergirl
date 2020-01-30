@@ -1,0 +1,28 @@
+{{- if .Values.ingress.enabled -}}
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ include "papergirl.fullname" . }}
+  labels:
+{{ include "papergirl.labels" . | indent 4 }}
+  annotations:
+{{ toYaml .Values.ingress.annotations | indent 4 }}
+spec:
+  tls:
+    - hosts:
+    {{- range .Values.ingress.hostnames }}
+      - {{ . }}
+    {{- end }}
+      secretName: frontend-tls
+  rules:
+    {{- $ := . }}
+    {{- range .Values.ingress.hostnames }}
+    - host: {{ . }}
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: {{ include "papergirl.fullname" $ }}
+              servicePort: http
+    {{- end }}
+{{- end }}
