@@ -38,7 +38,7 @@ prometheus:
 papergirl:
   image:
     repository: neoskop/papergirl
-    tag: 0.1.3
+    tag: 0.2.0
     pullPolicy: IfNotPresent
     pullSecrets: []
   resources:
