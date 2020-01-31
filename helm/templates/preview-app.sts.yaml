@@ -63,10 +63,7 @@ spec:
           command: 
             - /bin/sh
             - -c
-            - while ! nc -z $ENDPOINT 9000; do echo 'Wait for MinIO startup...' && sleep 1; done;
-            - sleep 5 
-            - /usr/bin/mc config host add s3 $ENDPOINT $ACCESSKEY $SECRETKEY;
-            - /usr/bin/mc mb s3/$BUCKET
+            - while ! nc -z $ENDPOINT 9000; do echo 'Wait for MinIO startup...' && sleep 1; done; sleep 5 ; /usr/bin/mc config host add s3 http://$ENDPOINT:9000 $ACCESSKEY $SECRETKEY ; /usr/bin/mc ls s3 | grep -q $BUCKET || /usr/bin/mc mb s3/$BUCKET
         - name: volume-setup
           image: "{{ .Values.volumeSetup.image.repository }}:{{ .Values.volumeSetup.image.tag }}"
           imagePullPolicy: {{ .Values.volumeSetup.image.pullPolicy }}
