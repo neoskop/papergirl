@@ -13,6 +13,19 @@ resources:
     cpu: 100m
     memory: 128Mi
 replicaCount: 2
+bucketSetup:
+  image:
+    repository: minio/mc
+    tag: RELEASE.2020-01-25T03-02-19Z
+    pullPolicy: IfNotPresent
+    pullSecrets: []
+  resources:
+    limits:
+      cpu: 50m
+      memory: 16Mi
+    requests:
+      cpu: 50m
+      memory: 16Mi
 volumeSetup:
   image:
     repository: busybox

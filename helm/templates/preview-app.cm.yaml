@@ -6,6 +6,7 @@ metadata:
 data:
   kubernetes.env: |
     QUEUE_URI={{ include "papergirl.nats.url" . }}
+    QUEUE_SUBJECT=papergirl-preview
     S3_ENDPOINT={{ include "papergirl.minio.endpoint" . }}
     S3_USESSL=false
     S3_ACCESSKEY={{ .Values.minio.accesskey }}
