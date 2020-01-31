@@ -1,4 +1,4 @@
-{{- if .Values.ingress.enabled -}}
+{{- if .Values.papergirl.ingress.enabled -}}
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
@@ -6,17 +6,17 @@ metadata:
   labels:
 {{ include "papergirl.labels" . | indent 4 }}
   annotations:
-{{ toYaml .Values.ingress.annotations | indent 4 }}
+{{ toYaml .Values.papergirl.ingress.annotations | indent 4 }}
 spec:
   tls:
     - hosts:
-    {{- range .Values.ingress.hostnames }}
+    {{- range .Values.papergirl.ingress.hostnames }}
       - {{ . }}
     {{- end }}
       secretName: frontend-tls
   rules:
     {{- $ := . }}
-    {{- range .Values.ingress.hostnames }}
+    {{- range .Values.papergirl.ingress.hostnames }}
     - host: {{ . }}
       http:
         paths:

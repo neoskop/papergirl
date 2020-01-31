@@ -1,14 +1,18 @@
-replicaCount: 2
+image:
+  repository: neoskop/papergirl
+  tag: 0.3.1
+  pullPolicy: IfNotPresent
 websiteCache:
   storageClass: ""
   size: 1Gi
-ingress:
-  enabled: false
-  hostnames:
-  - papergirl.local
-  annotations:
-    kubernetes.io/ingress.class: nginx
-    cert-manager.io/cluster-issuer: letsencrypt-prod
+resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+replicaCount: 2
 volumeSetup:
   image:
     repository: busybox
@@ -43,18 +47,22 @@ prometheus:
     pullPolicy: IfNotPresent
     pullSecrets: []
 papergirl:
-  image:
-    repository: neoskop/papergirl
-    tag: 0.3.1
-    pullPolicy: IfNotPresent
-    pullSecrets: []
-  resources:
-    limits:
-      cpu: 100m
-      memory: 128Mi
-    requests:
-      cpu: 100m
-      memory: 128Mi
+  ingress:
+    enabled: false
+    hostnames:
+    - papergirl.local
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+papergirlPreview:
+  enabled: true
+  ingress:
+    enabled: false
+    hostnames:
+    - papergirl.local
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      cert-manager.io/cluster-issuer: letsencrypt-prod
 minio:
   createCluster: true
   endpoint: null

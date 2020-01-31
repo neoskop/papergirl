@@ -1,0 +1,28 @@
+{{- if and .Values.papergirlPreview.ingress.enabled .Values.papergirlPreview.enabled -}}
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ include "papergirl.preview.name" . }}
+  labels:
+{{ include "papergirl.labels" . | indent 4 }}
+  annotations:
+{{ toYaml .Values.papergirlPreview.ingress.annotations | indent 4 }}
+spec:
+  tls:
+    - hosts:
+    {{- range .Values.papergirlPreview.ingress.hostnames }}
+      - {{ . }}
+    {{- end }}
+      secretName: frontend-tls
+  rules:
+    {{- $ := . }}
+    {{- range .Values.papergirlPreview.ingress.hostnames }}
+    - host: {{ . }}
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: {{ include "papergirl.preview.name" $ }}
+              servicePort: http
+    {{- end }}
+{{- end }}

@@ -1,7 +1,8 @@
+{{- if .Values.papergirlPreview.enabled -}}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: {{ include "papergirl.fullname" . }}
+  name: {{ include "papergirl.preview.name" . }}
   labels:
 {{ include "papergirl.labels" . | indent 4 }}
 spec:
@@ -19,12 +20,12 @@ spec:
             storage: {{ .Values.websiteCache.size }}
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ include "papergirl.name" . }}
+      app.kubernetes.io/name: {{ include "papergirl.preview.name" . }}
       app.kubernetes.io/instance: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: {{ include "papergirl.name" . }}
+        app.kubernetes.io/name: {{ include "papergirl.preview.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
         {{- if .Values.prometheus.enabled }}
         prometheus.io/scrape: "true"
@@ -39,13 +40,13 @@ spec:
       volumes:
         - name: config
           configMap:
-            name: {{ include "papergirl.fullname" . }}-config
+            name: {{ include "papergirl.preview.name" . }}-config
         - name: nginx-config
           configMap:
-            name: {{ include "papergirl.fullname" . }}-nginx-config
+            name: {{ include "papergirl.preview.name" . }}-nginx-config
         - name: nginx-config-snippets
           configMap:
-            name: {{ include "papergirl.fullname" . }}-nginx-config-snippets
+            name: {{ include "papergirl.preview.name" . }}-nginx-config-snippets
       initContainers:
         - name: volume-setup
           image: "{{ .Values.volumeSetup.image.repository }}:{{ .Values.volumeSetup.image.tag }}"
@@ -153,3 +154,4 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
     {{- end }}
+{{- end }}

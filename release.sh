@@ -3,7 +3,7 @@
 set -e
 
 function check_commands() {
-  for command in $@ ; do
+  for command in $@; do
     if ! command -v $command >/dev/null; then
       echo -e "Install \033[1m$command\033[0m"
       exit 1
@@ -18,7 +18,7 @@ if [[ "$#" != "1" ]] || [[ ! "$1" =~ ^(patch|minor|major)$ ]]; then
   exit 1
 fi
 
-if [[ `git status --porcelain` ]]; then
+if [[ $(git status --porcelain) ]]; then
   echo -e "The repository has changes. Commit first...\033[0;31mAborting!\033[0m"
   exit 1
 fi
@@ -27,12 +27,12 @@ git pull --rebase
 yarn
 yarn build
 npm version --no-git-tag-version $1
-version=`cat package.json | jq -r .version`
+version=$(cat package.json | jq -r .version)
 sed -i "s/appVersion: .*/appVersion: \"$version\"/" helm/Chart.yaml
 sed -i "s/version: .*/version: $version/" helm/Chart.yaml
 yq w -i helm/Chart.yaml version $version
 yq w -i helm/Chart.yaml appVersion $version
-yq w -i helm/values.yaml papergirl.image.tag $version
+yq w -i helm/values.yaml image.tag $version
 git add .
 git commit -m "chore: Bump version to ${version}."
 git push

@@ -25,6 +25,13 @@ If release name contains chart name it will be used as a full name.
 {{- end -}}
 
 {{/*
+Create a prefix for all preview instance resources
+*/}}
+{{- define "papergirl.preview.name" -}}
+{{- include "papergirl.fullname" . }}-preview
+{{- end -}}
+
+{{/*
 Create a prefix for all minio cluster resources
 */}}
 {{- define "papergirl.minio.name" -}}
