@@ -35,12 +35,32 @@ check_commands() {
 }
 
 get_tags() {
-  curl -s https://hub.docker.com/v2/repositories/$1/tags/?page_size=10000 | jq -r '.results | map(.name) | .[]'
+  i=0
+  has_more=""
+  while [[ $has_more != "null" ]]; do
+    i=$((i + 1))
+    answer=$(curl -s "https://hub.docker.com/v2/repositories/$1/tags/?page_size=100&page=$i")
+    result=$(echo "$answer" | jq -r '.results | map(.name) | .[]')
+    has_more=$(echo "$answer" | jq -r '.next')
+    if [[ ! -z "${result// /}" ]]; then results="${results}\n${result}"; fi
+  done
+  echo -e "$results"
+}
+
+get_node_lts_tags() {
+  local NODE_TAGS=$(get_tags library/node | grep '^[0-9]*\.[0-9]*\.[0-9]*' | grep '\-buster\-slim$' | sort -V)
+  for tag in $NODE_TAGS; do
+    if [[ "$tag" =~ ^[0-9]+ ]] && [ -n "$(echo "${BASH_REMATCH[0]}" | awk '! ($0 % 2)')" ]; then
+      echo "$tag"
+    fi
+  done
 }
 
 check_commands yarn-check yarn jq yq
 yarn-check -u
 echo "Will use the following new image versions:"
+NODE_LATEST_TAG=$(get_node_lts_tags | tail -n 1)
+echo "  - Node: $(bold $NODE_LATEST_TAG)"
 NGINX_LATEST_TAG=$(get_tags library/nginx | grep '^[0-9]*\.[0-9]*\.[0-9]*$' | sort -V | tail -n 1)
 echo "  - NGINX: $(bold $NGINX_LATEST_TAG)"
 NGINX_PROMETHEUS_EXPORTER_LATEST_TAG=$(get_tags nginx/nginx-prometheus-exporter | grep '^[0-9]*\.[0-9]*\.[0-9]*$' | sort -V | tail -n 1)
@@ -54,6 +74,7 @@ MINIO_MC_LATEST_TAG=$(get_tags minio/mc | grep '^RELEASE' | sort | tail -n 1)
 echo "  - MinIO CLI: $(bold $MINIO_MC_LATEST_TAG)"
 BUSYBOX_LATEST_TAG=$(get_tags library/busybox | grep '^[0-9]*\.[0-9]*\.[0-9]*$' | sort -V | tail -n 1)
 echo "  - Busybox: $(bold $BUSYBOX_LATEST_TAG)"
+sed -i "1 s/^.*$/FROM node:$NODE_LATEST_TAG as base/" Dockerfile
 yq w -i docker-compose.yml services.webserver.image nginx:$NGINX_LATEST_TAG
 yq w -i docker-compose.yml services.queue.image nats:$NATS_LATEST_TAG
 yq w -i docker-compose.yml services.s3.image minio/minio:$MINIO_LATEST_TAG
