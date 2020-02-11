@@ -122,12 +122,18 @@ spec:
               protocol: TCP
           livenessProbe:
             httpGet:
-              path: /health
+              path: /probe/liveness
               port: papergirl-http
+            initialDelaySeconds: 15
+            failureThreshold: 10
+            periodSeconds: 5
           readinessProbe:
             httpGet:
-              path: /health
+              path: /probe/readiness
               port: papergirl-http
+            initialDelaySeconds: 15
+            periodSeconds: 5
+            failureThreshold: 10
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
         {{- if .Values.prometheus.enabled }}

@@ -3,6 +3,7 @@ import * as fs from 'fs';
 import { ncp } from 'ncp';
 import * as path from 'path';
 import { ConfigService } from '../config/config.service';
+import { ReadinessService } from '../health/readiness.service';
 import { NginxService } from './nginx/nginx.service';
 import { S3Service } from './s3/s3.service';
 
@@ -15,6 +16,7 @@ export class UpdateService implements OnApplicationBootstrap {
     private readonly s3service: S3Service,
     private readonly nginxService: NginxService,
     private readonly config: ConfigService,
+    private readonly readinessService: ReadinessService,
   ) {
     this.dirBlack = path.join(
       this.config.nginxRootDir,
@@ -25,6 +27,7 @@ export class UpdateService implements OnApplicationBootstrap {
 
   async onApplicationBootstrap() {
     await this.perform();
+    this.readinessService.setReady();
   }
 
   public async perform() {
