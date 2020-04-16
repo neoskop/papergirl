@@ -39,7 +39,7 @@ volumeSetup:
 nginx:
   image:
     repository: nginx
-    tag: 1.17.10
+    tag: 1.17.9
     pullPolicy: IfNotPresent
     pullSecrets: []
   resources:

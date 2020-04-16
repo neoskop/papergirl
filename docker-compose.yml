@@ -1,21 +1,21 @@
-version: "2.4"
+version: '2.4'
 services:
   queue:
     image: nats:2.1.6-scratch
     hostname: queue
     ports:
-    - 4222:4222
-    - 8222:8222
+      - 4222:4222
+      - 8222:8222
   webserver:
-    image: nginx:1.17.10
+    image: nginx:1.17.9
     ports:
-    - 8081:8081
-    - 8082:8082
+      - 8081:8081
+      - 8082:8082
     user: nginx
     volumes:
-    - nginx:/home/papergirl/nginx
-    - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-    - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - nginx:/home/papergirl/nginx
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
   s3:
     image: minio/minio:RELEASE.2020-04-15T19-42-18Z
     command: server /data
@@ -23,9 +23,9 @@ services:
       MINIO_ACCESS_KEY: minio
       MINIO_SECRET_KEY: minio123
     ports:
-    - 9000:9000
+      - 9000:9000
     volumes:
-    - ./s3-data:/data
+      - ./s3-data:/data
   app:
     build:
       context: .
@@ -33,13 +33,13 @@ services:
     environment:
       CONFIG: docker-compose
     ports:
-    - 8080:8080
+      - 8080:8080
     depends_on:
-    - queue
-    - webserver
+      - queue
+      - webserver
     pid: service:webserver
     volumes:
-    - ./src:/home/papergirl/app/src:ro,consistent
-    - nginx:/home/papergirl/nginx
+      - ./src:/home/papergirl/app/src:ro,consistent
+      - nginx:/home/papergirl/nginx
 volumes:
   nginx: null
