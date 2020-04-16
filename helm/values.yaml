@@ -10,7 +10,6 @@ resources:
     cpu: 100m
     memory: 128Mi
   requests:
-    cpu: 100m
     memory: 128Mi
 replicaCount: 2
 bucketSetup:
@@ -24,7 +23,6 @@ bucketSetup:
       cpu: 50m
       memory: 16Mi
     requests:
-      cpu: 50m
       memory: 16Mi
 volumeSetup:
   image:
@@ -37,7 +35,6 @@ volumeSetup:
       cpu: 50m
       memory: 16Mi
     requests:
-      cpu: 50m
       memory: 16Mi
 nginx:
   image:
@@ -50,7 +47,6 @@ nginx:
       cpu: 100m
       memory: 128Mi
     requests:
-      cpu: 100m
       memory: 128Mi
 prometheus:
   enabled: false
@@ -94,7 +90,6 @@ minio:
       cpu: 250m
     requests:
       memory: 512Mi
-      cpu: 250m
 nats:
   createCluster: true
   url: null
