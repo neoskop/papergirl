@@ -1,13 +1,13 @@
 version: "2.4"
 services:
   queue:
-    image: nats:2.1.4-scratch
+    image: nats:2.1.6-scratch
     hostname: queue
     ports:
     - 4222:4222
     - 8222:8222
   webserver:
-    image: nginx:1.17.8
+    image: nginx:1.17.10
     ports:
     - 8081:8081
     - 8082:8082
@@ -17,7 +17,7 @@ services:
     - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
     - ./nginx/conf.d:/etc/nginx/conf.d:ro
   s3:
-    image: minio/minio:RELEASE.2020-02-07T23-28-16Z
+    image: minio/minio:RELEASE.2020-04-15T19-42-18Z
     command: server /data
     environment:
       MINIO_ACCESS_KEY: minio
