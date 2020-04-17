@@ -7,9 +7,9 @@ websiteCache:
   size: 1Gi
 resources:
   limits:
-    cpu: 100m
     memory: 128Mi
   requests:
+    cpu: 150m
     memory: 128Mi
 replicaCount: 2
 bucketSetup:
@@ -20,9 +20,9 @@ bucketSetup:
     pullSecrets: []
   resources:
     limits:
-      cpu: 50m
       memory: 16Mi
     requests:
+      cpu: 50m
       memory: 16Mi
 volumeSetup:
   image:
@@ -32,9 +32,9 @@ volumeSetup:
     pullSecrets: []
   resources:
     limits:
-      cpu: 50m
       memory: 16Mi
     requests:
+      cpu: 50m
       memory: 16Mi
 nginx:
   image:
@@ -44,9 +44,9 @@ nginx:
     pullSecrets: []
   resources:
     limits:
-      cpu: 100m
       memory: 128Mi
     requests:
+      cpu: 50m
       memory: 128Mi
 prometheus:
   enabled: false
@@ -87,8 +87,8 @@ minio:
   resources:
     limits:
       memory: 512Mi
-      cpu: 250m
     requests:
+      cpu: 100m
       memory: 512Mi
 nats:
   createCluster: true
