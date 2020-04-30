@@ -1,4 +1,4 @@
-version: '2.4'
+version: "2.4"
 services:
   queue:
     image: nats:2.1.6-scratch
@@ -14,8 +14,8 @@ services:
     user: nginx
     volumes:
       - nginx:/home/papergirl/nginx
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro,delegated
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro,delegated
   s3:
     image: minio/minio:RELEASE.2020-04-15T19-42-18Z
     command: server /data
@@ -39,7 +39,8 @@ services:
       - webserver
     pid: service:webserver
     volumes:
-      - ./src:/home/papergirl/app/src:ro,consistent
+      - ./src:/home/papergirl/app/src:ro,delegated
+      - ./config:/home/papergirl/app/config:ro,delegated
       - nginx:/home/papergirl/nginx
 volumes:
   nginx: null
