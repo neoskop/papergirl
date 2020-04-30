@@ -2,7 +2,7 @@ import * as Joi from '@hapi/joi';
 import { Injectable } from '@nestjs/common';
 import * as dotenv from 'dotenv';
 import * as fs from 'fs';
-import { ClientOptions } from 'minio';
+import { ClientOptions, Region } from 'minio';
 
 export interface EnvConfig {
   [key: string]: string;
@@ -30,6 +30,7 @@ export class ConfigService {
       QUEUE_URI: Joi.string().required(),
       QUEUE_SUBJECT: Joi.string().default('papergirl'),
       S3_ENDPOINT: Joi.string().required(),
+      S3_REGION: Joi.string().default('us-east-1'),
       S3_PORT: Joi.number().default(9000),
       S3_USESSL: Joi.boolean().default(false),
       S3_ACCESSKEY: Joi.string().required(),
@@ -66,11 +67,16 @@ export class ConfigService {
   get s3ClientOptions(): ClientOptions {
     return {
       endPoint: this.envConfig.S3_ENDPOINT,
+      region: this.envConfig.S3_REGION,
       port: Number(this.envConfig.S3_PORT),
       useSSL: Boolean(this.envConfig.S3_USESSL),
       accessKey: this.envConfig.S3_ACCESSKEY,
       secretKey: this.envConfig.S3_SECRETKEY,
     };
+  }
+
+  get s3Region(): Region {
+    return this.envConfig.S3_REGION;
   }
 
   get s3BucketName(): string {

@@ -1,15 +1,32 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
 import * as fs from 'fs';
 import { Client } from 'minio';
 import * as path from 'path';
 import { ConfigService } from '../../config/config.service';
 
 @Injectable()
-export class S3Service {
+export class S3Service implements OnApplicationBootstrap {
   private s3Client: Client;
 
   constructor(private readonly config: ConfigService) {
     this.s3Client = new Client(this.config.s3ClientOptions);
+  }
+
+  public async onApplicationBootstrap() {
+    if (!(await this.s3Client.bucketExists(this.config.s3BucketName))) {
+      Logger.debug(`Creating bucket '${this.config.s3BucketName}'`);
+
+      try {
+        await this.s3Client.makeBucket(
+          this.config.s3BucketName,
+          this.config.s3Region,
+        );
+      } catch (err) {
+        Logger.error(
+          `Creation of bucket '${this.config.s3BucketName}' failed: ${err.message}`,
+        );
+      }
+    }
   }
 
   private async directoryIsWritable(directory: string): Promise<boolean> {
@@ -57,7 +74,7 @@ export class S3Service {
       true,
       '',
     );
-    objectsStream.on('data', async obj => {
+    objectsStream.on('data', async (obj) => {
       const filePath = path.join(targetDir, obj.name);
       Logger.debug(`Writing ${filePath}`);
       await this.s3Client.fGetObject(
@@ -66,9 +83,9 @@ export class S3Service {
         filePath,
       );
     });
-    objectsStream.on('error', e => {
+    objectsStream.on('error', (e) => {
       Logger.error(e);
     });
-    return new Promise(done => objectsStream.on('end', done));
+    return new Promise((done) => objectsStream.on('end', done));
   }
 }
