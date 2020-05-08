@@ -15,7 +15,7 @@ replicaCount: 2
 bucketSetup:
   image:
     repository: minio/mc
-    tag: RELEASE.2020-04-17T02-56-18Z
+    tag: RELEASE.2020-05-06T18-00-07Z
     pullPolicy: IfNotPresent
     pullSecrets: []
   resources:
@@ -39,7 +39,7 @@ volumeSetup:
 nginx:
   image:
     repository: nginx
-    tag: 1.17.9
+    tag: 1.18.0
     pullPolicy: IfNotPresent
     pullSecrets: []
   resources:
@@ -52,7 +52,7 @@ prometheus:
   enabled: false
   nginxExporterImage:
     repository: nginx/nginx-prometheus-exporter
-    tag: 0.6.0
+    tag: 0.7.0
     pullPolicy: IfNotPresent
     pullSecrets: []
 papergirl:
@@ -81,7 +81,7 @@ minio:
   replicaCount: 4
   image:
     repository: minio/minio
-    tag: RELEASE.2020-04-15T19-42-18Z
+    tag: RELEASE.2020-05-08T02-40-49Z
     pullPolicy: IfNotPresent
     pullSecrets: []
   resources:
