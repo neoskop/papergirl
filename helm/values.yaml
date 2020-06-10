@@ -74,6 +74,7 @@ papergirlPreview:
       cert-manager.io/cluster-issuer: letsencrypt-prod
 minio:
   createCluster: true
+  version: 2
   endpoint: null
   accesskey: minio
   secretkey: minio123

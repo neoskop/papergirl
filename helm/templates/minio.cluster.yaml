@@ -1,6 +1,11 @@
 {{- if .Values.minio.createCluster -}}
+{{- if ge (int .Values.minio.version) 2 -}}
+apiVersion: operator.min.io/v1
+kind: MinIOInstance
+{{- else -}}
 apiVersion: miniocontroller.min.io/v1beta1
 kind: MinIOInstance
+{{- end }}
 metadata:
   name: {{ include "papergirl.minio.name" . }}
   labels:
