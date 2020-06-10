@@ -27,7 +27,14 @@ spec:
   {{- end }}
   credsSecret:
     name: {{ include "papergirl.minio.name" . }}-credentials
+{{- if ge (int .Values.minio.version) 2 }}
+  zones:
+    - name: "zone-0"
+      servers: {{ .Values.minio.replicaCount }}
+  volumesPerServer: 1
+{{- else -}}
   replicas: {{ .Values.minio.replicaCount }}
+{{- end }}
   podManagementPolicy: Parallel
   requestAutoCert: false
   certConfig:
