@@ -1,4 +1,4 @@
-FROM node:14.2.0-buster-slim as base
+FROM node:14.4.0-buster-slim as base
 RUN adduser --uid 101 --system papergirl
 USER papergirl
 WORKDIR /home/papergirl
