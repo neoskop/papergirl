@@ -32,6 +32,7 @@ spec:
     - name: "zone-0"
       servers: {{ .Values.minio.replicaCount }}
   volumesPerServer: 1
+  mountPath: /export
 {{- else -}}
   replicas: {{ .Values.minio.replicaCount }}
 {{- end }}
