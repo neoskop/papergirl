@@ -15,7 +15,7 @@ replicaCount: 2
 bucketSetup:
   image:
     repository: minio/mc
-    tag: RELEASE.2020-05-28T23-43-36Z
+    tag: RELEASE.2020-06-20T00-18-43Z
     pullPolicy: IfNotPresent
     pullSecrets: []
   resources:
@@ -52,14 +52,14 @@ prometheus:
   enabled: false
   nginxExporterImage:
     repository: nginx/nginx-prometheus-exporter
-    tag: 0.7.0
+    tag: 0.8.0
     pullPolicy: IfNotPresent
     pullSecrets: []
 papergirl:
   ingress:
     enabled: false
     hostnames:
-    - papergirl.local
+      - papergirl.local
     annotations:
       kubernetes.io/ingress.class: nginx
       cert-manager.io/cluster-issuer: letsencrypt-prod
@@ -68,7 +68,7 @@ papergirlPreview:
   ingress:
     enabled: false
     hostnames:
-    - papergirl.local
+      - papergirl.local
     annotations:
       kubernetes.io/ingress.class: nginx
       cert-manager.io/cluster-issuer: letsencrypt-prod
@@ -82,7 +82,7 @@ minio:
   replicaCount: 4
   image:
     repository: minio/minio
-    tag: RELEASE.2020-06-03T22-13-49Z
+    tag: RELEASE.2020-06-22T03-12-50Z
     pullPolicy: IfNotPresent
     pullSecrets: []
   resources:
