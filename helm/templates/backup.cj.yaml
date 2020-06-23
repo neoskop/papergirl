@@ -1,0 +1,26 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: {{ include "papergirl.backup.name" . }}
+  labels:
+{{ include "papergirl.labels" . | indent 4 }}
+spec:
+  schedule: {{ .Values.backup.schedule }}
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: backup
+            image: "{{ .Values.backup.image.repository }}:{{ .Values.backup.image.tag }}"
+            imagePullPolicy: {{ .Values.backup.image.pullPolicy }}
+            command: [/usr/local/bin/backup.sh]
+            volumeMounts:
+            - name: backup-script
+              mountPath: /usr/local/bin
+          restartPolicy: OnFailure
+          volumes:
+            - name: backup-script
+              configMap:
+                name: {{ include "papergirl.backup.name" . }}
+                defaultMode: 0777

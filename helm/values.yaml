@@ -91,6 +91,13 @@ minio:
     requests:
       cpu: 100m
       memory: 512Mi
+backup:
+  schedule: "0 5 * * *"
+  image:
+    repository: minio/mc
+    tag: RELEASE.2020-06-20T00-18-43Z
+    pullPolicy: IfNotPresent
+    pullSecrets: []
 nats:
   createCluster: true
   url: null

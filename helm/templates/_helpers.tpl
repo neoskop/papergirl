@@ -39,6 +39,20 @@ Create a prefix for all minio cluster resources
 {{- end -}}
 
 {{/*
+Create a prefix for backup resources
+*/}}
+{{- define "papergirl.backup.name" -}}
+{{- include "papergirl.fullname" . }}-backup
+{{- end -}}
+
+{{/*
+Create a prefix for preview backup resources
+*/}}
+{{- define "papergirl.preview-backup.name" -}}
+{{- include "papergirl.fullname" . }}-preview-backup
+{{- end -}}
+
+{{/*
 Endpoint for the S3 bucket to use
 */}}
 {{- define "papergirl.minio.endpoint" -}}

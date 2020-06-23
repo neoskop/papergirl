@@ -82,5 +82,6 @@ yq w -i helm/values.yaml nginx.image.tag $NGINX_LATEST_TAG
 yq w -i helm/values.yaml prometheus.nginxExporterImage.tag $NGINX_PROMETHEUS_EXPORTER_LATEST_TAG
 yq w -i helm/values.yaml minio.image.tag $MINIO_LATEST_TAG
 yq w -i helm/values.yaml bucketSetup.image.tag $MINIO_MC_LATEST_TAG
+yq w -i helm/values.yaml backup.image.tag $MINIO_MC_LATEST_TAG
 yq w -i helm/values.yaml nats.version $NATS_LATEST_VERSION
 yq w -i helm/values.yaml volumeSetup.image.tag $BUSYBOX_LATEST_TAG
