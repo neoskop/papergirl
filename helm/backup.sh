@@ -30,6 +30,9 @@ setup_bucket() {
       info "Creating bucket $(bold $1)"
       mc mb s3/$1 &>/dev/null
   fi
+
+  info "Add download policy to bucket $(bold $1)"
+  mc policy set download s3/$1 &>/dev/null
 }
 
 backup_bucket() {

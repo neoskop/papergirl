@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "papergirl.preview-fallback.name" . }}
+  labels:
+{{ include "papergirl.labels" . | indent 4 }}
+data:
+  nginx.conf.template: |
+    {{- tpl (.Files.Get "nginx.conf.template") . | nindent 4 }}

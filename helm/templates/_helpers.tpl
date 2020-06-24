@@ -53,6 +53,20 @@ Create a prefix for preview backup resources
 {{- end -}}
 
 {{/*
+Create a prefix for fallback frontend resources
+*/}}
+{{- define "papergirl.fallback.name" -}}
+{{- include "papergirl.fullname" . }}-fallback
+{{- end -}}
+
+{{/*
+Create a prefix for preview fallback frontend resources
+*/}}
+{{- define "papergirl.preview-fallback.name" -}}
+{{- include "papergirl.fullname" . }}-preview-fallback
+{{- end -}}
+
+{{/*
 Endpoint for the S3 bucket to use
 */}}
 {{- define "papergirl.minio.endpoint" -}}

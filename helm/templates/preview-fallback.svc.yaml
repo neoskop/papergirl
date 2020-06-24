@@ -1,0 +1,18 @@
+{{- if .Values.papergirlPreview.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "papergirl.preview-fallback.name" . }}
+  labels:
+{{ include "papergirl.labels" . | indent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: {{ include "papergirl.preview-fallback.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}

@@ -5,7 +5,7 @@ metadata:
   labels:
 {{ include "papergirl.labels" . | indent 4 }}
 spec:
-  schedule: {{ .Values.backup.schedule }}
+  schedule: {{ .Values.backup.schedule | quote }}
   jobTemplate:
     spec:
       template:
