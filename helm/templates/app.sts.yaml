@@ -99,8 +99,7 @@ spec:
             tcpSocket:
               port: http
           readinessProbe:
-            httpGet:
-              path: /
+            tcpSocket:
               port: http
           resources:
             {{- toYaml .Values.nginx.resources | nindent 12 }}
