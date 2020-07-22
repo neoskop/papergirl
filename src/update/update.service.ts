@@ -4,6 +4,7 @@ import { ncp } from 'ncp';
 import * as path from 'path';
 import { ConfigService } from '../config/config.service';
 import { ReadinessService } from '../health/readiness.service';
+import { MetaService } from '../meta/meta.service';
 import { NginxService } from './nginx/nginx.service';
 import { S3Service } from './s3/s3.service';
 
@@ -17,6 +18,7 @@ export class UpdateService implements OnApplicationBootstrap {
     private readonly nginxService: NginxService,
     private readonly config: ConfigService,
     private readonly readinessService: ReadinessService,
+    private readonly metaService: MetaService,
   ) {
     this.dirBlack = path.join(
       this.config.nginxRootDir,
@@ -36,8 +38,8 @@ export class UpdateService implements OnApplicationBootstrap {
 
       if (!currentRoot.endsWith(this.config.nginxDirBlack)) {
         await fs.promises.rmdir(this.dirBlack, { recursive: true });
-        await new Promise(done => {
-          ncp(this.dirRed, this.dirBlack, err => {
+        await new Promise((done) => {
+          ncp(this.dirRed, this.dirBlack, (err) => {
             if (err) {
               throw err;
             } else {
@@ -52,6 +54,8 @@ export class UpdateService implements OnApplicationBootstrap {
       await fs.promises.mkdir(this.dirRed);
       await this.s3service.download(this.dirRed);
       Logger.debug('Download complete');
+      const meta = await this.metaService.parse(this.dirRed);
+      await this.nginxService.configure(meta);
       await this.nginxService.switchRootDir(this.dirRed);
     } catch (err) {
       Logger.error(err.message);

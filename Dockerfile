@@ -1,6 +1,6 @@
 FROM node:14.5.0-buster-slim as base
-RUN adduser --uid 101 --system papergirl
-USER papergirl
+RUN mkdir -p /home/papergirl && chown www-data:www-data /home/papergirl
+USER www-data
 WORKDIR /home/papergirl
 RUN mkdir -p nginx/pid && \
     mkdir -p nginx/conf.d && \

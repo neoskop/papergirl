@@ -1,4 +1,5 @@
 import { Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
+import { eachLimit } from 'async';
 import * as fs from 'fs';
 import { Client } from 'minio';
 import * as path from 'path';
@@ -74,18 +75,29 @@ export class S3Service implements OnApplicationBootstrap {
       true,
       '',
     );
-    objectsStream.on('data', async (obj) => {
-      const filePath = path.join(targetDir, obj.name);
-      Logger.debug(`Writing ${filePath}`);
-      await this.s3Client.fGetObject(
-        this.config.s3BucketName,
-        obj.name,
-        filePath,
-      );
+    return new Promise((resolve, reject) => {
+      const files = [];
+      objectsStream.on('data', async (obj) => {
+        files.push({ path: path.join(targetDir, obj.name), name: obj.name });
+      });
+      objectsStream.on('error', (err) => {
+        reject(err);
+      });
+      objectsStream.on('end', async () => {
+        eachLimit(
+          files,
+          5,
+          async (file) => {
+            Logger.debug(`Writing ${file.path}`);
+            await this.s3Client.fGetObject(
+              this.config.s3BucketName,
+              file.name,
+              file.path,
+            );
+          },
+          resolve,
+        );
+      });
     });
-    objectsStream.on('error', (e) => {
-      Logger.error(e);
-    });
-    return new Promise((done) => objectsStream.on('end', done));
   }
 }

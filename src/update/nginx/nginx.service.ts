@@ -1,6 +1,8 @@
 import { Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
 import * as fs from 'fs';
+import { join } from 'path';
 import { ConfigService } from '../../config/config.service';
+import { Meta } from '../../meta/meta.interface';
 
 @Injectable()
 export class NginxService implements OnApplicationBootstrap {
@@ -8,18 +10,13 @@ export class NginxService implements OnApplicationBootstrap {
 
   public async onApplicationBootstrap() {
     try {
-      await fs.promises.access(
-        this.config.nginxConfigFilePath,
-        fs.constants.W_OK,
-      );
+      await fs.promises.access(this.config.nginxConfigDir, fs.constants.W_OK);
     } catch (err) {
       if (err.code === 'ENOENT') {
-        Logger.debug(
-          `Config file ${this.config.nginxConfigFilePath} does not exist`,
-        );
+        Logger.debug(`Config dir ${this.config.nginxConfigDir} does not exist`);
       } else if (err.code === 'EACCES') {
         throw new Error(
-          `Config file ${this.config.nginxConfigFilePath} is not writable`,
+          `Config dir ${this.config.nginxConfigDir} is not writable`,
         );
       } else {
         throw err;
@@ -27,15 +24,59 @@ export class NginxService implements OnApplicationBootstrap {
     }
   }
 
+  public async configure(meta: Meta) {
+    const configFilePath = join(this.config.nginxConfigDir, 'security.conf');
+    let configLines = [];
+
+    if (meta && meta.security) {
+      if (meta.security.standardHeaders) {
+        configLines = configLines.concat([
+          'add_header X-Frame-Options SAMEORIGIN',
+          'add_header X-XSS-Protection "1; mode=block"',
+          'add_header X-Content-Type-Options nosniff',
+          'add_header Referrer-Policy strict-origin-when-cross-origin',
+        ]);
+      }
+
+      if (meta.security.hideVersion) {
+        configLines.push('server_tokens off');
+      }
+
+      const csp = meta.security.csp;
+      const nonceRegex = /'nonce-(.+?)'/;
+
+      if (csp) {
+        const staticNonce = (csp.match(nonceRegex) || [null])[1];
+
+        if (staticNonce) {
+          configLines = configLines.concat([
+            'set_secure_random_alphanum $cspNonce 32',
+            `add_header Content-Security-Policy "${csp.replace(
+              nonceRegex,
+              "'nonce-$cspNonce'",
+            )}"`,
+            `sub_filter '${staticNonce}' $cspNonce`,
+            'sub_filter_once off',
+          ]);
+        } else {
+          configLines.push(`add_header Content-Security-Policy "${csp}"`);
+        }
+      }
+    }
+
+    await fs.promises.writeFile(configFilePath, `${configLines.join(';\n')};`);
+  }
+
   public async getActiveRootDir(): Promise<string> {
+    const configFilePath = join(this.config.nginxConfigDir, 'root.conf');
     const configFileContents = (
-      await fs.promises.readFile(this.config.nginxConfigFilePath)
+      await fs.promises.readFile(configFilePath)
     ).toString();
     const match = /root (.+?);/.exec(configFileContents);
 
     if (!match) {
       throw new Error(
-        `Root path is not correctly specified in ${this.config.nginxConfigFilePath}`,
+        `Root path is not correctly specified in ${configFilePath}`,
       );
     }
 
@@ -45,7 +86,7 @@ export class NginxService implements OnApplicationBootstrap {
 
   public async switchRootDir(path: string) {
     await fs.promises.writeFile(
-      this.config.nginxConfigFilePath,
+      join(this.config.nginxConfigDir, 'root.conf'),
       `root ${path};`,
     );
     await this.reload();

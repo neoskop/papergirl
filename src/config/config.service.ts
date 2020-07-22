@@ -40,7 +40,7 @@ export class ConfigService {
       NGINX_DIR_BLACK: Joi.string().default('black'),
       NGINX_DIR_RED: Joi.string().default('red'),
       NGINX_PID_PATH: Joi.string().required(),
-      NGINX_CONFIG_FILE_PATH: Joi.string().required(),
+      NGINX_CONFIG_DIR: Joi.string().required(),
     });
 
     const { error, value: validatedEnvConfig } = envVarsSchema.validate(
@@ -103,8 +103,8 @@ export class ConfigService {
     return this.envConfig.NGINX_PID_PATH;
   }
 
-  get nginxConfigFilePath(): string {
-    return this.envConfig.NGINX_CONFIG_FILE_PATH;
+  get nginxConfigDir(): string {
+    return this.envConfig.NGINX_CONFIG_DIR;
   }
 
   get nginxDirBlack(): string {

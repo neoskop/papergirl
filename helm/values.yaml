@@ -15,7 +15,7 @@ replicaCount: 2
 bucketSetup:
   image:
     repository: minio/mc
-    tag: RELEASE.2020-07-17T02-52-20Z-s390x
+    tag: RELEASE.2020-07-17T02-52-20Z
     pullPolicy: IfNotPresent
     pullSecrets: []
   resources:
@@ -38,8 +38,8 @@ volumeSetup:
       memory: 16Mi
 nginx:
   image:
-    repository: nginx
-    tag: 1.19.1
+    repository: openresty/openresty
+    tag: 1.17.8.1-buster
     pullPolicy: IfNotPresent
     pullSecrets: []
   resources:
@@ -82,7 +82,7 @@ minio:
   replicaCount: 4
   image:
     repository: minio/minio
-    tag: RELEASE.2020-07-20T02-25-16Z-s390x
+    tag: RELEASE.2020-07-20T02-25-16Z
     pullPolicy: IfNotPresent
     pullSecrets: []
   resources:
@@ -95,7 +95,7 @@ backup:
   schedule: "0 5 * * *"
   image:
     repository: minio/mc
-    tag: RELEASE.2020-07-17T02-52-20Z-s390x
+    tag: RELEASE.2020-07-17T02-52-20Z
     pullPolicy: IfNotPresent
     pullSecrets: []
   replicaCount: 2

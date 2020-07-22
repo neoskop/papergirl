@@ -61,24 +61,24 @@ yarn-check -u
 echo "Will use the following new image versions:"
 NODE_LATEST_TAG=$(get_node_lts_tags | tail -n 1)
 echo "  - Node: $(bold $NODE_LATEST_TAG)"
-NGINX_LATEST_TAG=$(get_tags library/nginx | grep '^[0-9]*\.[0-9]*\.[0-9]*$' | sort -V | tail -n 1)
-echo "  - NGINX: $(bold $NGINX_LATEST_TAG)"
+OPENRESTY_LATEST_TAG=$(get_tags openresty/openresty | grep '^[0-9]*\.[0-9]*\.[0-9]*\.[0-9]*-buster$' | sort -V | tail -n 1)
+echo "  - OpenResty: $(bold $OPENRESTY_LATEST_TAG)"
 NGINX_PROMETHEUS_EXPORTER_LATEST_TAG=$(get_tags nginx/nginx-prometheus-exporter | grep '^[0-9]*\.[0-9]*\.[0-9]*$' | sort -V | tail -n 1)
 echo "  - NGINX Prometheus Exporter: $(bold $NGINX_PROMETHEUS_EXPORTER_LATEST_TAG)"
 NATS_LATEST_TAG=$(get_tags library/nats | grep '^[0-9]*\.[0-9]*\.[0-9]*-scratch$' | sort -V | tail -n 1)
 echo "  - NATS: $(bold $NATS_LATEST_TAG)"
 NATS_LATEST_VERSION=$(get_tags library/nats | grep '^[0-9]*\.[0-9]*\.[0-9]*$' | sort -V | tail -n 1)
-MINIO_LATEST_TAG=$(get_tags minio/minio | grep '^RELEASE' | sort | tail -n 1)
+MINIO_LATEST_TAG=$(get_tags minio/minio | grep '^RELEASE.[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}T[0-9]\{2\}-[0-9]\{2\}-[0-9]\{2\}Z$' | sort | tail -n 1)
 echo "  - MinIO: $(bold $MINIO_LATEST_TAG)"
-MINIO_MC_LATEST_TAG=$(get_tags minio/mc | grep '^RELEASE' | sort | tail -n 1)
+MINIO_MC_LATEST_TAG=$(get_tags minio/mc | grep '^RELEASE.[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}T[0-9]\{2\}-[0-9]\{2\}-[0-9]\{2\}Z$' | sort | tail -n 1)
 echo "  - MinIO CLI: $(bold $MINIO_MC_LATEST_TAG)"
 BUSYBOX_LATEST_TAG=$(get_tags library/busybox | grep '^[0-9]*\.[0-9]*\.[0-9]*$' | sort -V | tail -n 1)
 echo "  - Busybox: $(bold $BUSYBOX_LATEST_TAG)"
 sed -i "1 s/^.*$/FROM node:$NODE_LATEST_TAG as base/" Dockerfile
-yq w -i docker-compose.yml services.webserver.image nginx:$NGINX_LATEST_TAG
+yq w -i docker-compose.yml services.webserver.image openresty/openresty:$OPENRESTY_LATEST_TAG
 yq w -i docker-compose.yml services.queue.image nats:$NATS_LATEST_TAG
 yq w -i docker-compose.yml services.s3.image minio/minio:$MINIO_LATEST_TAG
-yq w -i helm/values.yaml nginx.image.tag $NGINX_LATEST_TAG
+yq w -i helm/values.yaml nginx.image.tag $OPENRESTY_LATEST_TAG
 yq w -i helm/values.yaml prometheus.nginxExporterImage.tag $NGINX_PROMETHEUS_EXPORTER_LATEST_TAG
 yq w -i helm/values.yaml minio.image.tag $MINIO_LATEST_TAG
 yq w -i helm/values.yaml bucketSetup.image.tag $MINIO_MC_LATEST_TAG
