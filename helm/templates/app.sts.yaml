@@ -66,7 +66,7 @@ spec:
         - name: volume-setup
           image: "{{ .Values.volumeSetup.image.repository }}:{{ .Values.volumeSetup.image.tag }}"
           imagePullPolicy: {{ .Values.volumeSetup.image.pullPolicy }}
-          command: ['sh', '-c', 'cd /home/papergirl/nginx && mkdir -p pid && mkdir -p conf.d && mkdir -p www/black && mkdir -p www/red && echo "root /home/papergirl/nginx/www/black;" > conf.d/root.conf && echo "error_page 404 /404/index.html;" > conf.d/errors.conf && chown -R 101 .']
+          command: ['sh', '-c', 'cd /home/papergirl/nginx && mkdir -p pid && mkdir -p conf.d && mkdir -p www/black && mkdir -p www/red && echo "root /home/papergirl/nginx/www/black;" > conf.d/root.conf && echo "error_page 404 /404/index.html;" > conf.d/errors.conf && chown -R 33 .']
           volumeMounts:
             - name: website-cache
               mountPath: /home/papergirl/nginx
@@ -77,8 +77,8 @@ spec:
           image: "{{ .Values.nginx.image.repository }}:{{ .Values.nginx.image.tag }}"
           imagePullPolicy: {{ .Values.nginx.image.pullPolicy }}
           securityContext:
-            runAsUser: 101
-            runAsGroup: 101
+            runAsUser: 33
+            runAsGroup: 33
           volumeMounts:
             - name: nginx-config
               mountPath: /etc/nginx/nginx.conf
