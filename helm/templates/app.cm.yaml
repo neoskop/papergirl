@@ -22,7 +22,7 @@ data:
   nginx.conf: |
     pid /home/papergirl/nginx/pid/nginx.pid;
     worker_processes  auto;
-    error_log  /var/log/nginx/error.log warn;
+    error_log  /usr/local/openresty/nginx/logs/error.log warn;
 
     events {
         worker_connections  1024;
