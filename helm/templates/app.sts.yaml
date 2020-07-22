@@ -81,7 +81,7 @@ spec:
             runAsGroup: 33
           volumeMounts:
             - name: nginx-config
-              mountPath: /etc/nginx/nginx.conf
+              mountPath: /usr/local/openresty/nginx/conf/nginx.conf
               subPath: "nginx.conf"
             - name: nginx-config-snippets
               mountPath: /etc/nginx/conf.d
