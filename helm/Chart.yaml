@@ -3,3 +3,10 @@ appVersion: 0.13.4
 description: Sets up high-available delivery tier with Papergirl optionally and NATS and MinIO
 name: papergirl
 version: 0.13.4
+home: https://github.com/neoskop/papergirl
+sources:
+  - https://github.com/neoskop/papergirl
+maintainers:
+  - name: Arne Diekmann
+    email: diekmann@neoskop.de
+    url: https://www.neoskop.de
