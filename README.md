@@ -14,8 +14,17 @@ $ nats papergirl '{"foo":"bar"}'
 
 ### Helm
 
+You can either checkout the repository and use the Helm chart files directly i.e.:
+
 ```sh
 $ helm install papergirl ./helm
+```
+
+Or you can use our Helm repository:
+
+```sh
+$ helm repo add neoskop https://charts.neoskop.dev
+$ helm install papergirl neoskop/papergirl
 ```
 
 ## Architecture
