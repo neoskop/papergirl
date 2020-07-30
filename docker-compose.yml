@@ -7,7 +7,7 @@ services:
       - 4222:4222
       - 8222:8222
   webserver:
-    image: openresty/openresty:1.17.8.1-buster
+    image: openresty/openresty:1.17.8.2-buster
     ports:
       - 8081:8081
       - 8082:8082
@@ -17,7 +17,7 @@ services:
       - ./nginx/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf:ro,delegated
       - ./nginx/conf.d:/etc/nginx/conf.d:ro,delegated
   s3:
-    image: minio/minio:RELEASE.2020-07-20T02-25-16Z
+    image: minio/minio:RELEASE.2020-07-27T18-37-02Z
     command: server /data
     environment:
       MINIO_ACCESS_KEY: minio
