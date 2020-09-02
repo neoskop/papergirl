@@ -64,7 +64,10 @@ export class NginxService implements OnApplicationBootstrap {
       }
     }
 
-    await fs.promises.writeFile(configFilePath, `${configLines.join(';\n')};`);
+    await fs.promises.writeFile(
+      configFilePath,
+      configLines.length > 0 ? `${configLines.join(';\n')};` : '',
+    );
   }
 
   public async getActiveRootDir(): Promise<string> {

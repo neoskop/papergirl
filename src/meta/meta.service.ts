@@ -7,11 +7,19 @@ import { Meta } from './meta.interface';
 
 @Injectable()
 export class MetaService {
+  private readonly DEFAULT_SETTINGS = {
+    security: {
+      standardHeaders: true,
+      hideVersion: true,
+      csp: "default-src 'none'",
+    },
+  };
+
   public async parse(dir: string): Promise<Meta> {
     const configFile = await this.findConfigFile(dir);
 
     if (!configFile) {
-      return null;
+      return this.DEFAULT_SETTINGS;
     }
 
     const configFileContents = await fs.promises.readFile(configFile);
@@ -23,16 +31,7 @@ export class MetaService {
       throw new Error(`Invalid config file`);
     } else {
       await fs.promises.unlink(configFile);
-      return deepmerge(
-        {
-          security: {
-            standardHeaders: true,
-            hideVersion: true,
-            csp: "default-src 'none'",
-          },
-        },
-        document,
-      );
+      return deepmerge(this.DEFAULT_SETTINGS, document);
     }
   }
 
