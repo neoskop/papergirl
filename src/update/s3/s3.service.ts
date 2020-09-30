@@ -77,25 +77,44 @@ export class S3Service implements OnApplicationBootstrap {
     );
     return new Promise((resolve, reject) => {
       const files = [];
-      objectsStream.on('data', async (obj) => {
+      objectsStream.on('data', (obj) => {
         files.push({ path: path.join(targetDir, obj.name), name: obj.name });
       });
       objectsStream.on('error', (err) => {
-        reject(err);
+        reject(`Listing files failed: ${err}`);
       });
       objectsStream.on('end', async () => {
         eachLimit(
           files,
           5,
           async (file) => {
-            Logger.debug(`Writing ${file.path}`);
-            await this.s3Client.fGetObject(
-              this.config.s3BucketName,
-              file.name,
-              file.path,
-            );
+            try {
+              if (file.name.endsWith('/')) {
+                try {
+                  await fs.promises.access(file.path);
+                } catch (error) {
+                  Logger.debug(`Creating directory ${file.path}`);
+                  await fs.promises.mkdir(file.path);
+                }
+              } else {
+                Logger.debug(`Downloading ${file.path}`);
+                await this.s3Client.fGetObject(
+                  this.config.s3BucketName,
+                  file.name,
+                  file.path,
+                );
+              }
+            } catch (err) {
+              reject(`Downloading of ${file.path} failed: ${err}`);
+            }
           },
-          resolve,
+          (err) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve();
+            }
+          },
         );
       });
     });
