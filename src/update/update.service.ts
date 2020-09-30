@@ -58,7 +58,7 @@ export class UpdateService implements OnApplicationBootstrap {
       await this.nginxService.configure(meta);
       await this.nginxService.switchRootDir(this.dirRed);
     } catch (err) {
-      Logger.error(err.message);
+      Logger.error(err.message || err);
     }
   }
 }
