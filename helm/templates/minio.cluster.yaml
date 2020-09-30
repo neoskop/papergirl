@@ -66,5 +66,5 @@ spec:
       storageClassName: {{ .Values.minio.storageClass }}
       resources:
         requests:
-          storage: 5Gi
+          storage: {{ .Values.minio.storageSize }}
 {{- end }}
