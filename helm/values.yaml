@@ -15,7 +15,7 @@ replicaCount: 2
 bucketSetup:
   image:
     repository: minio/mc
-    tag: RELEASE.2020-09-23T20-02-13Z
+    tag: RELEASE.2020-10-03T02-54-56Z
     pullPolicy: IfNotPresent
     pullSecrets: []
   resources:
@@ -83,7 +83,7 @@ minio:
   replicaCount: 4
   image:
     repository: minio/minio
-    tag: RELEASE.2020-09-26T03-44-56Z
+    tag: RELEASE.2020-10-12T21-53-21Z
     pullPolicy: IfNotPresent
     pullSecrets: []
   resources:
@@ -96,7 +96,7 @@ backup:
   schedule: '0 5 * * *'
   image:
     repository: minio/mc
-    tag: RELEASE.2020-09-23T20-02-13Z
+    tag: RELEASE.2020-10-03T02-54-56Z
     pullPolicy: IfNotPresent
     pullSecrets: []
   replicaCount: 2
