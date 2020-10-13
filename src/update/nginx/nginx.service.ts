@@ -25,50 +25,47 @@ export class NginxService implements OnApplicationBootstrap {
   }
 
   public async configure(meta: Meta) {
-    if (meta?.security) {
-      await this.configureSecurity(meta);
-    }
-
-    if (meta?.redirects) {
-      await this.configureRedirects(meta);
-    }
+    await this.configureSecurity(meta);
+    await this.configureRedirects(meta);
   }
 
   private async configureSecurity(meta: Meta) {
     const configFilePath = join(this.config.nginxConfigDir, 'security.conf');
     let configLines = [];
 
-    if (meta.security.standardHeaders) {
-      configLines = configLines.concat([
-        'add_header X-Frame-Options SAMEORIGIN',
-        'add_header X-XSS-Protection "1; mode=block"',
-        'add_header X-Content-Type-Options nosniff',
-        'add_header Referrer-Policy strict-origin-when-cross-origin',
-      ]);
-    }
-
-    if (meta.security.hideVersion) {
-      configLines.push('server_tokens off');
-    }
-
-    const csp = meta.security.csp;
-    const nonceRegex = /'nonce-(.+?)'/;
-
-    if (csp) {
-      const staticNonce = (csp.match(nonceRegex) || [null])[1];
-
-      if (staticNonce) {
+    if (meta?.security) {
+      if (meta.security.standardHeaders) {
         configLines = configLines.concat([
-          'set_secure_random_alphanum $cspNonce 32',
-          `add_header Content-Security-Policy "${csp.replace(
-            nonceRegex,
-            "'nonce-$cspNonce'",
-          )}"`,
-          `sub_filter '${staticNonce}' $cspNonce`,
-          'sub_filter_once off',
+          'add_header X-Frame-Options SAMEORIGIN',
+          'add_header X-XSS-Protection "1; mode=block"',
+          'add_header X-Content-Type-Options nosniff',
+          'add_header Referrer-Policy strict-origin-when-cross-origin',
         ]);
-      } else {
-        configLines.push(`add_header Content-Security-Policy "${csp}"`);
+      }
+
+      if (meta.security.hideVersion) {
+        configLines.push('server_tokens off');
+      }
+
+      const csp = meta.security.csp;
+      const nonceRegex = /'nonce-(.+?)'/;
+
+      if (csp) {
+        const staticNonce = (csp.match(nonceRegex) || [null])[1];
+
+        if (staticNonce) {
+          configLines = configLines.concat([
+            'set_secure_random_alphanum $cspNonce 32',
+            `add_header Content-Security-Policy "${csp.replace(
+              nonceRegex,
+              "'nonce-$cspNonce'",
+            )}"`,
+            `sub_filter '${staticNonce}' $cspNonce`,
+            'sub_filter_once off',
+          ]);
+        } else {
+          configLines.push(`add_header Content-Security-Policy "${csp}"`);
+        }
       }
     }
 
@@ -82,11 +79,13 @@ export class NginxService implements OnApplicationBootstrap {
     const configFilePath = join(this.config.nginxConfigDir, 'redirects.conf');
     let configLines = [];
 
-    configLines = configLines.concat(
-      meta.redirects.map((redirect) => {
-        return `location = ${redirect.from} { return 301 ${redirect.to}; }`;
-      }),
-    );
+    if (meta?.redirects) {
+      configLines = configLines.concat(
+        meta.redirects.map((redirect) => {
+          return `location = ${redirect.from} { return 301 ${redirect.to}; }`;
+        }),
+      );
+    }
 
     await fs.promises.writeFile(
       configFilePath,
