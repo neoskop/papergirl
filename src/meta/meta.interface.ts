@@ -4,5 +4,5 @@ export interface Meta {
     standardHeaders?: boolean;
     hideVersion?: boolean;
   };
-  redirects?: { from: string; to: string }[];
+  redirects?: { from: string; to: string; regex?: boolean }[];
 }

@@ -82,7 +82,9 @@ export class NginxService implements OnApplicationBootstrap {
     if (meta?.redirects) {
       configLines = configLines.concat(
         meta.redirects.map((redirect) => {
-          return `location = ${redirect.from} { return 301 ${redirect.to}; }`;
+          return `location ${redirect.regex ? '~*' : '='} ${
+            redirect.from
+          } { return 301 ${redirect.to}; }`;
         }),
       );
     }
