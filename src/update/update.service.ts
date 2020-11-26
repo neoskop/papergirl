@@ -38,7 +38,7 @@ export class UpdateService implements OnApplicationBootstrap {
 
       if (!currentRoot.endsWith(this.config.nginxDirBlack)) {
         await fs.promises.rmdir(this.dirBlack, { recursive: true });
-        await new Promise((done) => {
+        await new Promise<void>((done) => {
           ncp(this.dirRed, this.dirBlack, (err) => {
             if (err) {
               throw err;
