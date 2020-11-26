@@ -3,5 +3,7 @@ yarn-error.log
 dist/
 s3-data/.minio.sys/
 s3-data/papergirl-test/*
+!s3-data/papergirl-test/papergirl.yml
+!s3-data/papergirl-test/index.html
 !**/.gitkeep
 .deploy

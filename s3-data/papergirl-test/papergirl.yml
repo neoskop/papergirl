@@ -1,0 +1,11 @@
+security:
+  csp: "default-src 'none'; object-src 'none'; script-src 'strict-dynamic' 'nonce-Uw5ohvoo1AeLeichei9Aex9m' https: ; base-uri 'self'"
+redirects:
+  - from: /foo
+    to: https://www.neoskop.de
+  - from: ^/bar/([0-9]+)
+    to: https://www.neoskop.de/$1
+    regex: true
+  - from: /baz
+    to: https://www.neoskop.de/
+    code: 307
