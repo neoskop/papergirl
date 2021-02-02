@@ -1,8 +1,8 @@
 apiVersion: v1
-appVersion: 0.17.1
+appVersion: "0.18.0"
 description: Sets up high-available delivery tier with Papergirl optionally and NATS and MinIO
 name: papergirl
-version: 0.17.1
+version: 0.18.0
 home: https://github.com/neoskop/papergirl
 sources:
   - https://github.com/neoskop/papergirl
