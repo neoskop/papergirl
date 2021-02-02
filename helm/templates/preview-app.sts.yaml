@@ -48,6 +48,15 @@ spec:
           configMap:
             name: {{ include "papergirl.preview.name" . }}-nginx-config-snippets
       initContainers:
+        - name: connection-check
+          image: "{{ .Values.connectionCheck.image.repository }}:{{ .Values.connectionCheck.image.tag }}"
+          imagePullPolicy: {{ .Values.connectionCheck.image.pullPolicy }}
+          env:
+            - name: ENDPOINT
+              value: {{ include "papergirl.minio.endpoint" . }}
+          command: ['sh', '-c', 'while ! nc -z $ENDPOINT 9000; do echo 'Wait for MinIO startup...' && sleep 1; done']  
+          resources:
+            {{- toYaml .Values.connectionCheck.resources | nindent 12 }}
         - name: bucket-setup
           image: "{{ .Values.bucketSetup.image.repository }}:{{ .Values.bucketSetup.image.tag }}"
           imagePullPolicy: {{ .Values.bucketSetup.image.pullPolicy }}
@@ -63,7 +72,9 @@ spec:
           command: 
             - /bin/sh
             - -c
-            - while ! nc -z $ENDPOINT 9000; do echo 'Wait for MinIO startup...' && sleep 1; done; sleep 5 ; /usr/bin/mc config host add s3 http://$ENDPOINT:9000 $ACCESSKEY $SECRETKEY ; /usr/bin/mc ls s3 | grep -q $BUCKET || /usr/bin/mc mb s3/$BUCKET
+            - /usr/bin/mc config host add s3 http://$ENDPOINT:9000 $ACCESSKEY $SECRETKEY ; /usr/bin/mc ls s3 | grep -q $BUCKET || /usr/bin/mc mb s3/$BUCKET
+          resources:
+            {{- toYaml .Values.bucketSetup.resources | nindent 12 }}
         - name: volume-setup
           image: "{{ .Values.volumeSetup.image.repository }}:{{ .Values.volumeSetup.image.tag }}"
           imagePullPolicy: {{ .Values.volumeSetup.image.pullPolicy }}

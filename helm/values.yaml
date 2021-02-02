@@ -12,6 +12,18 @@ resources:
     cpu: 150m
     memory: 128Mi
 replicaCount: 2
+connectionCheck:
+  image:
+    repository: busybox
+    tag: 1.33.0
+    pullPolicy: IfNotPresent
+    pullSecrets: []
+  resources:
+    limits:
+      memory: 16Mi
+    requests:
+      cpu: 50m
+      memory: 16Mi
 bucketSetup:
   image:
     repository: minio/mc
