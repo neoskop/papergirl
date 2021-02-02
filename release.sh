@@ -30,9 +30,9 @@ npm version --no-git-tag-version $1
 version=$(cat package.json | jq -r .version)
 sed -i "s/appVersion: .*/appVersion: \"$version\"/" helm/Chart.yaml
 sed -i "s/version: .*/version: $version/" helm/Chart.yaml
-yq w -i helm/Chart.yaml version $version
-yq w -i helm/Chart.yaml appVersion $version
-yq w -i helm/values.yaml image.tag $version
+yq eval -i ".version = \"$version\"" helm/Chart.yaml
+yq eval -i ".appVersion = \"$version\"" helm/Chart.yaml
+yq eval -i ".image.tag = \"$version\"" helm/values.yaml
 git add .
 git commit -m "chore: Bump version to ${version}."
 git push
@@ -50,7 +50,7 @@ git push
 git checkout master
 rm -rf .deploy/
 
-HELM_CHARTS_DIR=../neoskop-helm-charts
+HELM_CHARTS_DIR=../helm-charts
 [ -d $HELM_CHARTS_DIR ] || git clone git@github.com:neoskop/helm-charts.git $HELM_CHARTS_DIR
 cd $HELM_CHARTS_DIR
 ./update-index.sh
