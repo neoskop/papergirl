@@ -53,7 +53,10 @@ spec:
           env:
             - name: ENDPOINT
               value: {{ include "papergirl.minio.endpoint" . }}
-          command: ['sh', '-c', 'while ! nc -z $ENDPOINT 9000; do echo 'Wait for MinIO startup...' && sleep 1; done']  
+          command:
+            - sh
+            - -c
+            - while ! nc -z $ENDPOINT 9000; do echo 'Wait for MinIO startup...' && sleep 1; done
           resources:
             {{- toYaml .Values.connectionCheck.resources | nindent 12 }}
         - name: bucket-setup
