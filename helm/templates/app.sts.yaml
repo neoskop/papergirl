@@ -180,9 +180,20 @@ spec:
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-    {{- with .Values.affinity }}
+    {{- if .Values.affinity }}
       affinity:
-        {{- toYaml . | nindent 8 }}
+        {{- toYaml .Values.affinity | nindent 8 }}
+    {{- else }}
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key:  app.kubernetes.io/name
+                operator: In
+                values:
+                - {{ include "papergirl.name" . }}
+            topologyKey: "kubernetes.io/hostname"
     {{- end }}
     {{- with .Values.tolerations }}
       tolerations:
