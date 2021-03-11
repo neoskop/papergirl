@@ -27,7 +27,7 @@ connectionCheck:
 bucketSetup:
   image:
     repository: minio/mc
-    tag: RELEASE.2021-01-30T00-50-42Z
+    tag: RELEASE.2021-03-10T05-59-20Z
     pullPolicy: IfNotPresent
     pullSecrets: []
   resources:
@@ -95,7 +95,7 @@ minio:
   replicaCount: 4
   image:
     repository: minio/minio
-    tag: RELEASE.2021-02-01T22-56-52Z
+    tag: RELEASE.2021-03-10T05-11-33Z
     pullPolicy: IfNotPresent
     pullSecrets: []
   resources:
@@ -108,7 +108,7 @@ backup:
   schedule: '0 5 * * *'
   image:
     repository: minio/mc
-    tag: RELEASE.2021-01-30T00-50-42Z
+    tag: RELEASE.2021-03-10T05-59-20Z
     pullPolicy: IfNotPresent
     pullSecrets: []
   replicaCount: 2
