@@ -4,6 +4,12 @@ A fault-tolerant delivery tier with S3
 
 ## Quickstart
 
+### KinD
+
+```sh
+$ scripts/quickstart.sh
+```
+
 ### Docker Compose
 
 ```sh
