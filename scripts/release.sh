@@ -2,6 +2,9 @@
 
 set -e
 
+cd $(git rev-parse --show-toplevel)
+
+
 function check_commands() {
   for command in $@; do
     if ! command -v $command >/dev/null; then

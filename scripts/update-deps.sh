@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+cd $(git rev-parse --show-toplevel)
 
 bold() {
   local BOLD='\033[1m'
@@ -70,6 +71,8 @@ echo "  - NATS: $(bold $NATS_LATEST_TAG)"
 NATS_LATEST_VERSION=$(get_tags library/nats | grep '^[0-9]*\.[0-9]*\.[0-9]*$' | sort -V | tail -n 1)
 MINIO_LATEST_TAG=$(get_tags minio/minio | grep '^RELEASE.[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}T[0-9]\{2\}-[0-9]\{2\}-[0-9]\{2\}Z$' | sort | tail -n 1)
 echo "  - MinIO: $(bold $MINIO_LATEST_TAG)"
+MINIO_CONSOLE_LATEST_TAG=$(get_tags minio/console | grep '^v[0-9]*\.[0-9]*\.[0-9]*$' | sort | tail -n 1)
+echo "  - MinIO Console: $(bold $MINIO_CONSOLE_LATEST_TAG)"
 MINIO_MC_LATEST_TAG=$(get_tags minio/mc | grep '^RELEASE.[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}T[0-9]\{2\}-[0-9]\{2\}-[0-9]\{2\}Z$' | sort | tail -n 1)
 echo "  - MinIO CLI: $(bold $MINIO_MC_LATEST_TAG)"
 BUSYBOX_LATEST_TAG=$(get_tags library/busybox | grep '^[0-9]*\.[0-9]*\.[0-9]*$' | sort -V | tail -n 1)
@@ -81,6 +84,7 @@ yq eval -i ".services.s3.image = \"minio/minio:$MINIO_LATEST_TAG\"" docker-compo
 yq eval -i ".nginx.image.tag = \"$OPENRESTY_LATEST_TAG\"" helm/values.yaml
 yq eval -i ".prometheus.nginxExporterImage.tag = \"$NGINX_PROMETHEUS_EXPORTER_LATEST_TAG\"" helm/values.yaml
 yq eval -i ".minio.image.tag = \"$MINIO_LATEST_TAG\"" helm/values.yaml
+yq eval -i ".minio.console.image.tag = \"$MINIO_CONSOLE_LATEST_TAG\"" helm/values.yaml
 yq eval -i ".bucketSetup.image.tag = \"$MINIO_MC_LATEST_TAG\"" helm/values.yaml
 yq eval -i ".backup.image.tag = \"$MINIO_MC_LATEST_TAG\"" helm/values.yaml
 yq eval -i ".nats.version = \"$NATS_LATEST_VERSION\"" helm/values.yaml
