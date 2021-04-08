@@ -1,0 +1,74 @@
+{{- if and .Values.minio.createCluster (ge (int .Values.minio.version) 4) -}}
+apiVersion: minio.min.io/v2
+kind: Tenant
+metadata:
+  name: {{ include "papergirl.minio.name" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "papergirl.minio.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+  annotations:
+    prometheus.io/path: /minio/prometheus/metrics
+    prometheus.io/port: "9000"
+    prometheus.io/scrape: "true"
+spec:
+  image: "{{ .Values.minio.image.repository }}:{{ .Values.minio.image.tag }}"
+  imagePullPolicy: {{ .Values.minio.image.pullPolicy }}
+  {{- with .Values.minio.image.pullSecrets }}
+  imagePullSecrets:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  credsSecret:
+    name: {{ include "papergirl.minio.name" . }}-credentials
+  pools:
+    - servers: {{ .Values.minio.replicaCount }}
+      volumesPerServer: {{ .Values.minio.replicaCount }}
+      volumeClaimTemplate:
+        metadata:
+          name: data
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          storageClassName: {{ .Values.minio.storageClass }}
+          resources:
+            requests:
+              storage: {{ .Values.minio.storageSize }}
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        runAsNonRoot: true
+  mountPath: /export
+  requestAutoCert: false
+  s3:
+    bucketDNS: false
+  certConfig:
+    commonName: ""
+    organizationName: []
+    dnsNames: []
+  podManagementPolicy: Parallel
+  exposeServices:
+    console: false
+    minio: false
+  serviceMetadata:
+    minioServiceLabels:
+      label: minio-svc
+    minioServiceAnnotations:
+      v2.min.io: minio-svc
+    consoleServiceLabels:
+      label: console-svc
+    consoleServiceAnnotations:
+      v2.min.io: console-svc
+  console:
+    image: "{{ .Values.minio.console.image.repository }}:{{ .Values.minio.console.image.tag }}"
+    imagePullPolicy: {{ .Values.minio.console.image.pullPolicy }}
+    {{- with .Values.minio.console.image.pullSecrets }}
+    imagePullSecrets:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
+    replicas: 2
+    consoleSecret:
+      name: {{ include "papergirl.minio.name" . }}-console-credentials
+    securityContext:
+      runAsUser: 1000
+      runAsGroup: 2000
+      runAsNonRoot: true
+{{- end }}

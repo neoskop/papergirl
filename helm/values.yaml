@@ -86,16 +86,26 @@ papergirlPreview:
       cert-manager.io/cluster-issuer: letsencrypt-prod
 minio:
   createCluster: true
-  version: 2
+  version: 4
   endpoint: null
   accesskey: minio
   secretkey: minio123
   storageClass: ''
   storageSize: 5Gi
   replicaCount: 4
+  console:
+    pbkdfPassphrase: secret
+    pbkdfSalt: secret
+    accesskey: admin
+    secretkey: minio456
+    image:
+      repository: minio/console
+      tag: v0.6.3
+      pullPolicy: IfNotPresent
+      pullSecrets: []
   image:
     repository: minio/minio
-    tag: RELEASE.2021-03-10T05-11-33Z
+    tag: RELEASE.2021-04-06T23-11-00Z
     pullPolicy: IfNotPresent
     pullSecrets: []
   resources:

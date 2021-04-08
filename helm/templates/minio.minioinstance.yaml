@@ -1,4 +1,4 @@
-{{- if .Values.minio.createCluster -}}
+{{- if and .Values.minio.createCluster (lt (int .Values.minio.version) 4) -}}
 {{- if ge (int .Values.minio.version) 2 -}}
 apiVersion: operator.min.io/v1
 kind: MinIOInstance
@@ -45,8 +45,6 @@ spec:
   env:
     - name: MINIO_BROWSER
       value: "on"
-    # - name: MINIO_STORAGE_CLASS_RRS
-    #   value: "EC:2"
   resources:
     requests:
       memory: 128Mi
