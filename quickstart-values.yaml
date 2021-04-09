@@ -1,3 +1,3 @@
-# Disable default pod anti affinity rule to schedule multiple replicas in aa single node cluster
+# Disable default pod anti affinity rule to schedule multiple replicas in a single node cluster
 affinity:
   podAntiAffinity: {}
