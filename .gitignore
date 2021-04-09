@@ -7,3 +7,4 @@ s3-data/papergirl-test/*
 !s3-data/papergirl-test/index.html
 !**/.gitkeep
 .deploy
+logs.log
