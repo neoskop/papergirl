@@ -34,9 +34,9 @@ done
 
 if ! helm status papergirl -n papergirl &>/dev/null ; then
     kubectl create ns papergirl
-    helm install papergirl -n papergirl ./helm
+    helm install papergirl -n papergirl -f quickstart-values.yaml ./helm
 else
-    helm upgrade papergirl -n papergirl ./helm
+    helm upgrade papergirl -n papergirl -f quickstart-values.yaml ./helm
 fi
 
 kubectl config set-context --current --namespace=papergirl &>/dev/null
