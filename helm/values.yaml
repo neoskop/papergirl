@@ -93,6 +93,7 @@ minio:
   storageClass: ''
   storageSize: 5Gi
   replicaCount: 4
+  volumesPerReplica: 1
   console:
     pbkdfPassphrase: secret
     pbkdfSalt: secret

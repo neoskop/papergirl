@@ -21,7 +21,7 @@ spec:
     name: {{ include "papergirl.minio.name" . }}-credentials
   pools:
     - servers: {{ .Values.minio.replicaCount }}
-      volumesPerServer: {{ .Values.minio.replicaCount }}
+      volumesPerServer: {{ .Values.minio.volumesPerReplica }}
       volumeClaimTemplate:
         metadata:
           name: data
