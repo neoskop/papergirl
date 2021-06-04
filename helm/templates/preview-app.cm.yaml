@@ -44,6 +44,11 @@ data:
         access_log  /usr/local/openresty/nginx/logs/access.log  main;
         sendfile        on;
         keepalive_timeout  65;
+        map $http_x_forwarded_proto $thescheme {
+            default $scheme;
+            https https;
+        } 
+
         include /etc/nginx/conf.d/*.conf;
     }
 ---

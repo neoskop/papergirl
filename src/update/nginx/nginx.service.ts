@@ -26,6 +26,7 @@ export class NginxService implements OnApplicationBootstrap {
 
   public async configure(meta: Meta) {
     await this.configureSecurity(meta);
+    await this.configureTrailingSlashBehaviour(meta);
     await this.configureRedirects(meta);
   }
 

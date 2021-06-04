@@ -13,6 +13,7 @@ export class MetaService {
       hideVersion: true,
       csp: "default-src 'none'",
     },
+    removeTrailingSlash: true,
   };
 
   public async parse(dir: string): Promise<Meta> {

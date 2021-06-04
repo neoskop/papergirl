@@ -4,6 +4,7 @@ export interface Meta {
     standardHeaders?: boolean;
     hideVersion?: boolean;
   };
+  removeTrailingSlash?: boolean;
   redirects?: {
     from: string;
     to: string;
