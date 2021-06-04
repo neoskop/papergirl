@@ -22,7 +22,7 @@ To access the created MinIO cluster run:
 To access the MinIO console run:
 
   $ kubectl port-forward svc/{{ include "papergirl.minio.name" . }}-console 9090:9090 &>/dev/null &
-  $ google-chrome http://{{ .Values.minio.console.accesskey }}:{{ .Values.minio.console.secretkey }}@localhost:9000
+  $ google-chrome http://{{ .Values.minio.console.accesskey }}:{{ .Values.minio.console.secretkey }}@localhost:9090
 {{- end -}}
 {{- end -}}
 

@@ -28,6 +28,16 @@ export class NginxService implements OnApplicationBootstrap {
     await this.configureSecurity(meta);
     await this.configureTrailingSlashBehaviour(meta);
     await this.configureRedirects(meta);
+  private async configureTrailingSlashBehaviour(meta: Meta) {
+    if (meta.removeTrailingSlash) {
+      await fs.promises.writeFile(
+        join(this.config.nginxConfigDir, 'trailing_slash.conf'),
+        `location ~ (?<no_slash>.*)/$ {
+        return 301 $thescheme://$host$no_slash;
+   }`,
+      );
+    }
+  }
   }
 
   private async configureSecurity(meta: Meta) {
