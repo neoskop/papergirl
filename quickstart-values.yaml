@@ -1,3 +1,13 @@
 # Disable default pod anti affinity rule to schedule multiple replicas in a single node cluster
 affinity:
   podAntiAffinity: {}
+
+# Enable Caravaggio
+imageProxy:
+  enabled: true
+
+# Use locally build Papergirl image
+image:
+  repository: localhost:5000/papergirl
+  tag: latest
+  pullPolicy: Always
