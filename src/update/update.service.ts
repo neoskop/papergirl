@@ -37,7 +37,7 @@ export class UpdateService implements OnApplicationBootstrap {
       const currentRoot = await this.nginxService.getActiveRootDir();
 
       if (!currentRoot.endsWith(this.config.nginxDirBlack)) {
-        await fs.promises.rmdir(this.dirBlack, { recursive: true });
+        await fs.promises.rm(this.dirBlack, { recursive: true });
         await new Promise<void>((done) => {
           ncp(this.dirRed, this.dirBlack, (err) => {
             if (err) {
@@ -50,7 +50,7 @@ export class UpdateService implements OnApplicationBootstrap {
       }
 
       await this.nginxService.switchRootDir(this.dirBlack);
-      await fs.promises.rmdir(this.dirRed, { recursive: true });
+      await fs.promises.rm(this.dirRed, { recursive: true });
       await fs.promises.mkdir(this.dirRed);
       await this.s3service.download(this.dirRed);
       Logger.debug('Download complete');
