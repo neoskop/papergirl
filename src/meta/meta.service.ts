@@ -23,7 +23,7 @@ export class MetaService {
     }
 
     const configFileContents = await fs.promises.readFile(configFile);
-    const document = yaml.safeLoad(configFileContents.toString('utf-8'), {
+    const document = yaml.load(configFileContents.toString('utf-8'), {
       json: true,
     });
 

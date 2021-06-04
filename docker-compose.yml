@@ -1,7 +1,7 @@
 version: '2.4'
 services:
   queue:
-    image: nats:2.2.1-scratch
+    image: nats:2.2.6-scratch
     hostname: queue
     ports:
       - 4222:4222
@@ -17,7 +17,7 @@ services:
       - ./nginx/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf:ro,delegated
       - ./nginx/conf.d:/etc/nginx/conf.d:ro,delegated
   s3:
-    image: minio/minio:RELEASE.2021-04-06T23-11-00Z
+    image: minio/minio:RELEASE.2021-05-27T22-06-31Z
     command: server /data
     environment:
       MINIO_ACCESS_KEY: minio

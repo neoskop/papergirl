@@ -15,7 +15,7 @@ replicaCount: 2
 connectionCheck:
   image:
     repository: busybox
-    tag: 1.33.0
+    tag: 1.33.1
     pullPolicy: IfNotPresent
     pullSecrets: []
   resources:
@@ -27,7 +27,7 @@ connectionCheck:
 bucketSetup:
   image:
     repository: minio/mc
-    tag: RELEASE.2021-03-23T05-46-11Z
+    tag: RELEASE.2021-05-26T19-19-26Z
     pullPolicy: IfNotPresent
     pullSecrets: []
   resources:
@@ -39,7 +39,7 @@ bucketSetup:
 volumeSetup:
   image:
     repository: busybox
-    tag: 1.33.0
+    tag: 1.33.1
     pullPolicy: IfNotPresent
     pullSecrets: []
   resources:
@@ -101,12 +101,12 @@ minio:
     secretkey: minio456
     image:
       repository: minio/console
-      tag: v0.6.6
+      tag: v0.7.4
       pullPolicy: IfNotPresent
       pullSecrets: []
   image:
     repository: minio/minio
-    tag: RELEASE.2021-04-06T23-11-00Z
+    tag: RELEASE.2021-05-27T22-06-31Z
     pullPolicy: IfNotPresent
     pullSecrets: []
   resources:
@@ -119,7 +119,7 @@ backup:
   schedule: '0 5 * * *'
   image:
     repository: minio/mc
-    tag: RELEASE.2021-03-23T05-46-11Z
+    tag: RELEASE.2021-05-26T19-19-26Z
     pullPolicy: IfNotPresent
     pullSecrets: []
   replicaCount: 2
@@ -127,7 +127,7 @@ nats:
   createCluster: true
   url: null
   size: 3
-  version: 2.2.1
+  version: 2.2.6
 imagePullSecrets: []
 nameOverride: ''
 fullnameOverride: ''
