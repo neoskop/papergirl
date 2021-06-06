@@ -1,6 +1,6 @@
 image:
   repository: neoskop/papergirl
-  tag: 1.1.1
+  tag: 1.2.0
   pullPolicy: IfNotPresent
 websiteCache:
   storageClass: ''
