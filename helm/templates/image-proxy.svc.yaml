@@ -1,0 +1,17 @@
+{{- if .Values.imageProxy.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "papergirl.image-proxy.name" . }}
+  labels:
+{{ include "papergirl.labels" . | indent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8565
+      targetPort: 8565
+      protocol: TCP
+  selector:
+    app.kubernetes.io/name: {{ include "papergirl.image-proxy.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end -}}

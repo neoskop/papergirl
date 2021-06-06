@@ -4,6 +4,7 @@ metadata:
   name: {{ include "papergirl.fullname" . }}-config
 data:
   kubernetes.env: |
+    SERVICE_NAME={{ include "papergirl.fullname" . }}
     QUEUE_URI={{ include "papergirl.nats.url" . }}
     S3_ENDPOINT={{ include "papergirl.minio.endpoint" . }}
     S3_USESSL=false
@@ -42,10 +43,17 @@ data:
         access_log  /usr/local/openresty/nginx/logs/access.log  main;
         sendfile        on;
         keepalive_timeout  65;
+
+        map $http_accept $image_type {
+          default "jpeg";
+          "~*webp" "webp";
+        }
+
         map $http_x_forwarded_proto $thescheme {
             default $scheme;
             https https;
         }   
+
         include /etc/nginx/conf.d/*.conf;
     }
 ---
@@ -60,12 +68,13 @@ data:
       server_name  _;
       port_in_redirect off;
       server_name_in_redirect off;
-      error_page   500 502 503 504  /50x.html;
+      error_page 500 502 503 504 /50x.html;
 
       location / {
-          include /home/papergirl/nginx/conf.d/*.conf;
-          index  index.html index.htm;
+          try_files $uri $uri/index.html $uri/index.htm =404;
       }
+
+      include /home/papergirl/nginx/conf.d/*.conf;
       
       location = /50x.html {
           root   /usr/share/nginx/html;

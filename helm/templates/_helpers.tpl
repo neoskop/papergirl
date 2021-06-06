@@ -60,6 +60,13 @@ Create a prefix for fallback frontend resources
 {{- end -}}
 
 {{/*
+Create a prefix for fallback frontend resources
+*/}}
+{{- define "papergirl.image-proxy.name" -}}
+{{- include "papergirl.fullname" . }}-image-proxy
+{{- end -}}
+
+{{/*
 Create a prefix for preview fallback frontend resources
 */}}
 {{- define "papergirl.preview-fallback.name" -}}

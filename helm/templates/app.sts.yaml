@@ -149,6 +149,15 @@ spec:
             failureThreshold: 10
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+        - name: dnsmasq
+          image: "janeczku/go-dnsmasq:release-1.0.5"
+          args:
+            - --listen
+            - "127.0.0.1:53"
+            - --default-resolver
+            - --append-search-domains
+            - --hostsfile=/etc/hosts
+            - --verbose
         {{- if .Values.prometheus.enabled }}
         - name: nginx-prometheus-exporter
           image: "{{ .Values.prometheus.nginxExporterImage.repository }}:{{ .Values.prometheus.nginxExporterImage.tag }}"

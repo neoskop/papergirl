@@ -25,9 +25,13 @@ export class NginxService implements OnApplicationBootstrap {
   }
 
   public async configure(meta: Meta) {
+    Logger.debug(`Processing the following config: ${JSON.stringify(meta)}`);
     await this.configureSecurity(meta);
     await this.configureTrailingSlashBehaviour(meta);
     await this.configureRedirects(meta);
+    await this.configureImageProcessing(meta);
+  }
+
   private async configureTrailingSlashBehaviour(meta: Meta) {
     if (meta.removeTrailingSlash) {
       await fs.promises.writeFile(
@@ -38,6 +42,29 @@ export class NginxService implements OnApplicationBootstrap {
       );
     }
   }
+
+  private async configureImageProcessing(meta: Meta) {
+    if (meta.imageProcessing?.enabled) {
+      const defaults = {
+        quality: 85,
+        imageType: 'original',
+      };
+      const args = Object.assign(defaults, meta.imageProcessing);
+      const configFilePath = join(
+        this.config.nginxConfigDir,
+        'image_processing.conf',
+      );
+      const config = `location ~* "^/(?<path>.+)-(?<width>[\\d-]+)x(?<height>[\\d-]+)\\.(?<ext>(jpg|jpeg|png))$" {
+        resolver 127.0.0.1:53 ipv6=off;
+        set $upstream papergirl-image-proxy:8565;
+        proxy_pass http://$upstream/rs,s:\${width}x\${height},m:fill,g:auto/q:${args.quality}/o:${args.imageType}?image=http://${this.config.serviceName}:8081/$path.$ext;
+        proxy_hide_header cache-control;
+        add_header Vary Accept;
+        add_header Pragma "public";
+        add_header Cache-Control "public, max-age=600";
+    }`;
+      await fs.promises.writeFile(configFilePath, config);
+    }
   }
 
   private async configureSecurity(meta: Meta) {

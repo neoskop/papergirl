@@ -1,4 +1,9 @@
 export interface Meta {
+  imageProcessing?: {
+    enabled: boolean;
+    quality?: number;
+    imageType?: 'original' | 'auto';
+  };
   security?: {
     csp?: string;
     standardHeaders?: boolean;

@@ -123,6 +123,22 @@ backup:
     pullPolicy: IfNotPresent
     pullSecrets: []
   replicaCount: 2
+imageProxy:
+  enabled: false
+  image:
+    repository: ramielcreations/caravaggio
+    tag: 3.4.1
+    pullPolicy: IfNotPresent
+    pullSecrets: []
+  replicaCount: 2
+  args:
+    - --cache none
+  resources:
+    limits:
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 512Mi
 nats:
   createCluster: true
   url: null

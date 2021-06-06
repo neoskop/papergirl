@@ -78,6 +78,8 @@ echo "  - MinIO CLI: $(bold $MINIO_MC_LATEST_TAG)"
 BUSYBOX_LATEST_TAG=$(get_tags library/busybox | grep '^[0-9]*\.[0-9]*\.[0-9]*$' | sort -V | tail -n 1)
 echo "  - Busybox: $(bold $BUSYBOX_LATEST_TAG)"
 sed -i "1 s/^.*$/FROM node:$NODE_LATEST_TAG as base/" Dockerfile
+CARAVAGGIO_LATEST_TAG=$(get_tags ramielcreations/caravaggio | grep '^[0-9]*\.[0-9]*\.[0-9]*$' | sort -V | tail -n 1)
+echo "  - Caravaggio: $(bold $CARAVAGGIO_LATEST_TAG)"
 yq eval -i ".services.webserver.image = \"openresty/openresty:$OPENRESTY_LATEST_TAG\"" docker-compose.yml
 yq eval -i ".services.queue.image = \"nats:$NATS_LATEST_TAG\"" docker-compose.yml
 yq eval -i ".services.s3.image = \"minio/minio:$MINIO_LATEST_TAG\"" docker-compose.yml
@@ -90,3 +92,4 @@ yq eval -i ".backup.image.tag = \"$MINIO_MC_LATEST_TAG\"" helm/values.yaml
 yq eval -i ".nats.version = \"$NATS_LATEST_VERSION\"" helm/values.yaml
 yq eval -i ".volumeSetup.image.tag = \"$BUSYBOX_LATEST_TAG\"" helm/values.yaml
 yq eval -i ".connectionCheck.image.tag = \"$BUSYBOX_LATEST_TAG\"" helm/values.yaml
+yq eval -i ".imageProxy.image.tag = \"$CARAVAGGIO_LATEST_TAG\"" helm/values.yaml

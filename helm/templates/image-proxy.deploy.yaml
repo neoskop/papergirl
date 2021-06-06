@@ -1,0 +1,32 @@
+{{- if .Values.imageProxy.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "papergirl.image-proxy.name" . }}
+  labels:
+{{ include "papergirl.labels" . | indent 4 }}
+spec:
+  replicas: {{ .Values.imageProxy.replicaCount }}
+  revisionHistoryLimit: 1
+  selector:
+    matchLabels:
+        app.kubernetes.io/name: {{ include "papergirl.image-proxy.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "papergirl.image-proxy.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      containers:
+      - name: image-proxy
+        image: "{{ .Values.imageProxy.image.repository }}:{{ .Values.imageProxy.image.tag }}"
+        imagePullPolicy: {{ .Values.imageProxy.image.pullPolicy }}
+        {{- with .Values.imageProxy.args }}
+        args:
+        {{- toYaml . | nindent 10 }}
+        {{- end }}
+        ports:
+          - containerPort: 8565
+            name: http
+{{- end -}}

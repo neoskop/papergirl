@@ -27,6 +27,7 @@ export class ConfigService {
       SERVER_BIND_ADDRESS: Joi.string()
         .valid(/([\d]{1,3}\.){3}[\d]{1,3}/)
         .default('0.0.0.0'),
+      SERVICE_NAME: Joi.string().default('papergirl'),
       QUEUE_URI: Joi.string().required(),
       QUEUE_SUBJECT: Joi.string().default('papergirl'),
       S3_ENDPOINT: Joi.string().required(),
@@ -43,9 +44,8 @@ export class ConfigService {
       NGINX_CONFIG_DIR: Joi.string().required(),
     });
 
-    const { error, value: validatedEnvConfig } = envVarsSchema.validate(
-      envConfig,
-    );
+    const { error, value: validatedEnvConfig } =
+      envVarsSchema.validate(envConfig);
     if (error) {
       throw new Error(`Config validation error: ${error.message}`);
     }
@@ -93,6 +93,10 @@ export class ConfigService {
 
   get serverBindAddress(): string {
     return this.envConfig.SERVER_BIND_ADDRESS;
+  }
+
+  get serviceName(): string {
+    return this.envConfig.SERVICE_NAME;
   }
 
   get nginxRootDir(): string {
