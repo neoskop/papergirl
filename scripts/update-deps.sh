@@ -62,6 +62,8 @@ yarn-check -u
 echo "Will use the following new image versions:"
 NODE_LATEST_TAG=$(get_node_lts_tags | tail -n 1)
 echo "  - Node: $(bold $NODE_LATEST_TAG)"
+DNSMASQ_LATEST_TAG=$(get_tags janeczku/go-dnsmasq | grep '^release-[0-9]*\.[0-9]*\.[0-9]$' | sort -V | tail -n 1)
+echo "  - Dnsmasq: $(bold $DNSMASQ_LATEST_TAG)"
 OPENRESTY_LATEST_TAG=$(get_tags openresty/openresty | grep '^[0-9]*\.[0-9]*\.[0-9]*\.[0-9]*-buster$' | sort -V | tail -n 1)
 echo "  - OpenResty: $(bold $OPENRESTY_LATEST_TAG)"
 NGINX_PROMETHEUS_EXPORTER_LATEST_TAG=$(get_tags nginx/nginx-prometheus-exporter | grep '^[0-9]*\.[0-9]*\.[0-9]*$' | sort -V | tail -n 1)
@@ -83,6 +85,7 @@ echo "  - Caravaggio: $(bold $CARAVAGGIO_LATEST_TAG)"
 yq eval -i ".services.webserver.image = \"openresty/openresty:$OPENRESTY_LATEST_TAG\"" docker-compose.yml
 yq eval -i ".services.queue.image = \"nats:$NATS_LATEST_TAG\"" docker-compose.yml
 yq eval -i ".services.s3.image = \"minio/minio:$MINIO_LATEST_TAG\"" docker-compose.yml
+yq eval -i ".dnsmasq.image.tag = \"$DNSMASQ_LATEST_TAG\"" helm/values.yaml
 yq eval -i ".nginx.image.tag = \"$OPENRESTY_LATEST_TAG\"" helm/values.yaml
 yq eval -i ".prometheus.nginxExporterImage.tag = \"$NGINX_PROMETHEUS_EXPORTER_LATEST_TAG\"" helm/values.yaml
 yq eval -i ".minio.image.tag = \"$MINIO_LATEST_TAG\"" helm/values.yaml

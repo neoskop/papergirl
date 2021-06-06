@@ -48,6 +48,18 @@ volumeSetup:
     requests:
       cpu: 50m
       memory: 16Mi
+dnsmasq:
+  image:
+    repository: janeczku/go-dnsmasq
+    tag: release-1.0.7
+    pullPolicy: IfNotPresent
+    pullSecrets: []
+  resources:
+    limits:
+      memory: 50Mi
+    requests:
+      cpu: 5m
+      memory: 25Mi
 nginx:
   image:
     repository: openresty/openresty

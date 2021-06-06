@@ -150,7 +150,8 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
         - name: dnsmasq
-          image: "janeczku/go-dnsmasq:release-1.0.5"
+          image: "{{ .Values.dnsmasq.image.repository }}:{{ .Values.dnsmasq.image.tag }}"
+          imagePullPolicy: {{ .Values.dnsmasq.image.pullPolicy }}
           args:
             - --listen
             - "127.0.0.1:53"
@@ -158,6 +159,8 @@ spec:
             - --append-search-domains
             - --hostsfile=/etc/hosts
             - --verbose
+          resources:
+            {{- toYaml .Values.dnsmasq.resources | nindent 12 }}
         {{- if .Values.prometheus.enabled }}
         - name: nginx-prometheus-exporter
           image: "{{ .Values.prometheus.nginxExporterImage.repository }}:{{ .Values.prometheus.nginxExporterImage.tag }}"
