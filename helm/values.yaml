@@ -27,7 +27,7 @@ connectionCheck:
 bucketSetup:
   image:
     repository: minio/mc
-    tag: RELEASE.2021-05-26T19-19-26Z
+    tag: RELEASE.2021-06-08T01-29-37Z
     pullPolicy: IfNotPresent
     pullSecrets: []
   resources:
@@ -63,7 +63,7 @@ dnsmasq:
 nginx:
   image:
     repository: openresty/openresty
-    tag: 1.19.3.1-buster
+    tag: 1.19.3.2-buster
     pullPolicy: IfNotPresent
     pullSecrets: []
   resources:
@@ -118,7 +118,7 @@ minio:
       pullSecrets: []
   image:
     repository: minio/minio
-    tag: RELEASE.2021-05-27T22-06-31Z
+    tag: RELEASE.2021-06-07T21-40-51Z
     pullPolicy: IfNotPresent
     pullSecrets: []
   resources:
@@ -131,7 +131,7 @@ backup:
   schedule: '0 5 * * *'
   image:
     repository: minio/mc
-    tag: RELEASE.2021-05-26T19-19-26Z
+    tag: RELEASE.2021-06-08T01-29-37Z
     pullPolicy: IfNotPresent
     pullSecrets: []
   replicaCount: 2
