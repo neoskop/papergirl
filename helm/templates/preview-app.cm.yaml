@@ -72,7 +72,7 @@ data:
       server_name_in_redirect off;
       error_page   500 502 503 504  /50x.html;
 
-      location {
+      location / {
           try_files $uri $uri/index.html $uri/index.htm =404;
       }
 
