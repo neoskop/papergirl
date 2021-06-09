@@ -36,7 +36,7 @@ export class NginxService implements OnApplicationBootstrap {
     if (meta.removeTrailingSlash) {
       await fs.promises.writeFile(
         join(this.config.nginxConfigDir, 'trailing_slash.conf'),
-        `location ~ (?<no_slash>.*)/$ {
+        `location ~ (?<no_slash>.+)/$ {
         return 301 $thescheme://$host$no_slash;
    }`,
       );
