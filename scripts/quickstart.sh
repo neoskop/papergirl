@@ -11,6 +11,8 @@ if ! kind get clusters | grep -o papergirl &>/dev/null ; then
             registry:2
     fi
 
+    local_dir=`pwd`
+
 cat <<EOF | kind create cluster --name papergirl --config=-
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
@@ -18,6 +20,27 @@ containerdConfigPatches:
 - |-
   [plugins."io.containerd.grpc.v1.cri".registry.mirrors."localhost:${reg_port}"]
     endpoint = ["http://${reg_name}:${reg_port}"]
+nodes:
+- role: control-plane
+  extraPortMappings:
+  - containerPort: 30001
+    hostPort: 8081
+    listenAddress: "127.0.0.1"
+  - containerPort: 30002
+    hostPort: 8082
+    listenAddress: "127.0.0.1"
+  - containerPort: 30003
+    hostPort: 9000
+    listenAddress: "127.0.0.1"
+  - containerPort: 30004
+    hostPort: 9090
+    listenAddress: "127.0.0.1"
+  - containerPort: 30005
+    hostPort: 4222
+    listenAddress: "127.0.0.1"
+  extraMounts:
+  - hostPath: ${local_dir}
+    containerPath: /papergirl
 EOF
 
     docker network connect "kind" "${reg_name}" || true
@@ -62,7 +85,7 @@ while ! kubectl get crd tenants.minio.min.io &>/dev/null ; do
     sleep 1
 done
 
-docker build -t localhost:5000/papergirl:latest .
+docker build --target development -t localhost:5000/papergirl:latest .
 docker push localhost:5000/papergirl:latest
 
 if ! helm status papergirl -n papergirl &>/dev/null ; then

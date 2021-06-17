@@ -6,12 +6,19 @@ metadata:
   labels:
 {{ include "papergirl.labels" . | indent 4 }}
 spec:
+  {{- if .Values.develop }}
+  type: NodePort
+  {{- else }}
   type: ClusterIP
+  {{- end }}
   ports:
     - port: 8081
       targetPort: http
       protocol: TCP
       name: http
+      {{- if .Values.develop }}
+      nodePort: 30002
+      {{- end }}
   selector:
     app.kubernetes.io/name: {{ include "papergirl.preview.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}

@@ -6,11 +6,18 @@ metadata:
   labels:
 {{ include "papergirl.labels" . | indent 4 }}
 spec:
+  {{- if .Values.develop }}
+  type: NodePort
+  {{- else }}
   type: ClusterIP
+  {{- end }}
   ports:
     - port: 4222
       targetPort: 4222
       protocol: TCP
+      {{- if .Values.develop }}
+      nodePort: 30005
+      {{- end }}
   selector:
     app: nats
     nats_cluster: {{ include "papergirl.fullname" . }}-nats

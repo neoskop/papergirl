@@ -11,3 +11,11 @@ image:
   repository: localhost:5000/papergirl
   tag: latest
   pullPolicy: Always
+
+# Increase memory limit to allow for live reloading / dev mode
+resources:
+  limits:
+    memory: 512Mi
+
+# Enable development mode
+develop: true

@@ -38,6 +38,12 @@ spec:
     {{- end }}
       shareProcessNamespace: true
       volumes:
+      {{- if .Values.develop }}
+        - name: local-dir 
+          hostPath:
+            path: /papergirl
+            type: Directory
+      {{- end }}
         - name: config
           configMap:
             name: {{ include "papergirl.preview.name" . }}-config
@@ -125,6 +131,11 @@ spec:
             - name: CONFIG
               value: kubernetes
           volumeMounts:
+          {{- if .Values.develop }}
+            - name: local-dir
+              mountPath: /home/papergirl/app/src
+              subPath: src
+          {{- end }}
             - name: config
               mountPath: /home/papergirl/app/config/kubernetes.env
               subPath: "kubernetes.env"

@@ -6,11 +6,18 @@ metadata:
   labels:
 {{ include "papergirl.labels" . | indent 4 }}
 spec:
+  {{- if .Values.develop }}
+  type: NodePort
+  {{- else }}
   type: ClusterIP
+  {{- end }}
   ports:
     - port: 9000
       targetPort: 9000
       protocol: TCP
+      {{- if .Values.develop }}
+      nodePort: 30003
+      {{- end }}
   selector:
     app.kubernetes.io/name: {{ include "papergirl.minio.name" . }}
 {{- end -}}
