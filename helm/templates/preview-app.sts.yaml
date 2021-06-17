@@ -150,6 +150,17 @@ spec:
             failureThreshold: 10
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+        - name: dnsmasq
+          image: "{{ .Values.dnsmasq.image.repository }}:{{ .Values.dnsmasq.image.tag }}"
+          imagePullPolicy: {{ .Values.dnsmasq.image.pullPolicy }}
+          args:
+            - --listen
+            - "127.0.0.1:53"
+            - --default-resolver
+            - --append-search-domains
+            - --hostsfile=/etc/hosts
+          resources:
+            {{- toYaml .Values.dnsmasq.resources | nindent 12 }}
         {{- if .Values.prometheus.enabled }}
         - name: nginx-prometheus-exporter
           image: "{{ .Values.prometheus.nginxExporterImage.repository }}:{{ .Values.prometheus.nginxExporterImage.tag }}"
