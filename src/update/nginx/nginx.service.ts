@@ -54,7 +54,9 @@ export class NginxService implements OnApplicationBootstrap {
         this.config.nginxConfigDir,
         'image_processing.conf',
       );
-      const config = `location ~* "^/(?<path>.+)-(?<width>[\\d-]+)x(?<height>[\\d-]+)\\.(?<ext>(jpg|jpeg|png))$" {
+
+      const config = [
+        `location ~* "^/(?<path>.+)-(?<width>[\\d-]+)x(?<height>[\\d-]+)\\.(?<ext>(jpg|jpeg|png))$" {
         resolver 127.0.0.1:53 ipv6=off;
         set $upstream papergirl-image-proxy:8565;
         proxy_pass http://$upstream/rs,s:\${width}x\${height},m:fill,g:auto/q:${args.quality}/o:${args.imageType}?image=http://${this.config.serviceName}:8081/$path.$ext;
@@ -62,7 +64,26 @@ export class NginxService implements OnApplicationBootstrap {
         add_header Vary Accept;
         add_header Pragma "public";
         add_header Cache-Control "public, max-age=600";
-    }`;
+    }`,
+        `location ~* "^/(?<path>.+)-(?<width>[\\d-]+)w\\.(?<ext>(jpg|jpeg|png))$" {
+      resolver 127.0.0.1:53 ipv6=off;
+      set $upstream papergirl-image-proxy:8565;
+      proxy_pass http://$upstream/rs,s:\${width},m:fill,g:auto/q:${args.quality}/o:${args.imageType}?image=http://${this.config.serviceName}:8081/$path.$ext;
+      proxy_hide_header cache-control;
+      add_header Vary Accept;
+      add_header Pragma "public";
+      add_header Cache-Control "public, max-age=600";
+  }`,
+        `location ~* "^/(?<path>.+)-(?<height>[\\d-]+)h\\.(?<ext>(jpg|jpeg|png))$" {
+    resolver 127.0.0.1:53 ipv6=off;
+    set $upstream papergirl-image-proxy:8565;
+    proxy_pass http://$upstream/rs,s:x\${height},m:fill,g:auto/q:${args.quality}/o:${args.imageType}?image=http://${this.config.serviceName}:8081/$path.$ext;
+    proxy_hide_header cache-control;
+    add_header Vary Accept;
+    add_header Pragma "public";
+    add_header Cache-Control "public, max-age=600";
+}`,
+      ].join('\n\n');
       await fs.promises.writeFile(configFilePath, config);
     }
   }
