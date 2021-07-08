@@ -61,9 +61,9 @@ spec:
   console:
     image: "{{ .Values.minio.console.image.repository }}:{{ .Values.minio.console.image.tag }}"
     imagePullPolicy: {{ .Values.minio.console.image.pullPolicy }}
-    {{- with .Values.minio.console.image.pullSecrets }}
-    imagePullSecrets:
-      {{- toYaml . | nindent 6 }}
+    {{- if .Values.imagePullSecret }}
+    imagePullSecrets: 
+    - name: {{ include "papergirl.pull-secret-name" . }}
     {{- end }}
     replicas: 2
     consoleSecret:

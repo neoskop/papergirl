@@ -31,10 +31,10 @@ spec:
         prometheus.io/port: "9113"
         {{- end }}
     spec:
-    {{- with .Values.imagePullSecrets }}
-      imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
-    {{- end }}
+      {{- if .Values.imagePullSecret }}
+      imagePullSecrets: 
+      - name: {{ include "papergirl.pull-secret-name" . }}
+      {{- end }}
       shareProcessNamespace: true
       volumes:
       {{- if .Values.develop }}

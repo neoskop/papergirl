@@ -18,6 +18,10 @@ spec:
         app.kubernetes.io/name: {{ include "papergirl.image-proxy.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
+      {{- if .Values.imagePullSecret }}
+      imagePullSecrets: 
+      - name: {{ include "papergirl.pull-secret-name" . }}
+      {{- end }}
       containers:
       - name: image-proxy
         image: "{{ .Values.imageProxy.image.repository }}:{{ .Values.imageProxy.image.tag }}"

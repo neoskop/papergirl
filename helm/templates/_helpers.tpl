@@ -113,3 +113,16 @@ app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end -}}
+
+{{/*
+Create a prefix for the pull secret
+*/}}
+{{- define "papergirl.pull-secret-name" -}}
+{{- include "papergirl.fullname" . }}-pull-secret
+{{- end -}}
+
+{{- define "imagePullSecret" }}
+{{- with .Values.imagePullSecret }}
+{{- printf "{\"auths\":{\"%s\":{\"username\":\"%s\",\"password\":\"%s\",\"email\":\"%s\",\"auth\":\"%s\"}}}" .registry .username .password .email (printf "%s:%s" .username .password | b64enc) | b64enc }}
+{{- end }}
+{{- end }}

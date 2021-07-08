@@ -21,9 +21,9 @@ spec:
       prometheus.io/scrape: "true"
   image: "{{ .Values.minio.image.repository }}:{{ .Values.minio.image.tag }}"
   imagePullPolicy: {{ .Values.minio.image.pullPolicy }}
-  {{- with .Values.minio.image.pullSecrets }}
-  imagePullSecrets:
-    {{- toYaml . | nindent 4 }}
+  {{- if .Values.imagePullSecret }}
+  imagePullSecrets: 
+  - name: {{ include "papergirl.pull-secret-name" . }}
   {{- end }}
   credsSecret:
     name: {{ include "papergirl.minio.name" . }}-credentials

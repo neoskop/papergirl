@@ -20,6 +20,10 @@ spec:
         app.kubernetes.io/name: {{ include "papergirl.preview-fallback.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
+      {{- if .Values.imagePullSecret }}
+      imagePullSecrets: 
+      - name: {{ include "papergirl.pull-secret-name" . }}
+      {{- end }}
       containers:
       - name: nginx
         image: "{{ .Values.nginx.image.repository }}:{{ .Values.nginx.image.tag }}"
