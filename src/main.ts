@@ -4,7 +4,8 @@ import { ConfigService } from './config/config.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  const config: ConfigService = app.get('ConfigService');
+  await app.init();
+  const config: ConfigService = app.get(ConfigService);
 
   if (config.enableShutdownHooks) {
     app.enableShutdownHooks();
