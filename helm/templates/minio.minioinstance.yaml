@@ -22,7 +22,7 @@ spec:
   image: "{{ .Values.minio.image.repository }}:{{ .Values.minio.image.tag }}"
   imagePullPolicy: {{ .Values.minio.image.pullPolicy }}
   {{- if .Values.imagePullSecret }}
-  imagePullSecrets: 
+  imagePullSecret: 
   - name: {{ include "papergirl.pull-secret-name" . }}
   {{- end }}
   credsSecret:
