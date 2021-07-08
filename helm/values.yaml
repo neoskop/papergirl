@@ -114,12 +114,12 @@ minio:
     secretkey: minio456
     image:
       repository: minio/console
-      tag: v0.7.4
+      tag: v0.7.5
       pullPolicy: IfNotPresent
       pullSecrets: []
   image:
     repository: minio/minio
-    tag: RELEASE.2021-06-17T00-10-46Z
+    tag: RELEASE.2021-07-08T01-15-01Z
     pullPolicy: IfNotPresent
     pullSecrets: []
   resources:
@@ -140,7 +140,7 @@ imageProxy:
   enabled: false
   image:
     repository: ramielcreations/caravaggio
-    tag: 3.4.1
+    tag: 3.5.0
     pullPolicy: IfNotPresent
     pullSecrets: []
   replicaCount: 2
@@ -156,7 +156,7 @@ nats:
   createCluster: true
   url: null
   size: 3
-  version: 2.2.6
+  version: 2.3.2
 imagePullSecrets: []
 nameOverride: ''
 fullnameOverride: ''
