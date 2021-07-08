@@ -2,6 +2,22 @@ apiVersion: v1
 entries:
   papergirl:
   - apiVersion: v1
+    appVersion: 1.5.1
+    created: "2021-07-08T18:19:52.340162707+02:00"
+    description: Sets up high-available delivery tier with Papergirl optionally and NATS and MinIO
+    digest: 2deaaad6a3ce437837d4ae63de0cae5a48f32157380bcc83eb2fef810838d2b2
+    home: https://github.com/neoskop/papergirl
+    maintainers:
+    - email: diekmann@neoskop.de
+      name: Arne Diekmann
+      url: https://www.neoskop.de
+    name: papergirl
+    sources:
+    - https://github.com/neoskop/papergirl
+    urls:
+    - https://github.com/neoskop/papergirl/releases/download/papergirl-1.5.1/papergirl-1.5.1.tgz
+    version: 1.5.1
+  - apiVersion: v1
     appVersion: 1.5.0
     created: "2021-07-08T17:12:59.814674153+02:00"
     description: Sets up high-available delivery tier with Papergirl optionally and NATS and MinIO
