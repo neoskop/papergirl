@@ -15,7 +15,7 @@ spec:
   imagePullPolicy: {{ .Values.minio.image.pullPolicy }}
   {{- if .Values.imagePullSecret }}
   imagePullSecret: 
-  - name: {{ include "papergirl.pull-secret-name" . }}
+    name: {{ include "papergirl.pull-secret-name" . }}
   {{- end }}
   credsSecret:
     name: {{ include "papergirl.minio.name" . }}-credentials
