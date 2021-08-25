@@ -9,5 +9,8 @@ redirects:
   - from: /baz
     to: https://www.neoskop.de/
     code: 307
+  - from: /baz
+    to: https://www.neoskop.de/baz
+    code: 301
 imageProcessing:
   enabled: true

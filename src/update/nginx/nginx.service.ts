@@ -139,8 +139,16 @@ export class NginxService implements OnApplicationBootstrap {
     let configLines = [];
 
     if (meta?.redirects) {
+      let createdLocations = new Set();
       configLines = configLines.concat(
         meta.redirects.map((redirect) => {
+          if (createdLocations.has(redirect.from)) {
+            Logger.debug(
+              `Ignoring duplicate location ${redirect.from} in redirects`,
+            );
+            return '';
+          }
+          createdLocations.add(redirect.from);
           return `location ${redirect.regex ? '~*' : '='} ${
             redirect.from
           } { return ${redirect.code || '301'} ${redirect.to}; }`;
