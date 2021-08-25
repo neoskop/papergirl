@@ -28,11 +28,11 @@ export class UpdateService implements OnApplicationBootstrap {
   }
 
   async onApplicationBootstrap() {
-    await this.perform();
+    await this.perform(true);
     this.readinessService.setReady();
   }
 
-  public async perform() {
+  public async perform(initialBuild: boolean = false) {
     try {
       const currentRoot = await this.nginxService.getActiveRootDir();
 
@@ -49,7 +49,10 @@ export class UpdateService implements OnApplicationBootstrap {
         });
       }
 
-      await this.nginxService.switchRootDir(this.dirBlack);
+      if (!initialBuild) {
+        await this.nginxService.switchRootDir(this.dirBlack);
+      }
+
       await fs.promises.rm(this.dirRed, { recursive: true });
       await fs.promises.mkdir(this.dirRed);
       await this.s3service.download(this.dirRed);
