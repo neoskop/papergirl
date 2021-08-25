@@ -149,16 +149,20 @@ spec:
             httpGet:
               path: /probe/liveness
               port: papergirl-http
-            initialDelaySeconds: 15
             failureThreshold: 10
             periodSeconds: 5
           readinessProbe:
             httpGet:
               path: /probe/readiness
               port: papergirl-http
-            initialDelaySeconds: 15
             periodSeconds: 5
             failureThreshold: 10
+          startupProbe:
+            httpGet:
+              path: /probe/startup
+              port: papergirl-http
+            failureThreshold: 30
+            periodSeconds: 10
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
         - name: dnsmasq

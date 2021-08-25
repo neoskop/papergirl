@@ -18,4 +18,9 @@ export class ProbeController {
   public liveness() {
     return { status: 'ok' };
   }
+
+  @Get('startup')
+  public async startup(@Res() res: Response) {
+    return this.readiness(res);
+  }
 }
