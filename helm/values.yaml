@@ -131,7 +131,7 @@ imageProxy:
   enabled: false
   image:
     repository: ramielcreations/caravaggio
-    tag: 3.5.0
+    tag: 3.4.1
     pullPolicy: IfNotPresent
   replicaCount: 2
   args:
