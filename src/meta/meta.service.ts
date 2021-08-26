@@ -7,13 +7,16 @@ import { Meta } from './meta.interface';
 
 @Injectable()
 export class MetaService {
-  private readonly DEFAULT_SETTINGS = {
+  private readonly DEFAULT_SETTINGS: Meta = {
     security: {
       standardHeaders: true,
       hideVersion: true,
       csp: "default-src 'none'",
     },
     removeTrailingSlash: true,
+    cache: {
+      headers: true,
+    },
   };
 
   public async parse(dir: string): Promise<Meta> {

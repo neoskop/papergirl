@@ -14,3 +14,5 @@ redirects:
     code: 301
 imageProcessing:
   enabled: true
+cache:
+  headers: true

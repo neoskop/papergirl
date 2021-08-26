@@ -4,6 +4,9 @@ export interface Meta {
     quality?: number;
     imageType?: 'original' | 'auto';
   };
+  cache?: {
+    headers: boolean;
+  };
   security?: {
     csp?: string;
     standardHeaders?: boolean;

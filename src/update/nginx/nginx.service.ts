@@ -26,37 +26,102 @@ export class NginxService implements OnApplicationBootstrap {
 
   public async configure(meta: Meta) {
     Logger.debug(`Processing the following config: ${JSON.stringify(meta)}`);
+    await this.configureCache(meta);
     await this.configureSecurity(meta);
     await this.configureTrailingSlashBehaviour(meta);
     await this.configureRedirects(meta);
     await this.configureImageProcessing(meta);
   }
 
+  private async configureCache(meta: Meta) {
+    const configFilePath = join(this.config.nginxConfigDir, 'cache.conf');
+    if (meta.cache?.headers) {
+      const locations = [
+        `location ~* \\.(?:manifest|appcache|html|xml|json)$ {
+          expires -1;
+        }`,
+        `location ~* (serviceWorker\\.js)$ {
+          expires 10m;
+          access_log off;
+          add_header Cache-Control "public";
+        }`,
+        `location ~* \\.(?:css|js|woff|woff2)$ {
+          expires 1y;
+          access_log off;
+          add_header Cache-Control "public";
+        }`,
+      ];
+
+      if (meta.imageProcessing?.enabled) {
+        locations.push(`location ~* (?!.+-(\\d+x\\d+|\\d+[wh])\\.(jpg|jpeg|gif|png|svg|svgz))(?=.+\\.(jpg|jpeg|gif|png|svg|svgz))^.+$ {
+          expires 1M;
+          access_log off;
+          add_header Cache-Control "public";
+        }`);
+        locations.push(`location ~* \\.(?:ico|cur|gz|mp4|ogg|ogv|webm|htc)$ {
+          expires 1M;
+          access_log off;
+          add_header Cache-Control "public";
+        }`);
+      } else {
+        locations.push(`location ~* \\.(?:jpg|jpeg|gif|png|ico|cur|gz|svg|svgz|mp4|ogg|ogv|webm|htc)$ {
+          expires 1M;
+          access_log off;
+          add_header Cache-Control "public";
+        }`);
+      }
+
+      await fs.promises.writeFile(configFilePath, locations.join('\n\n'));
+    } else {
+      await this.deleteStaleConfig(configFilePath);
+    }
+  }
+
+  private async deleteStaleConfig(configFilePath: string) {
+    if (
+      await fs.promises
+        .access(configFilePath, fs.constants.F_OK)
+        .then(() => true)
+        .catch(() => false)
+    ) {
+      Logger.debug(`Deleting ${configFilePath}`);
+      await fs.promises.unlink(configFilePath);
+    } else {
+      Logger.debug(`File ${configFilePath} does not exist`);
+    }
+  }
+
   private async configureTrailingSlashBehaviour(meta: Meta) {
+    const configFilePath = join(
+      this.config.nginxConfigDir,
+      'trailing_slash.conf',
+    );
     if (meta.removeTrailingSlash) {
       await fs.promises.writeFile(
-        join(this.config.nginxConfigDir, 'trailing_slash.conf'),
+        configFilePath,
         `location ~ (?<no_slash>.+)/$ {
         return 301 $thescheme://$host$no_slash;
    }`,
       );
+    } else {
+      await this.deleteStaleConfig(configFilePath);
     }
   }
 
   private async configureImageProcessing(meta: Meta) {
+    const configFilePath = join(
+      this.config.nginxConfigDir,
+      'image_processing.conf',
+    );
     if (meta.imageProcessing?.enabled) {
       const defaults = {
         quality: 85,
         imageType: 'original',
       };
       const args = Object.assign(defaults, meta.imageProcessing);
-      const configFilePath = join(
-        this.config.nginxConfigDir,
-        'image_processing.conf',
-      );
 
       const config = [
-        `location ~* "^/(?<path>.+)-(?<width>[\\d-]+)x(?<height>[\\d-]+)\\.(?<ext>(jpg|jpeg|png))$" {
+        `location ~* "^/(?<path>.+)-(?<width>\\d+)x(?<height>\\d+)\\.(?<ext>(jpg|jpeg|png|svg|svgz|gif))$" {
         resolver 127.0.0.1:53 ipv6=off;
         set $upstream papergirl-image-proxy:8565;
         proxy_pass http://$upstream/rs,s:\${width}x\${height},m:fill,g:auto/q:${args.quality}/o:${args.imageType}?image=http://${this.config.serviceName}:8081/$path.$ext;
@@ -65,7 +130,7 @@ export class NginxService implements OnApplicationBootstrap {
         add_header Pragma "public";
         add_header Cache-Control "public, max-age=600";
     }`,
-        `location ~* "^/(?<path>.+)-(?<width>[\\d-]+)w\\.(?<ext>(jpg|jpeg|png))$" {
+        `location ~* "^/(?<path>.+)-(?<width>\\d+)w\\.(?<ext>(jpg|jpeg|png|svg|svgz|gif))$" {
       resolver 127.0.0.1:53 ipv6=off;
       set $upstream papergirl-image-proxy:8565;
       proxy_pass http://$upstream/rs,s:\${width},m:fill,g:auto/q:${args.quality}/o:${args.imageType}?image=http://${this.config.serviceName}:8081/$path.$ext;
@@ -74,7 +139,7 @@ export class NginxService implements OnApplicationBootstrap {
       add_header Pragma "public";
       add_header Cache-Control "public, max-age=600";
   }`,
-        `location ~* "^/(?<path>.+)-(?<height>[\\d-]+)h\\.(?<ext>(jpg|jpeg|png))$" {
+        `location ~* "^/(?<path>.+)-(?<height>\\d+)h\\.(?<ext>(jpg|jpeg|png|svg|gif))$" {
     resolver 127.0.0.1:53 ipv6=off;
     set $upstream papergirl-image-proxy:8565;
     proxy_pass http://$upstream/rs,s:x\${height},m:fill,g:auto/q:${args.quality}/o:${args.imageType}?image=http://${this.config.serviceName}:8081/$path.$ext;
@@ -85,6 +150,8 @@ export class NginxService implements OnApplicationBootstrap {
 }`,
       ].join('\n\n');
       await fs.promises.writeFile(configFilePath, config);
+    } else {
+      await this.deleteStaleConfig(configFilePath);
     }
   }
 
