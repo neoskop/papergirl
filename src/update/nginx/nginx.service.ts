@@ -43,31 +43,38 @@ export class NginxService implements OnApplicationBootstrap {
         `location ~* (serviceWorker\\.js)$ {
           expires 10m;
           access_log off;
-          add_header Cache-Control "public";
         }`,
         `location ~* \\.(?:css|js|woff|woff2)$ {
+          add_header Cache-Controll "public";
           expires 1y;
+          add_header Vary Accept;
+          add_header Pragma "public";
           access_log off;
-          add_header Cache-Control "public";
         }`,
       ];
 
       if (meta.imageProcessing?.enabled) {
         locations.push(`location ~* (?!.+-(\\d+x\\d+|\\d+[wh])\\.(jpg|jpeg|gif|png|svg|svgz))(?=.+\\.(jpg|jpeg|gif|png|svg|svgz))^.+$ {
-          expires 1M;
+          add_header Cache-Controll "public";
+          expires 1y;
+          add_header Vary Accept;
+          add_header Pragma "public";
           access_log off;
-          add_header Cache-Control "public";
         }`);
         locations.push(`location ~* \\.(?:ico|cur|gz|mp4|ogg|ogv|webm|htc)$ {
-          expires 1M;
+          add_header Cache-Controll "public";
+          expires 1y;
+          add_header Vary Accept;
+          add_header Pragma "public";
           access_log off;
-          add_header Cache-Control "public";
         }`);
       } else {
         locations.push(`location ~* \\.(?:jpg|jpeg|gif|png|ico|cur|gz|svg|svgz|mp4|ogg|ogv|webm|htc)$ {
-          expires 1M;
+          add_header Cache-Controll "public";
+          expires 1y;
+          add_header Vary Accept;
+          add_header Pragma "public";
           access_log off;
-          add_header Cache-Control "public";
         }`);
       }
 
@@ -126,9 +133,11 @@ export class NginxService implements OnApplicationBootstrap {
         set $upstream papergirl-image-proxy:8565;
         proxy_pass http://$upstream/rs,s:\${width}x\${height},m:fill,g:auto/q:${args.quality}/o:${args.imageType}?image=http://${this.config.serviceName}:8081/$path.$ext;
         proxy_hide_header cache-control;
+        add_header Cache-Controll "public";
+        expires 1y;
+        access_log off;
         add_header Vary Accept;
         add_header Pragma "public";
-        add_header Cache-Control "public, max-age=600";
     }`,
         `location ~* "^/(?<path>.+)-(?<width>\\d+)w\\.(?<ext>(jpg|jpeg|png|svg|svgz|gif))$" {
       resolver 127.0.0.1:53 ipv6=off;
@@ -136,17 +145,21 @@ export class NginxService implements OnApplicationBootstrap {
       proxy_pass http://$upstream/rs,s:\${width},m:fill,g:auto/q:${args.quality}/o:${args.imageType}?image=http://${this.config.serviceName}:8081/$path.$ext;
       proxy_hide_header cache-control;
       add_header Vary Accept;
+      add_header Cache-Controll "public";
+      expires 1y;
+      access_log off;
       add_header Pragma "public";
-      add_header Cache-Control "public, max-age=600";
   }`,
         `location ~* "^/(?<path>.+)-(?<height>\\d+)h\\.(?<ext>(jpg|jpeg|png|svg|gif))$" {
     resolver 127.0.0.1:53 ipv6=off;
     set $upstream papergirl-image-proxy:8565;
     proxy_pass http://$upstream/rs,s:x\${height},m:fill,g:auto/q:${args.quality}/o:${args.imageType}?image=http://${this.config.serviceName}:8081/$path.$ext;
     proxy_hide_header cache-control;
+    add_header Cache-Controll "public";
+    expires 1y;
+    access_log off;
     add_header Vary Accept;
     add_header Pragma "public";
-    add_header Cache-Control "public, max-age=600";
 }`,
       ].join('\n\n');
       await fs.promises.writeFile(configFilePath, config);
