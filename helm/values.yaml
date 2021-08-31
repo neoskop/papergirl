@@ -131,7 +131,7 @@ imageProxy:
   enabled: false
   image:
     repository: ramielcreations/caravaggio
-    tag: 3.4.1
+    tag: 3.6.0
     pullPolicy: IfNotPresent
   replicaCount: 2
   args:
@@ -146,7 +146,7 @@ nats:
   createCluster: true
   url: null
   size: 3
-  version: 2.3.4
+  version: 2.4.0
 imagePullSecret: {}
 nameOverride: ''
 fullnameOverride: ''
