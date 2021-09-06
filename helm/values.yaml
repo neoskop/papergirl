@@ -105,11 +105,11 @@ minio:
     secretkey: minio456
     image:
       repository: minio/console
-      tag: v0.9.5
+      tag: v0.9.6
       pullPolicy: IfNotPresent
   image:
     repository: minio/minio
-    tag: RELEASE.2021-08-25T00-41-18Z
+    tag: RELEASE.2021-09-03T03-56-13Z
     pullPolicy: IfNotPresent
   resources:
     limits:
@@ -121,7 +121,7 @@ backup:
   schedule: '0 5 * * *'
   image:
     repository: minio/mc
-    tag: RELEASE.2021-07-27T06-46-19Z
+    tag: RELEASE.2021-09-02T09-21-27Z
     pullPolicy: IfNotPresent
   replicaCount: 2
 imageProxy:
