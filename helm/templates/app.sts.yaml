@@ -53,36 +53,44 @@ spec:
           configMap:
             name: {{ include "papergirl.fullname" . }}-nginx-config-snippets
       initContainers:
+        {{- if .Values.minio.createCluster  }}
         - name: connection-check
           image: "{{ .Values.connectionCheck.image.repository }}:{{ .Values.connectionCheck.image.tag }}"
           imagePullPolicy: {{ .Values.connectionCheck.image.pullPolicy }}
           env:
             - name: ENDPOINT
-              value: {{ include "papergirl.minio.endpoint" . }}
+              value: {{ include "papergirl.s3.endpoint" . }}
           command:
             - sh
             - -c
             - while ! nc -z $ENDPOINT 9000; do echo 'Wait for MinIO startup...' && sleep 1; done
           resources:
             {{- toYaml .Values.connectionCheck.resources | nindent 12 }}
+        {{- end }}
+        {{- if .Values.s3.createBuckets }}
         - name: bucket-setup
           image: "{{ .Values.bucketSetup.image.repository }}:{{ .Values.bucketSetup.image.tag }}"
           imagePullPolicy: {{ .Values.bucketSetup.image.pullPolicy }}
           env:
             - name: ACCESSKEY
-              value: {{ .Values.minio.accesskey }}
+              value: {{ .Values.s3.accesskey }}
             - name: SECRETKEY
-              value: {{ .Values.minio.secretkey }}
+              value: {{ .Values.s3.secretkey }}
             - name: ENDPOINT
-              value: {{ include "papergirl.minio.endpoint" . }}
+              value: {{ include "papergirl.s3.endpoint" . }}
+            - name: PROTOCOL
+              value: {{ include "papergirl.s3.protocol" . }}
+            - name: PORT
+              value: "{{ .Values.s3.port }}"
             - name: BUCKET
               value: {{ include "papergirl.fullname" . }}
           command: 
             - /bin/sh
             - -c
-            - /usr/bin/mc config host add s3 http://$ENDPOINT:9000 $ACCESSKEY $SECRETKEY ; /usr/bin/mc ls s3 | grep -q $BUCKET || /usr/bin/mc mb s3/$BUCKET
+            - /usr/bin/mc config host add s3 $PROTOCOL://$ENDPOINT:$PORT $ACCESSKEY $SECRETKEY ; /usr/bin/mc ls s3 | grep -q $BUCKET || /usr/bin/mc mb s3/$BUCKET
           resources:
             {{- toYaml .Values.bucketSetup.resources | nindent 12 }}
+        {{- end }}
         - name: volume-setup
           image: "{{ .Values.volumeSetup.image.repository }}:{{ .Values.volumeSetup.image.tag }}"
           imagePullPolicy: {{ .Values.volumeSetup.image.pullPolicy }}

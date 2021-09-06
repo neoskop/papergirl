@@ -2,13 +2,17 @@
 set -e
 
 if ! kind get clusters | grep -o papergirl &>/dev/null ; then
-    reg_name='kind-registry'
+    reg_name='kind-registry-papergirl'
     reg_port='5000'
     running="$(docker inspect -f '{{.State.Running}}' "${reg_name}" 2>/dev/null || true)"
-    if [ "${running}" != 'true' ]; then
+
+    state=$(docker container ls -a -f name=$reg_name --format="{{.State}}")
+    if [ -z "$state" ]; then
         docker run \
             -d --restart=always -p "127.0.0.1:${reg_port}:5000" --name "${reg_name}" \
             registry:2
+    elif [ "$state" == "exited" ]; then
+      docker start "${reg_name}"
     fi
 
     local_dir=`pwd`
@@ -93,6 +97,7 @@ if ! helm status papergirl -n papergirl &>/dev/null ; then
     helm install papergirl -n papergirl -f quickstart-values.yaml ./helm
 else
     helm upgrade papergirl -n papergirl -f quickstart-values.yaml ./helm
+    sleep 3
     kubectl rollout restart sts/papergirl
     kubectl rollout restart sts/papergirl-preview
 fi

@@ -15,7 +15,7 @@ To access the webserver execute:
 To access the created MinIO cluster run:
 
   $ kubectl port-forward svc/{{ include "papergirl.minio.name" . }} 9000:9000 &>/dev/null &
-  $ google-chrome http://{{ .Values.minio.accesskey }}:{{ .Values.minio.secretkey }}@localhost:9000
+  $ google-chrome http://{{ .Values.s3.accesskey }}:{{ .Values.s3.secretkey }}@localhost:9000
 
 {{- if ge (int .Values.minio.version) 4 }}
 

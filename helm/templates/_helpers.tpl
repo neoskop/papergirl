@@ -74,10 +74,17 @@ Create a prefix for preview fallback frontend resources
 {{- end -}}
 
 {{/*
-Endpoint for the S3 bucket to use
+Endpoint for the S3 server to use
 */}}
-{{- define "papergirl.minio.endpoint" -}}
-{{- default (printf "%s-minio" (include "papergirl.fullname" .)) .Values.minio.endpoint -}}
+{{- define "papergirl.s3.endpoint" -}}
+{{- default (printf "%s-minio" (include "papergirl.fullname" .)) .Values.s3.endpoint -}}
+{{- end -}}
+
+{{/*
+Protocol for the S3 server to use
+*/}}
+{{- define "papergirl.s3.protocol" -}}
+{{- .Values.s3.ssl | ternary "https" "http" -}}
 {{- end -}}
 
 {{/*

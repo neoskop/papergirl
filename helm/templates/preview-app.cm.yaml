@@ -8,10 +8,11 @@ data:
     SERVICE_NAME={{ include "papergirl.preview.name" . }}
     QUEUE_URI={{ include "papergirl.nats.url" . }}
     QUEUE_SUBJECT=papergirl-preview
-    S3_ENDPOINT={{ include "papergirl.minio.endpoint" . }}
-    S3_USESSL=false
-    S3_ACCESSKEY={{ .Values.minio.accesskey }}
-    S3_SECRETKEY={{ .Values.minio.secretkey }}
+    S3_ENDPOINT={{ include "papergirl.s3.endpoint" . }}
+    S3_USESSL={{ .Values.s3.ssl }}
+    S3_PORT={{ .Values.s3.port }}
+    S3_ACCESSKEY={{ .Values.s3.accesskey }}
+    S3_SECRETKEY={{ .Values.s3.secretkey }}
     S3_BUCKETNAME={{ include "papergirl.preview.name" . }}
     NGINX_ROOT_DIR=/home/papergirl/nginx/www
     NGINX_PID_PATH=/home/papergirl/nginx/pid/nginx.pid

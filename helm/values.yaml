@@ -91,12 +91,16 @@ papergirlPreview:
     annotations:
       kubernetes.io/ingress.class: nginx
       cert-manager.io/cluster-issuer: letsencrypt-prod
+s3:
+  endpoint: null
+  port: 9000
+  ssl: false
+  accesskey: minio
+  secretkey: minio123
+  createBuckets: true
 minio:
   createCluster: true
   version: 4
-  endpoint: null
-  accesskey: minio
-  secretkey: minio123
   storageClass: ''
   storageSize: 5Gi
   replicaCount: 4
