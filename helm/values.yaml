@@ -97,7 +97,11 @@ s3:
   ssl: false
   accesskey: minio
   secretkey: minio123
-  createBuckets: true
+  buckets:
+    name: papergirl
+    backupName: papergirl-backup
+    previewName: papergirl-preview
+    previewBackupName: papergirl-preview-backup
 minio:
   createCluster: true
   version: 4

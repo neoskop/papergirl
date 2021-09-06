@@ -51,9 +51,9 @@ backup_bucket() {
 
 info "Setting up config in $(bold '~/.mc/config.json')"
 mc config host add s3 http://{{ include "papergirl.s3.endpoint" . }}:9000 {{ .Values.s3.accesskey }} {{ .Values.s3.secretkey }} &>/dev/null
-backup_bucket {{ include "papergirl.fullname" . }} {{ include "papergirl.backup.name" . }}
+backup_bucket {{ .Values.s3.buckets.name }} {{ .Values.s3.buckets.backupName }}
 {{ if .Values.papergirlPreview.enabled -}}
-backup_bucket {{ include "papergirl.preview.name" . }} {{ include "papergirl.preview-backup.name" . }}
+backup_bucket {{ .Values.s3.buckets.previewName }} {{ .Values.s3.buckets.previewBackupName }}
 {{- end }}
 
 

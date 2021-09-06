@@ -13,7 +13,7 @@ data:
     S3_PORT={{ .Values.s3.port }}
     S3_ACCESSKEY={{ .Values.s3.accesskey }}
     S3_SECRETKEY={{ .Values.s3.secretkey }}
-    S3_BUCKETNAME={{ include "papergirl.preview.name" . }}
+    S3_BUCKETNAME={{ .Values.s3.buckets.previewName }}
     NGINX_ROOT_DIR=/home/papergirl/nginx/www
     NGINX_PID_PATH=/home/papergirl/nginx/pid/nginx.pid
     NGINX_CONFIG_DIR=/home/papergirl/nginx/conf.d
