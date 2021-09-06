@@ -90,7 +90,6 @@ yq eval -i ".nginx.image.tag = \"$OPENRESTY_LATEST_TAG\"" helm/values.yaml
 yq eval -i ".prometheus.nginxExporterImage.tag = \"$NGINX_PROMETHEUS_EXPORTER_LATEST_TAG\"" helm/values.yaml
 yq eval -i ".minio.image.tag = \"$MINIO_LATEST_TAG\"" helm/values.yaml
 yq eval -i ".minio.console.image.tag = \"$MINIO_CONSOLE_LATEST_TAG\"" helm/values.yaml
-yq eval -i ".bucketSetup.image.tag = \"$MINIO_MC_LATEST_TAG\"" helm/values.yaml
 yq eval -i ".backup.image.tag = \"$MINIO_MC_LATEST_TAG\"" helm/values.yaml
 yq eval -i ".nats.version = \"$NATS_LATEST_VERSION\"" helm/values.yaml
 yq eval -i ".volumeSetup.image.tag = \"$BUSYBOX_LATEST_TAG\"" helm/values.yaml

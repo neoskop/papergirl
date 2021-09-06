@@ -24,17 +24,6 @@ connectionCheck:
     requests:
       cpu: 50m
       memory: 16Mi
-bucketSetup:
-  image:
-    repository: minio/mc
-    tag: RELEASE.2021-07-27T06-46-19Z
-    pullPolicy: IfNotPresent
-  resources:
-    limits:
-      memory: 16Mi
-    requests:
-      cpu: 50m
-      memory: 16Mi
 volumeSetup:
   image:
     repository: busybox
