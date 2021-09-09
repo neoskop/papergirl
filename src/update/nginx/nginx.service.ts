@@ -229,9 +229,12 @@ export class NginxService implements OnApplicationBootstrap {
             return '';
           }
           createdLocations.add(redirect.from);
+          const to = redirect.to.includes('?')
+            ? redirect.to
+            : `${redirect.to}$is_args$args`;
           return `location ${redirect.regex ? '~*' : '='} ${
             redirect.from
-          } { return ${redirect.code || '301'} ${redirect.to}; }`;
+          } { return ${redirect.code || '301'} ${to}; }`;
         }),
       );
     }

@@ -4,7 +4,7 @@ redirects:
   - from: /foo
     to: https://www.neoskop.de
   - from: ^/bar/([0-9]+)
-    to: https://www.neoskop.de/$1
+    to: https://www.neoskop.de/?foo=$1
     regex: true
   - from: /baz
     to: https://www.neoskop.de/
