@@ -1,19 +1,24 @@
-import { Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { eachLimit } from 'async';
 import * as fs from 'fs';
 import { Client } from 'minio';
 import * as path from 'path';
 import { ConfigService } from '../../config/config.service';
+import * as crypto from 'crypto';
+import { ColorPathService } from '../color-path.service';
 
 @Injectable()
-export class S3Service implements OnApplicationBootstrap {
+export class S3Service implements OnModuleInit {
   private s3Client: Client;
 
-  constructor(private readonly config: ConfigService) {
+  constructor(
+    private readonly config: ConfigService,
+    private readonly colorPathService: ColorPathService,
+  ) {
     this.s3Client = new Client(this.config.s3ClientOptions);
   }
 
-  public async onApplicationBootstrap() {
+  public async onModuleInit() {
     if (!(await this.s3Client.bucketExists(this.config.s3BucketName))) {
       Logger.debug(`Creating bucket '${this.config.s3BucketName}'`);
 
@@ -44,32 +49,15 @@ export class S3Service implements OnApplicationBootstrap {
     return true;
   }
 
-  public async download(targetDir: string): Promise<void> {
-    try {
-      if (!(await this.directoryIsWritable(targetDir))) {
-        throw new Error(`Directory ${targetDir} is not writable`);
-      }
-    } catch (err) {
-      if (err.code === 'ENOENT') {
-        Logger.debug(`Directory ${targetDir} does not exist - creating it.`);
-        const parentDir = path.resolve(targetDir, '..');
-
-        if (!(await this.directoryIsWritable(parentDir))) {
-          throw new Error(
-            `Parent directory of ${targetDir} (${parentDir}) is not writable`,
-          );
-        } else {
-          await fs.promises.mkdir(targetDir, { recursive: true });
-        }
-      }
-    }
+  public async download(targetDir: string, oldDir: string): Promise<void> {
+    await this.checkTargetDirectoryExists(targetDir);
 
     if (!(await this.s3Client.bucketExists(this.config.s3BucketName))) {
       throw new Error(`Bucket ${this.config.s3BucketName} does not exist.`);
     }
 
-    Logger.debug('Start download files');
-    const objectsStream = this.s3Client.listObjectsV2(
+    Logger.debug('Start download of files');
+    const objectsStream = this.s3Client.extensions.listObjectsV2WithMetadata(
       this.config.s3BucketName,
       '',
       true,
@@ -78,7 +66,13 @@ export class S3Service implements OnApplicationBootstrap {
     return new Promise((resolve, reject) => {
       const files = [];
       objectsStream.on('data', (obj) => {
-        files.push({ path: path.join(targetDir, obj.name), name: obj.name });
+        files.push({
+          path: path.join(targetDir, obj.name),
+          oldPath: path.join(oldDir, obj.name),
+          name: obj.name,
+          lastModified: obj.lastModified,
+          hash: obj.metadata.hash,
+        });
       });
       objectsStream.on('error', (err) => {
         reject(`Listing files failed: ${err}`);
@@ -92,19 +86,28 @@ export class S3Service implements OnApplicationBootstrap {
               try {
                 await fs.promises.access(file.path);
               } catch (error) {
-                Logger.debug(`Creating directory ${file.path}`);
+                Logger.debug(
+                  `Creating directory ${this.colorPathService.colorize(
+                    file.path,
+                  )}`,
+                );
                 await fs.promises.mkdir(file.path);
               }
             } else {
-              Logger.debug(`Downloading ${file.path}`);
-              try {
-                await this.s3Client.fGetObject(
-                  this.config.s3BucketName,
-                  file.name,
+              if (
+                await this.downloadIsNeeded(
+                  file.oldPath,
+                  file.lastModified,
+                  file.hash,
+                )
+              ) {
+                await this.downloadFile(
                   file.path,
+                  file.name,
+                  file.lastModified,
                 );
-              } catch (err) {
-                reject(`Downloading of ${file.path} failed: ${err}`);
+              } else {
+                await this.takeOldFile(file.oldPath, file.path);
               }
             }
           },
@@ -118,5 +121,115 @@ export class S3Service implements OnApplicationBootstrap {
         );
       });
     });
+  }
+
+  private async takeOldFile(src: string, target: string) {
+    Logger.debug(
+      `Copying ${this.colorPathService.colorize(
+        src,
+      )} to ${this.colorPathService.colorize(target)}`,
+    );
+    await fs.promises.copyFile(src, target);
+    const stat = await fs.promises.stat(src);
+    await fs.promises.utimes(target, stat.atime, stat.mtime);
+  }
+
+  private async checkTargetDirectoryExists(targetDir: string) {
+    try {
+      if (!(await this.directoryIsWritable(targetDir))) {
+        throw new Error(
+          `Directory ${this.colorPathService.colorize(
+            targetDir,
+          )} is not writable`,
+        );
+      }
+    } catch (err) {
+      if (err.code === 'ENOENT') {
+        Logger.debug(
+          `Directory ${this.colorPathService.colorize(
+            targetDir,
+          )} does not exist - creating it.`,
+        );
+        const parentDir = path.resolve(targetDir, '..');
+
+        if (!(await this.directoryIsWritable(parentDir))) {
+          throw new Error(
+            `Parent directory of ${this.colorPathService.colorize(
+              targetDir,
+            )} (${parentDir}) is not writable`,
+          );
+        } else {
+          await fs.promises.mkdir(targetDir, { recursive: true });
+        }
+      }
+    }
+  }
+
+  private async getHashOfLocalFile(file: string): Promise<string> {
+    return new Promise((resolve) => {
+      const hash = crypto.createHash('sha256');
+      hash.setEncoding('hex');
+      const input = fs.createReadStream(file);
+
+      input.on('end', () => {
+        hash.end();
+        resolve(hash.read());
+        input.close();
+      });
+
+      input.pipe(hash);
+    });
+  }
+
+  private async downloadIsNeeded(
+    fullPath: string,
+    lastModified: Date,
+    hash: string,
+  ): Promise<boolean> {
+    try {
+      await fs.promises.access(fullPath);
+    } catch (err) {
+      return true;
+    }
+
+    if (hash) {
+      const localHash = await this.getHashOfLocalFile(fullPath);
+      Logger.debug(
+        `Comparing hashes for ${this.colorPathService.colorize(
+          fullPath,
+        )}: local: ${localHash}, remote: ${hash}`,
+      );
+      return localHash !== hash;
+    } else {
+      const localLastModified = await this.getLastModifiedDateOfFile(fullPath);
+      Logger.debug(
+        `Comparing mtime for ${this.colorPathService.colorize(
+          fullPath,
+        )}: local: ${localLastModified}, remote: ${lastModified}`,
+      );
+      return lastModified.getTime() !== localLastModified.getTime();
+    }
+  }
+
+  private async getLastModifiedDateOfFile(fullPath: string) {
+    return (await fs.promises.stat(fullPath)).mtime;
+  }
+
+  private async downloadFile(
+    fullPath: string,
+    name: string,
+    lastModified: Date,
+  ) {
+    Logger.debug(`Downloading ${this.colorPathService.colorize(fullPath)}`);
+    try {
+      await this.s3Client.fGetObject(this.config.s3BucketName, name, fullPath);
+      await fs.promises.utimes(fullPath, lastModified, lastModified);
+    } catch (err) {
+      throw new Error(
+        `Downloading of ${this.colorPathService.colorize(
+          fullPath,
+        )} failed: ${err}`,
+      );
+    }
   }
 }

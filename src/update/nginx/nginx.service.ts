@@ -3,10 +3,14 @@ import * as fs from 'fs';
 import { join } from 'path';
 import { ConfigService } from '../../config/config.service';
 import { Meta } from '../../meta/meta.interface';
+import { ColorPathService } from '../color-path.service';
 
 @Injectable()
 export class NginxService implements OnApplicationBootstrap {
-  constructor(private config: ConfigService) {}
+  constructor(
+    private config: ConfigService,
+    private readonly colorPathService: ColorPathService,
+  ) {}
 
   public async onApplicationBootstrap() {
     try {
@@ -258,7 +262,9 @@ export class NginxService implements OnApplicationBootstrap {
       );
     }
 
-    Logger.debug(`Active root dir of NGINX is ${match[1]}`);
+    Logger.debug(
+      `Active root dir of NGINX is ${this.colorPathService.colorize(match[1])}`,
+    );
     return match[1];
   }
 
@@ -268,7 +274,9 @@ export class NginxService implements OnApplicationBootstrap {
       `root ${path};`,
     );
     await this.reload();
-    Logger.debug(`Switched NGINX root dir to ${path}`);
+    Logger.debug(
+      `Switched NGINX root dir to ${this.colorPathService.colorize(path)}`,
+    );
   }
 
   private async reload() {

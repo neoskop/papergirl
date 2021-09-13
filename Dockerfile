@@ -8,6 +8,7 @@ RUN mkdir -p nginx/pid && \
     mkdir -p nginx/www/red && \
     echo "root /home/papergirl/nginx/www/black;" > /home/papergirl/nginx/conf.d/root.conf && \
     echo "error_page 404 /404/index.html;" > /home/papergirl/nginx/conf.d/errors.conf
+ENV FORCE_COLOR=1
 VOLUME [ "/home/papergirl/nginx" ]
 
 FROM base AS build

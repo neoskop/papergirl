@@ -1,12 +1,13 @@
 import { Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
+import * as chalk from 'chalk';
 import * as fs from 'fs';
-import { ncp } from 'ncp';
 import * as path from 'path';
 import { ConfigService } from '../config/config.service';
 import { ReadinessService } from '../health/readiness.service';
 import { MetaService } from '../meta/meta.service';
 import { NginxService } from './nginx/nginx.service';
 import { S3Service } from './s3/s3.service';
+import { ColorPathService } from './color-path.service';
 
 @Injectable()
 export class UpdateService implements OnApplicationBootstrap {
@@ -19,6 +20,7 @@ export class UpdateService implements OnApplicationBootstrap {
     private readonly config: ConfigService,
     private readonly readinessService: ReadinessService,
     private readonly metaService: MetaService,
+    private readonly colorPathService: ColorPathService,
   ) {
     this.dirBlack = path.join(
       this.config.nginxRootDir,
@@ -32,21 +34,36 @@ export class UpdateService implements OnApplicationBootstrap {
     this.readinessService.setReady();
   }
 
+  private async copyDir(src: string, dest: string) {
+    const entries = await fs.promises.readdir(src, { withFileTypes: true });
+    await fs.promises.mkdir(dest);
+
+    for (let entry of entries) {
+      const srcPath = path.join(src, entry.name);
+      const destPath = path.join(dest, entry.name);
+
+      if (entry.isDirectory()) {
+        await this.copyDir(srcPath, destPath);
+      } else {
+        await fs.promises.copyFile(srcPath, destPath);
+        const stat = await fs.promises.stat(srcPath);
+        await fs.promises.utimes(destPath, stat.atime, stat.mtime);
+      }
+    }
+  }
+
   public async perform(initialBuild: boolean = false) {
     try {
       const currentRoot = await this.nginxService.getActiveRootDir();
 
       if (!currentRoot.endsWith(this.config.nginxDirBlack)) {
+        Logger.debug(
+          `Replacing ${this.colorPathService.colorize(
+            this.dirBlack,
+          )} with ${this.colorPathService.colorize(this.dirRed)}`,
+        );
         await fs.promises.rm(this.dirBlack, { recursive: true });
-        await new Promise<void>((done) => {
-          ncp(this.dirRed, this.dirBlack, (err) => {
-            if (err) {
-              throw err;
-            } else {
-              done();
-            }
-          });
-        });
+        await this.copyDir(this.dirRed, this.dirBlack);
       }
 
       if (!initialBuild) {
@@ -55,7 +72,7 @@ export class UpdateService implements OnApplicationBootstrap {
 
       await fs.promises.rm(this.dirRed, { recursive: true });
       await fs.promises.mkdir(this.dirRed);
-      await this.s3service.download(this.dirRed);
+      await this.s3service.download(this.dirRed, this.dirBlack);
       Logger.debug('Download complete');
       const meta = await this.metaService.parse(this.dirRed);
       await this.nginxService.configure(meta);
