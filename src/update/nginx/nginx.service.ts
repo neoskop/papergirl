@@ -29,7 +29,9 @@ export class NginxService implements OnApplicationBootstrap {
   }
 
   public async configure(meta: Meta) {
-    Logger.debug(`Processing the following config: ${JSON.stringify(meta)}`);
+    Logger.debug(`Processing the following config:`);
+    console.dir(meta, { colors: true });
+
     await this.configureCache(meta);
     await this.configureSecurity(meta);
     await this.configureTrailingSlashBehaviour(meta);
