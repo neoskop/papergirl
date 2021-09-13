@@ -71,7 +71,7 @@ export class S3Service implements OnModuleInit {
           oldPath: path.join(oldDir, obj.name),
           name: obj.name,
           lastModified: obj.lastModified,
-          hash: obj.metadata.hash,
+          hash: obj.metadata?.hash,
         });
       });
       objectsStream.on('error', (err) => {
@@ -184,7 +184,7 @@ export class S3Service implements OnModuleInit {
   private async downloadIsNeeded(
     fullPath: string,
     lastModified: Date,
-    hash: string,
+    hash?: string,
   ): Promise<boolean> {
     try {
       await fs.promises.access(fullPath);
