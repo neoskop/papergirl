@@ -82,18 +82,18 @@ export class S3Service implements OnModuleInit {
           files,
           5,
           async (file) => {
-            if (file.name.endsWith('/')) {
+            if (!file.name.endsWith('/')) {
+              const baseDir = path.dirname(file.path);
               try {
-                await fs.promises.access(file.path);
+                await fs.promises.access(baseDir);
               } catch (error) {
                 Logger.debug(
                   `Creating directory ${this.colorPathService.colorize(
-                    file.path,
+                    baseDir,
                   )}`,
                 );
-                await fs.promises.mkdir(file.path);
+                await fs.promises.mkdir(baseDir, { recursive: true });
               }
-            } else {
               if (
                 await this.downloadIsNeeded(
                   file.oldPath,
