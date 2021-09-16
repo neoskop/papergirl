@@ -6,6 +6,7 @@ import * as path from 'path';
 import { ConfigService } from '../../config/config.service';
 import * as crypto from 'crypto';
 import { ColorPathService } from '../color-path.service';
+import chalk = require('chalk');
 
 @Injectable()
 export class S3Service implements OnModuleInit {
@@ -192,23 +193,26 @@ export class S3Service implements OnModuleInit {
       return true;
     }
 
+    let checkType: string;
+    let result: boolean;
+
     if (hash) {
       const localHash = await this.getHashOfLocalFile(fullPath);
-      Logger.debug(
-        `Comparing hashes for ${this.colorPathService.colorize(
-          fullPath,
-        )}: local: ${localHash}, remote: ${hash}`,
-      );
-      return localHash !== hash;
+      checkType = '#️⃣';
+      result = localHash !== hash;
+      return result;
     } else {
       const localLastModified = await this.getLastModifiedDateOfFile(fullPath);
-      Logger.debug(
-        `Comparing mtime for ${this.colorPathService.colorize(
-          fullPath,
-        )}: local: ${localLastModified}, remote: ${lastModified}`,
-      );
-      return lastModified.getTime() !== localLastModified.getTime();
+      checkType = '⏱ ';
+      result = lastModified.getTime() !== localLastModified.getTime();
     }
+
+    Logger.debug(
+      `Checking ${checkType} of ${this.colorPathService.colorize(fullPath)}: ${
+        result ? chalk.yellowBright('Stale') : chalk.blueBright('Up to date')
+      }`,
+    );
+    return result;
   }
 
   private async getLastModifiedDateOfFile(fullPath: string) {
