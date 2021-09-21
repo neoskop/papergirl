@@ -1,6 +1,6 @@
 # Papergirl
 
-A fault-tolerant delivery tier with S3
+A fault-tolerant delivery tier with S3 for Kubernetes
 
 ## Quickstart
 
