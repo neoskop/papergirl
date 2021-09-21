@@ -77,6 +77,8 @@ export class NginxService implements OnApplicationBootstrap {
         throw new Error(
           `Sending a signal to NGINX is not permitted - is it running with UID ${process.getuid()}?`,
         );
+      } else {
+        throw err;
       }
     }
   }
