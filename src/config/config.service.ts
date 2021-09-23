@@ -1,8 +1,10 @@
 import * as Joi from '@hapi/joi';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import * as dotenv from 'dotenv';
 import * as fs from 'fs';
 import { ClientOptions, Region } from 'minio';
+import * as chokidar from 'chokidar';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 export interface EnvConfig {
   [key: string]: string;
@@ -10,9 +12,24 @@ export interface EnvConfig {
 
 @Injectable()
 export class ConfigService {
-  private readonly envConfig: EnvConfig;
+  private envConfig: EnvConfig;
 
-  constructor(filePath: string) {
+  constructor(eventEmitter: EventEmitter2) {
+    const filePath = `config/${process.env.CONFIG || 'local'}.env`;
+    this.readConfigFile(filePath);
+    chokidar
+      .watch(filePath, { followSymlinks: true, atomic: true })
+      .on('change', () => {
+        try {
+          this.readConfigFile(filePath);
+          eventEmitter.emit('config.reloaded');
+        } catch (err) {
+          Logger.error(`Could not reload Papergirl config: ${err}`);
+        }
+      });
+  }
+
+  private readConfigFile(filePath: string) {
     const config = dotenv.parse(fs.readFileSync(filePath));
     this.envConfig = this.validateInput(config);
   }

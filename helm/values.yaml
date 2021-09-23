@@ -47,7 +47,7 @@ dnsmasq:
       cpu: 5m
       memory: 25Mi
 nginx:
-  image:
+  image: # this image is used for the fallback service as well
     repository: openresty/openresty
     tag: 1.19.9.1-buster
     pullPolicy: IfNotPresent

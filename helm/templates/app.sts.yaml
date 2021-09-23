@@ -110,8 +110,7 @@ spec:
               value: kubernetes
           volumeMounts:
             - name: config
-              mountPath: /home/papergirl/app/config/kubernetes.env
-              subPath: "kubernetes.env"
+              mountPath: /home/papergirl/app/config
             - name: website-cache
               mountPath: /home/papergirl/nginx
           {{- if .Values.develop }}

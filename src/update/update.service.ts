@@ -1,5 +1,4 @@
 import { Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
-import * as chalk from 'chalk';
 import * as fs from 'fs';
 import * as path from 'path';
 import { ConfigService } from '../config/config.service';
@@ -8,6 +7,8 @@ import { MetaService } from '../meta/meta.service';
 import { NginxService } from './nginx/nginx.service';
 import { S3Service } from './s3/s3.service';
 import { ColorPathService } from './color-path.service';
+import { OnEvent } from '@nestjs/event-emitter';
+import { ConfigReloadedEvent } from '../config/config-reloaded.event';
 
 @Injectable()
 export class UpdateService implements OnApplicationBootstrap {
@@ -32,6 +33,12 @@ export class UpdateService implements OnApplicationBootstrap {
   async onApplicationBootstrap() {
     await this.perform(true);
     this.readinessService.setReady();
+  }
+
+  @OnEvent('config.reloaded')
+  async onConfigReload(event: ConfigReloadedEvent) {
+    Logger.log('Perfoming an update since the service config was reloaded');
+    await this.perform();
   }
 
   private async copyDir(src: string, dest: string) {

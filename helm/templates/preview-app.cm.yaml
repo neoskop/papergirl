@@ -5,20 +5,8 @@ metadata:
   name: {{ include "papergirl.preview.name" . }}-config
 data:
   kubernetes.env: |
-    SERVICE_NAME={{ include "papergirl.preview.name" . }}
-    QUEUE_URI={{ include "papergirl.nats.url" . }}
-    QUEUE_SUBJECT=papergirl-preview
-    S3_ENDPOINT={{ include "papergirl.s3.endpoint" . }}
-    S3_USESSL={{ .Values.s3.ssl }}
-    S3_PORT={{ .Values.s3.port }}
-    S3_ACCESSKEY={{ .Values.s3.accesskey }}
-    S3_SECRETKEY={{ .Values.s3.secretkey }}
-    S3_BUCKETNAME={{ .Values.s3.buckets.previewName }}
-    NGINX_ROOT_DIR=/home/papergirl/nginx/www
-    NGINX_PID_PATH=/home/papergirl/nginx/pid/nginx.pid
-    NGINX_CONFIG_DIR=/home/papergirl/nginx/conf.d
-    NGINX_SITES_DIR=/home/papergirl/nginx/sites.d
-    NGINX_REDIRECTS_DIR=/home/papergirl/nginx/redirects.d
+    {{- $data := dict "s3BucketName" .Values.s3.buckets.previewName "s3Endpoint" (include "papergirl.s3.endpoint" .) "s3" .Values.s3 "name" (include "papergirl.preview.name" .) "queueUri" (include "papergirl.nats.url" .) "queueSubject" "papergirl-preview" "Template" .Template -}}
+    {{- tpl (.Files.Get "papergirl.env") $data | nindent 4 }}
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -26,39 +14,5 @@ metadata:
   name: {{ include "papergirl.preview.name" . }}-nginx-config
 data:
   nginx.conf: |
-    pid /home/papergirl/nginx/pid/nginx.pid;
-    worker_processes  auto;
-    error_log  /usr/local/openresty/nginx/logs/error.log warn;
-
-    events {
-        worker_connections  1024;
-    }
-
-    http {
-        client_body_temp_path /tmp/client_temp;
-        proxy_temp_path       /tmp/proxy_temp_path;
-        fastcgi_temp_path     /tmp/fastcgi_temp;
-        uwsgi_temp_path       /tmp/uwsgi_temp;
-        scgi_temp_path        /tmp/scgi_temp;
-        include       /usr/local/openresty/nginx/conf/mime.types;
-        default_type  application/octet-stream;
-        log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
-                        '$status $body_bytes_sent "$http_referer" '
-                        '"$http_user_agent" "$http_x_forwarded_for"';
-        access_log  /usr/local/openresty/nginx/logs/access.log  main;
-        sendfile        on;
-        keepalive_timeout  65;
-
-        map $http_accept $image_type {
-          default "jpeg";
-          "~*webp" "webp";
-        }
-
-        map $http_x_forwarded_proto $thescheme {
-            default $scheme;
-            https https;
-        } 
-
-        include /home/papergirl/nginx/sites.d/*.conf;
-    }
+{{- (.Files.Get "nginx.conf") | nindent 4 }}
 {{- end }}

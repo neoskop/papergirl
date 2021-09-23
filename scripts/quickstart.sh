@@ -79,15 +79,23 @@ if ! kubectl get ns minio-operator &>/dev/null ; then
     kubectl minio init
 fi
 
-while ! kubectl get crd | grep -o -i nats.io &>/dev/null ; do
-    echo "Waiting for NATS CRDs to be created by operator..."
-    sleep 1
-done
+if ! kubectl get crd | grep -o -i nats.io &>/dev/null ; then
+  echo -n "Waiting for NATS CRDs to be created by operator"
+  while ! kubectl get crd | grep -o -i nats.io &>/dev/null ; do
+      echo "."
+      sleep 1
+  done
+  echo
+fi
 
-while ! kubectl get crd tenants.minio.min.io &>/dev/null ; do
-    echo "Waiting for MinIO CRDs to be created by operator..."
-    sleep 1
-done
+if ! kubectl get crd tenants.minio.min.io &>/dev/null ; then
+  echo "Waiting for MinIO CRDs to be created by operator"
+  while ! kubectl get crd tenants.minio.min.io &>/dev/null ; do
+      echo "."
+      sleep 1
+  done
+  echo
+fi
 
 docker build --target development -t localhost:5000/papergirl:latest .
 docker push localhost:5000/papergirl:latest
