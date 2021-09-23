@@ -68,9 +68,9 @@ export class S3Service implements OnModuleInit {
       const files = [];
       objectsStream.on('data', (obj) => {
         files.push({
-          path: path.join(targetDir, obj.name),
-          oldPath: path.join(oldDir, obj.name),
-          name: obj.name,
+          path: path.join(targetDir, '' + obj.name),
+          oldPath: path.join(oldDir, '' + obj.name),
+          name: '' + obj.name,
           lastModified: obj.lastModified,
           hash: obj.metadata?.hash,
         });
