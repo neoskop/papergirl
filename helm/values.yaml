@@ -1,7 +1,7 @@
 develop: false
 image:
   repository: neoskop/papergirl
-  tag: 1.13.2
+  tag: 1.13.3
   pullPolicy: IfNotPresent
 websiteCache:
   storageClass: ''
