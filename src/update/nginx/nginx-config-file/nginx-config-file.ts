@@ -31,6 +31,6 @@ export class NginxConfigFile {
   }
 
   private getData(): string {
-    return this.lines.join('\n\n');
+    return this.lines.join('\n');
   }
 }

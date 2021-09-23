@@ -42,6 +42,8 @@ export class ConfigService {
       NGINX_DIR_RED: Joi.string().default('red'),
       NGINX_PID_PATH: Joi.string().required(),
       NGINX_CONFIG_DIR: Joi.string().required(),
+      NGINX_SITES_DIR: Joi.string().required(),
+      NGINX_REDIRECTS_DIR: Joi.string().required(),
     });
 
     const { error, value: validatedEnvConfig } =
@@ -109,6 +111,14 @@ export class ConfigService {
 
   get nginxConfigDir(): string {
     return this.envConfig.NGINX_CONFIG_DIR;
+  }
+
+  get nginxSitesDir(): string {
+    return this.envConfig.NGINX_SITES_DIR;
+  }
+
+  get nginxRedirectsDir(): string {
+    return this.envConfig.NGINX_REDIRECTS_DIR;
   }
 
   get nginxDirBlack(): string {

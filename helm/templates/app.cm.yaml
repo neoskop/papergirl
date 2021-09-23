@@ -15,6 +15,8 @@ data:
     NGINX_ROOT_DIR=/home/papergirl/nginx/www
     NGINX_PID_PATH=/home/papergirl/nginx/pid/nginx.pid
     NGINX_CONFIG_DIR=/home/papergirl/nginx/conf.d
+    NGINX_SITES_DIR=/home/papergirl/nginx/sites.d
+    NGINX_REDIRECTS_DIR=/home/papergirl/nginx/redirects.d
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -55,29 +57,5 @@ data:
             https https;
         }   
 
-        include /etc/nginx/conf.d/*.conf;
-    }
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ include "papergirl.fullname" . }}-nginx-config-snippets
-data:
-  papergirl.conf: |
-    server {
-      listen       8081;
-      server_name  _;
-      port_in_redirect off;
-      server_name_in_redirect off;
-      error_page 500 502 503 504 /50x.html;
-
-      location / {
-          try_files $uri $uri/index.html $uri/index.htm =404;
-      }
-
-      include /home/papergirl/nginx/conf.d/*.conf;
-      
-      location = /50x.html {
-          root   /usr/share/nginx/html;
-      }
+        include /home/papergirl/nginx/sites.d/*.conf;
     }

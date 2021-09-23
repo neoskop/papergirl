@@ -1,3 +1,6 @@
+import { Redirect } from './redirect.interface';
+import { Site } from './site.interface';
+
 export interface Meta {
   imageProcessing?: {
     enabled: boolean;
@@ -13,10 +16,9 @@ export interface Meta {
     hideVersion?: boolean;
   };
   removeTrailingSlash?: boolean;
-  redirects?: {
-    from: string;
-    to: string;
-    regex?: boolean;
-    code?: '301' | '302' | '307';
-  }[];
+  redirects?: Redirect[];
+  multisite?: {
+    enabled: boolean;
+    sites?: Site[];
+  };
 }

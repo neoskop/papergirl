@@ -12,6 +12,7 @@ import { ImageProcessingConfigListener } from './nginx/listeners/image-processin
 import { RedirectsConfigListener } from './nginx/listeners/redirects-config.listener';
 import { SecurityConfigListener } from './nginx/listeners/security-config.listener';
 import { TrailingSlashConfigListener } from './nginx/listeners/trailing-slash-config.listener';
+import { MultisiteConfigListener } from './nginx/listeners/multisite-config-listener';
 
 @Module({
   providers: [
@@ -24,6 +25,7 @@ import { TrailingSlashConfigListener } from './nginx/listeners/trailing-slash-co
     RedirectsConfigListener,
     SecurityConfigListener,
     TrailingSlashConfigListener,
+    MultisiteConfigListener,
   ],
   imports: [
     ConfigModule,

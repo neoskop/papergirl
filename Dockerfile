@@ -4,6 +4,8 @@ USER www-data
 WORKDIR /home/papergirl
 RUN mkdir -p nginx/pid && \
     mkdir -p nginx/conf.d && \
+    mkdir -p nginx/sites.d && \
+    mkdir -p nginx/redirects.d && \
     mkdir -p nginx/www/black && \
     mkdir -p nginx/www/red && \
     echo "root /home/papergirl/nginx/www/black;" > /home/papergirl/nginx/conf.d/root.conf && \

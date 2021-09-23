@@ -1,4 +1,3 @@
-import { Logger } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { join } from 'path';
 import { ConfigService } from '../../../config/config.service';

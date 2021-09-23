@@ -33,7 +33,7 @@ export class NginxService implements OnApplicationBootstrap {
 
   public async configure(meta: Meta) {
     Logger.debug(`Processing the following config:`);
-    console.dir(meta, { colors: true });
+    console.dir(meta, { colors: true, depth: 4 });
     await this.eventEmitter.emitAsync('config.read', new ConfigReadEvent(meta));
   }
 
