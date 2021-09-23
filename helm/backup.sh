@@ -1,5 +1,4 @@
-#!/bin/ash
-set -e
+#!/bin/bash
 
 bold() {
   local BOLD='\033[1m'
@@ -25,6 +24,15 @@ warn() {
   printf "[${ORANGE}WARN${NC}] $@\n"
 }
 
+silent_exec() {
+  output=`$@`
+
+  if [ $? -gt 0 ] ; then
+    error "The command $(bold $@) failed: $output"
+    exit 1
+  fi
+}
+
 setup_bucket() {
   if ! mc ls s3 | grep -q $1 ; then
       info "Creating bucket $(bold $1)"
@@ -40,17 +48,21 @@ backup_bucket() {
   TEMP_DIR=$(mktemp -d)
   info "Created temporary directory $(bold $TEMP_DIR)"
   info "Mirroring bucket $(bold $1) to $(bold $TEMP_DIR)"
-  mc mirror s3/$1 $TEMP_DIR &>/dev/null
-  info "Deleting contents of bucket $(bold $2)"
-  mc rm --recursive --force s3/$2 &>/dev/null
+  silent_exec mc mirror s3/$1 $TEMP_DIR
+
+  if [ `mc ls s3/$2 | wc -l` -gt 1 ]; then
+    info "Deleting contents of bucket $(bold $2)"
+    silent_exec mc rm --recursive --force s3/$2
+  fi
+
   info "Mirroring $(bold $TEMP_DIR) to $(bold $2)"
-  mc mirror $TEMP_DIR s3/$2 &>/dev/null
+  silent_exec mc mirror $TEMP_DIR s3/$2
   info "Deleting temporary directory $(bold $TEMP_DIR)"
   rm -rf $TEMP_DIR
 }
 
 info "Setting up config in $(bold '~/.mc/config.json')"
-mc config host add s3 http://{{ include "papergirl.s3.endpoint" . }}:9000 {{ .Values.s3.accesskey }} {{ .Values.s3.secretkey }} &>/dev/null
+silent_exec mc config host add s3 http://{{ include "papergirl.s3.endpoint" . }}:9000 {{ .Values.s3.accesskey }} {{ .Values.s3.secretkey }}
 backup_bucket {{ .Values.s3.buckets.name }} {{ .Values.s3.buckets.backupName }}
 {{ if .Values.papergirlPreview.enabled -}}
 backup_bucket {{ .Values.s3.buckets.previewName }} {{ .Values.s3.buckets.previewBackupName }}

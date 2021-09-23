@@ -17,7 +17,8 @@ spec:
             command: [/usr/local/bin/backup.sh]
             volumeMounts:
             - name: backup-script
-              mountPath: /usr/local/bin
+              mountPath: /usr/local/bin/backup.sh
+              subPath: backup.sh
           restartPolicy: OnFailure
           volumes:
             - name: backup-script
