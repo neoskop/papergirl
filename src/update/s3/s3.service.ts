@@ -229,11 +229,19 @@ export class S3Service implements OnModuleInit {
       await this.s3Client.fGetObject(this.config.s3BucketName, name, fullPath);
       await fs.promises.utimes(fullPath, lastModified, lastModified);
     } catch (err) {
-      throw new Error(
-        `Downloading of ${this.colorPathService.colorize(
-          fullPath,
-        )} failed: ${err}`,
-      );
+      if (err.message.matches(/Not Found/i)) {
+        Logger.warn(
+          `Couldn't download ${this.colorPathService.colorize(
+            fullPath,
+          )} since it does not exist (anymore?!)`,
+        );
+      } else {
+        throw new Error(
+          `Downloading of ${this.colorPathService.colorize(
+            fullPath,
+          )} failed: ${err}`,
+        );
+      }
     }
   }
 }
