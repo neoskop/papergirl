@@ -229,7 +229,7 @@ export class S3Service implements OnModuleInit {
       await this.s3Client.fGetObject(this.config.s3BucketName, name, fullPath);
       await fs.promises.utimes(fullPath, lastModified, lastModified);
     } catch (err) {
-      if (err.message.matches(/Not Found/i)) {
+      if (err.message?.match(/Not Found/i)) {
         Logger.warn(
           `Couldn't download ${this.colorPathService.colorize(
             fullPath,
