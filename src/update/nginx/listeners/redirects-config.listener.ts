@@ -41,6 +41,9 @@ export class RedirectsConfigListener {
   }
 
   private async clearRedirectsDirectory() {
+    await new NginxConfigFile(
+      join(this.config.nginxConfigDir, 'redirects.conf'),
+    ).delete();
     const files = await fs.promises.readdir(this.config.nginxRedirectsDir);
 
     for (const file of files) {
