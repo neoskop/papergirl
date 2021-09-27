@@ -87,8 +87,6 @@ export class S3Service implements OnModuleInit {
         reject(`Listing files failed: ${err}`);
       });
       objectsStream.on('end', () => {
-        Logger.debug(`Recevied files:`);
-        console.dir(files, { colors: true, depth: 4 });
         eachLimit(files, 5, this.processFile.bind(this), (err) => {
           if (err) {
             reject(err);
