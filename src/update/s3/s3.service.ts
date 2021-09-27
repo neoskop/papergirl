@@ -8,6 +8,14 @@ import * as crypto from 'crypto';
 import { ColorPathService } from '../color-path.service';
 import chalk = require('chalk');
 
+type FileMeta = {
+  path: string;
+  oldPath: string;
+  name: string;
+  lastModified: Date;
+  etag?: string;
+};
+
 @Injectable()
 export class S3Service implements OnModuleInit {
   private s3Client: Client;
@@ -58,70 +66,59 @@ export class S3Service implements OnModuleInit {
     }
 
     Logger.debug('Start download of files');
-    const objectsStream = this.s3Client.extensions.listObjectsV2WithMetadata(
+    const objectsStream = this.s3Client.listObjectsV2(
       this.config.s3BucketName,
       '',
       true,
       '',
     );
     return new Promise((resolve, reject) => {
-      const files = [];
+      const files: FileMeta[] = [];
       objectsStream.on('data', (obj) => {
         files.push({
           path: path.join(targetDir, '' + obj.name),
           oldPath: path.join(oldDir, '' + obj.name),
           name: '' + obj.name,
           lastModified: obj.lastModified,
-          hash: obj.metadata?.hash,
+          etag: obj.etag,
         });
       });
       objectsStream.on('error', (err) => {
         reject(`Listing files failed: ${err}`);
       });
       objectsStream.on('end', () => {
-        eachLimit(
-          files,
-          5,
-          async (file) => {
-            if (!file.name.endsWith('/')) {
-              const baseDir = path.dirname(file.path);
-              try {
-                await fs.promises.access(baseDir);
-              } catch (error) {
-                Logger.debug(
-                  `Creating directory ${this.colorPathService.colorize(
-                    baseDir,
-                  )}`,
-                );
-                await fs.promises.mkdir(baseDir, { recursive: true });
-              }
-              if (
-                await this.downloadIsNeeded(
-                  file.oldPath,
-                  file.lastModified,
-                  file.hash,
-                )
-              ) {
-                await this.downloadFile(
-                  file.path,
-                  file.name,
-                  file.lastModified,
-                );
-              } else {
-                await this.takeOldFile(file.oldPath, file.path);
-              }
-            }
-          },
-          (err) => {
-            if (err) {
-              reject(err);
-            } else {
-              resolve();
-            }
-          },
-        );
+        Logger.debug(`Recevied files:`);
+        console.dir(files, { colors: true, depth: 4 });
+        eachLimit(files, 5, this.processFile.bind(this), (err) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve();
+          }
+        });
       });
     });
+  }
+
+  private async processFile(file: FileMeta) {
+    if (!file.name.endsWith('/')) {
+      const baseDir = path.dirname(file.path);
+      try {
+        await fs.promises.access(baseDir);
+      } catch (error) {
+        Logger.debug(
+          `Creating directory ${this.colorPathService.colorize(baseDir)}`,
+        );
+        await fs.promises.mkdir(baseDir, { recursive: true });
+      }
+      if (
+        await this.downloadIsNeeded(file.oldPath, file.lastModified, file.etag)
+      ) {
+        await this.downloadFile(file.path, file.name, file.lastModified);
+      } else {
+        await this.takeOldFile(file.oldPath, file.path);
+      }
+    }
   }
 
   private async takeOldFile(src: string, target: string) {
@@ -168,7 +165,7 @@ export class S3Service implements OnModuleInit {
 
   private async getHashOfLocalFile(file: string): Promise<string> {
     return new Promise((resolve) => {
-      const hash = crypto.createHash('sha256');
+      const hash = crypto.createHash('md5');
       hash.setEncoding('hex');
       const input = fs.createReadStream(file);
 
@@ -185,7 +182,7 @@ export class S3Service implements OnModuleInit {
   private async downloadIsNeeded(
     fullPath: string,
     lastModified: Date,
-    hash?: string,
+    hash: string | undefined,
   ): Promise<boolean> {
     try {
       await fs.promises.access(fullPath);
@@ -196,11 +193,10 @@ export class S3Service implements OnModuleInit {
     let checkType: string;
     let result: boolean;
 
-    if (hash) {
+    if (hash !== undefined && hash.length > 0) {
       const localHash = await this.getHashOfLocalFile(fullPath);
-      checkType = '#️⃣';
+      checkType = '#️⃣ ';
       result = localHash !== hash;
-      return result;
     } else {
       const localLastModified = await this.getLastModifiedDateOfFile(fullPath);
       checkType = '⏱ ';
