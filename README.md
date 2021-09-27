@@ -116,5 +116,5 @@ In case an errornous version of a website is built or that the main bucket becom
 
 ```bash
 $ kubectl patch cm/papergirl-config --type merge  -p \
-  "{\"data\":{\"kubernetes.env\":\"$(kubectl get cm/papergirl-config -oyaml | yq e .data[] - | sed 's/S3_BUCKETNAME=.*/S3_BUCKETNAME=papergirl-backup/')\"}}"
+  "{\"data\":{\"kubernetes.env\":\"$(kubectl get cm/papergirl-config -oyaml | yq e .data[] - | sed 's/S3_BUCKETNAME=.*/S3_BUCKETNAME=papergirl-backup/' | sed -z 's/\n/\\n/g')\"}}"
 ```
