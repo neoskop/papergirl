@@ -109,3 +109,12 @@ If `multisite.enabled` is set to `true` (per default it is set to `false`), mult
 | `name`      | A shortname to reference in redirects and which is the root folder name | `string`   | -       |
 | `hostnames` | The list of hostnames for which the site serves content                 | `string[]` | -       |
 | `default`   | When `true` the site is the fallback in case of an unknown hostname     | `boolean`  | `false` |
+
+## Recovery
+
+In case an errornous version of a website is built or that the main bucket becomes unusable for some reason, you can manually switch to the backed up version of the website by changing the source bucket in the Papergirl config e.g.:
+
+```bash
+$ kubectl patch cm/papergirl-config --type merge  -p \
+  "{\"data\":{\"kubernetes.env\":\"$(kubectl get cm/papergirl-config -oyaml | yq e .data[] - | sed 's/S3_BUCKETNAME=.*/S3_BUCKETNAME=papergirl-backup/')\"}}"
+```
