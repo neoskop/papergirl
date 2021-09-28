@@ -2,9 +2,9 @@ import * as Joi from '@hapi/joi';
 import { Injectable, Logger } from '@nestjs/common';
 import * as dotenv from 'dotenv';
 import * as fs from 'fs';
-import { ClientOptions, Region } from 'minio';
 import * as chokidar from 'chokidar';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { S3ClientConfig } from '@aws-sdk/client-s3';
 
 export interface EnvConfig {
   [key: string]: string;
@@ -54,6 +54,7 @@ export class ConfigService {
       S3_ACCESSKEY: Joi.string().required(),
       S3_SECRETKEY: Joi.string().required(),
       S3_BUCKETNAME: Joi.string().default('papergirl'),
+      CONCURRENCY: Joi.string().default(10),
       NGINX_ROOT_DIR: Joi.string().required(),
       NGINX_DIR_BLACK: Joi.string().default('black'),
       NGINX_DIR_RED: Joi.string().default('red'),
@@ -83,23 +84,38 @@ export class ConfigService {
     return this.envConfig.QUEUE_SUBJECT;
   }
 
-  get s3ClientOptions(): ClientOptions {
+  get s3ClientOptions(): S3ClientConfig {
     return {
-      endPoint: this.envConfig.S3_ENDPOINT,
+      credentials: {
+        accessKeyId: this.envConfig.S3_ACCESSKEY,
+        secretAccessKey: this.envConfig.S3_SECRETKEY,
+      },
+      endpoint: `${Boolean(this.envConfig.S3_USESSL) ? 'https' : 'http'}://${
+        this.envConfig.S3_ENDPOINT
+      }:${this.envConfig.S3_PORT}`,
       region: this.envConfig.S3_REGION,
-      port: Number(this.envConfig.S3_PORT),
-      useSSL: Boolean(this.envConfig.S3_USESSL),
-      accessKey: this.envConfig.S3_ACCESSKEY,
-      secretKey: this.envConfig.S3_SECRETKEY,
+      tls: Boolean(this.envConfig.S3_USESSL),
     };
   }
 
-  get s3Region(): Region {
+  get s3AccessKey(): string {
+    return this.envConfig.S3_ACCESSKEY;
+  }
+
+  get S3SecretKey(): string {
+    return this.envConfig.S3_SECRETKEY;
+  }
+
+  get s3Region(): string {
     return this.envConfig.S3_REGION;
   }
 
   get s3BucketName(): string {
     return this.envConfig.S3_BUCKETNAME;
+  }
+
+  get concurrency(): number {
+    return Number(this.envConfig.CONCURRENCY);
   }
 
   get enableShutdownHooks(): boolean {

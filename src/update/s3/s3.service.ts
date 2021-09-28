@@ -1,12 +1,18 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { eachLimit } from 'async';
 import * as fs from 'fs';
-import { Client } from 'minio';
+import {
+  paginateListObjectsV2,
+  S3Client,
+  S3,
+  _Object,
+} from '@aws-sdk/client-s3';
 import * as path from 'path';
 import { ConfigService } from '../../config/config.service';
 import * as crypto from 'crypto';
 import { ColorPathService } from '../color-path.service';
 import chalk = require('chalk');
+import { pipeline } from 'stream/promises';
 
 type FileMeta = {
   path: string;
@@ -18,24 +24,29 @@ type FileMeta = {
 
 @Injectable()
 export class S3Service implements OnModuleInit {
-  private s3Client: Client;
+  private s3Client: S3Client;
+  private s3: S3;
 
   constructor(
     private readonly config: ConfigService,
     private readonly colorPathService: ColorPathService,
   ) {
-    this.s3Client = new Client(this.config.s3ClientOptions);
+    this.s3Client = new S3Client(this.config.s3ClientOptions);
+    this.s3 = new S3(this.config.s3ClientOptions);
+  }
+  private async bucketExists(): Promise<boolean> {
+    return (
+      (await this.s3.listBuckets({})).Buckets.find(
+        (bucket) => bucket.Name === this.config.s3BucketName,
+      ) !== null
+    );
   }
 
   public async onModuleInit() {
-    if (!(await this.s3Client.bucketExists(this.config.s3BucketName))) {
+    if (!(await this.bucketExists())) {
       Logger.debug(`Creating bucket '${this.config.s3BucketName}'`);
-
       try {
-        await this.s3Client.makeBucket(
-          this.config.s3BucketName,
-          this.config.s3Region,
-        );
+        await this.s3.createBucket({ Bucket: this.config.s3BucketName });
       } catch (err) {
         Logger.error(
           `Creation of bucket '${this.config.s3BucketName}' failed: ${err.message}`,
@@ -58,44 +69,55 @@ export class S3Service implements OnModuleInit {
     return true;
   }
 
+  private async getAllS3Files(
+    targetDir: string,
+    oldDir: string,
+  ): Promise<FileMeta[]> {
+    const result = [];
+    for await (const data of paginateListObjectsV2(
+      { client: this.s3Client },
+      { Bucket: this.config.s3BucketName },
+    )) {
+      result.push(
+        ...(data.Contents ?? []).map((obj) => ({
+          path: path.join(targetDir, '' + obj.Key),
+          oldPath: path.join(oldDir, '' + obj.Key),
+          name: '' + obj.Key,
+          lastModified: obj.LastModified,
+          etag: obj.ETag.replace(/['"]+/g, ''),
+        })),
+      );
+    }
+    return result;
+  }
+
   public async download(targetDir: string, oldDir: string): Promise<void> {
     await this.checkTargetDirectoryExists(targetDir);
 
-    if (!(await this.s3Client.bucketExists(this.config.s3BucketName))) {
+    if (!(await this.bucketExists())) {
       throw new Error(`Bucket ${this.config.s3BucketName} does not exist.`);
     }
 
     Logger.debug('Start download of files');
-    const objectsStream = this.s3Client.listObjectsV2(
-      this.config.s3BucketName,
-      '',
-      true,
-      '',
-    );
-    return new Promise((resolve, reject) => {
-      const files: FileMeta[] = [];
-      objectsStream.on('data', (obj) => {
-        files.push({
-          path: path.join(targetDir, '' + obj.name),
-          oldPath: path.join(oldDir, '' + obj.name),
-          name: '' + obj.name,
-          lastModified: obj.lastModified,
-          etag: obj.etag,
-        });
-      });
-      objectsStream.on('error', (err) => {
-        reject(`Listing files failed: ${err}`);
-      });
-      objectsStream.on('end', () => {
-        eachLimit(files, 5, this.processFile.bind(this), (err) => {
+    var startTime = process.hrtime();
+    const files = await this.getAllS3Files(targetDir, oldDir);
+    await new Promise<void>((resolve, reject) => {
+      eachLimit(
+        files,
+        this.config.concurrency,
+        this.processFile.bind(this),
+        (err) => {
           if (err) {
             reject(err);
           } else {
             resolve();
           }
-        });
-      });
+        },
+      );
     });
+    const hrtime = process.hrtime(startTime);
+    var elapsedSeconds = (hrtime[0] + hrtime[1] / 1e9).toFixed(3);
+    Logger.debug(`Download complete after ${chalk.bold(elapsedSeconds)}s`);
   }
 
   private async processFile(file: FileMeta) {
@@ -220,7 +242,14 @@ export class S3Service implements OnModuleInit {
   ) {
     Logger.debug(`Downloading ${this.colorPathService.colorize(fullPath)}`);
     try {
-      await this.s3Client.fGetObject(this.config.s3BucketName, name, fullPath);
+      const data = await this.s3.getObject({
+        Bucket: this.config.s3BucketName,
+        Key: name,
+      });
+      const destination = fs.createWriteStream(fullPath);
+      // @ts-ignore
+      const source: Readable | Blob = data.Body;
+      await pipeline(source, destination);
       await fs.promises.utimes(fullPath, lastModified, lastModified);
     } catch (err) {
       if (err.message?.match(/Not Found/i)) {

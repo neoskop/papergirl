@@ -8,7 +8,7 @@ websiteCache:
   size: 1Gi
 resources:
   limits:
-    memory: 128Mi
+    memory: 256Mi
   requests:
     cpu: 150m
     memory: 128Mi
