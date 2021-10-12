@@ -1,4 +1,4 @@
-FROM node:16.10.0-buster-slim as base
+FROM node:16.11.0-buster-slim as base
 RUN mkdir -p /home/papergirl && chown www-data:www-data /home/papergirl
 USER www-data
 WORKDIR /home/papergirl

@@ -17,7 +17,7 @@ services:
       - ./nginx/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf:ro,delegated
       - ./nginx/conf.d:/etc/nginx/conf.d:ro,delegated
   s3:
-    image: minio/minio:RELEASE.2021-09-24T00-24-24Z
+    image: minio/minio:RELEASE.2021-10-10T16-53-30Z
     command: server /data
     environment:
       MINIO_ACCESS_KEY: minio
