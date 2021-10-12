@@ -84,6 +84,7 @@ s3:
   endpoint: null
   port: 9000
   ssl: false
+  forcePathStyle: true # needed for MinIO
   accesskey: minio
   secretkey: minio123
   buckets:

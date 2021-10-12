@@ -54,6 +54,7 @@ export class ConfigService {
       S3_ACCESSKEY: Joi.string().required(),
       S3_SECRETKEY: Joi.string().required(),
       S3_BUCKETNAME: Joi.string().default('papergirl'),
+      S3_FORCE_PATH_STYLE: Joi.boolean().default(true),
       CONCURRENCY: Joi.string().default(10),
       NGINX_ROOT_DIR: Joi.string().required(),
       NGINX_DIR_BLACK: Joi.string().default('black'),
@@ -95,6 +96,7 @@ export class ConfigService {
       }:${this.envConfig.S3_PORT}`,
       region: this.envConfig.S3_REGION,
       tls: Boolean(this.envConfig.S3_USESSL),
+      forcePathStyle: Boolean(this.envConfig.S3_FORCE_PATH_STYLE),
     };
   }
 
