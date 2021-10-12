@@ -149,7 +149,7 @@ spec:
             - --listen
             - "127.0.0.1:53"
             - --default-resolver
-            - --append-search-domains
+            - --enable-search
             - --hostsfile=/etc/hosts
           resources:
             {{- toYaml .Values.dnsmasq.resources | nindent 12 }}
