@@ -1,12 +1,7 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { eachLimit } from 'async';
 import * as fs from 'fs';
-import {
-  paginateListObjectsV2,
-  S3Client,
-  S3,
-  _Object,
-} from '@aws-sdk/client-s3';
+import { paginateListObjectsV2, S3Client, S3 } from '@aws-sdk/client-s3';
 import * as path from 'path';
 import { ConfigService } from '../../config/config.service';
 import * as crypto from 'crypto';
@@ -35,10 +30,10 @@ export class S3Service implements OnModuleInit {
     this.s3 = new S3(this.config.s3ClientOptions);
   }
   private async bucketExists(): Promise<boolean> {
+    const buckets = (await this.s3.listBuckets({})).Buckets;
     return (
-      (await this.s3.listBuckets({})).Buckets.find(
-        (bucket) => bucket.Name === this.config.s3BucketName,
-      ) !== null
+      buckets.find((bucket) => bucket.Name === this.config.s3BucketName) !==
+      undefined
     );
   }
 
