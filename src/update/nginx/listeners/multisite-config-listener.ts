@@ -52,13 +52,14 @@ export class MultisiteConfigListener {
       port_in_redirect off;
       server_name_in_redirect off;
       error_page 500 502 503 504 /50x.html;
+      error_page 404 /404/index.html
+
+      include ${this.config.nginxConfigDir}/*.conf;
+      include ${this.config.nginxRedirectsDir}/${site.name}.conf;
 
       location / {
-          try_files ${prefix}$uri ${prefix}$uri/index.html ${prefix}$uri/index.htm =404;
+          try_files ${prefix}$uri ${prefix}$uri.html ${prefix}$uri/index.html ${prefix}$uri/index.htm =404;
       }
-
-      include ${this.config.nginxRedirectsDir}/${site.name}.conf;
-      include ${this.config.nginxConfigDir}/*.conf;
       
       location = /50x.html {
           root   /usr/share/nginx/html;
