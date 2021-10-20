@@ -52,7 +52,7 @@ export class MultisiteConfigListener {
       port_in_redirect off;
       server_name_in_redirect off;
       error_page 500 502 503 504 /50x.html;
-      error_page 404 /404/index.html
+      error_page 404 /404/index.html;
 
       include ${this.config.nginxConfigDir}/*.conf;
       include ${this.config.nginxRedirectsDir}/${site.name}.conf;
