@@ -110,7 +110,7 @@ minio:
       pullPolicy: IfNotPresent
   image:
     repository: minio/minio
-    tag: RELEASE.2021-10-10T16-53-30Z
+    tag: RELEASE.2021-10-13T00-23-17Z
     pullPolicy: IfNotPresent
   resources:
     limits:
@@ -144,7 +144,7 @@ nats:
   createCluster: true
   url: null
   size: 3
-  version: 2.6.1
+  version: 2.6.2
 imagePullSecret: {}
 nameOverride: ''
 fullnameOverride: ''
