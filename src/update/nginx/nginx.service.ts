@@ -46,7 +46,7 @@ export class NginxService implements OnApplicationBootstrap {
   }
 
   public async switchRootDir(dir: string) {
-    this.currentRootPath = join(this.config.nginxRootDir, dir);
+    this.currentRootPath = dir;
     await this.eventEmitter.emitAsync(
       'root.changed',
       new RootChangedEvent(this.currentRootPath),
