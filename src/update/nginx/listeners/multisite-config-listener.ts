@@ -6,6 +6,7 @@ import { ConfigReadEvent } from '../events/config-read.event';
 import { NginxConfigFile } from '../nginx-config-file/nginx-config-file';
 import * as fs from 'fs';
 import { Site } from 'src/meta/site.interface';
+import { RootChangedEvent } from '../events/root-changed.event';
 
 @Injectable()
 export class MultisiteConfigListener {
@@ -18,15 +19,44 @@ export class MultisiteConfigListener {
     if (event.meta.multisite?.enabled) {
       await Promise.all(
         event.meta.multisite.sites.map((site) =>
-          this.writeSiteConfig(site, `/${site.name}/`),
+          this.writeSiteConfig(event.rootPath, site, `/${site.name}/`),
         ),
       );
     } else {
-      await this.writeSiteConfig({
+      await this.writeSiteConfig(event.rootPath, {
         name: 'default',
         hostnames: ['_'],
         default: true,
       });
+    }
+  }
+
+  @OnEvent('root.changed')
+  async handleRootChange(event: RootChangedEvent) {
+    const files = await fs.promises.readdir(this.config.nginxSitesDir);
+
+    for (const file of files) {
+      const config = await fs.promises.readFile(
+        join(this.config.nginxSitesDir, file),
+        'utf8',
+      );
+      var result = config.replace(
+        new RegExp(
+          `(?<=root )(${join(
+            this.config.nginxRootDir,
+            this.config.nginxDirBlack,
+          ).replace('/', '//')}|${join(
+            this.config.nginxRootDir,
+            this.config.nginxDirRed,
+          ).replace('/', '//')})(?=.*;)`,
+        ),
+        `root ${event.rootPath}`,
+      );
+      await fs.promises.writeFile(
+        join(this.config.nginxSitesDir, file),
+        result,
+        'utf8',
+      );
     }
   }
 
@@ -38,14 +68,18 @@ export class MultisiteConfigListener {
     }
   }
 
-  private async writeSiteConfig(site: Site, prefix: string = '') {
+  private async writeSiteConfig(
+    rootPath: string,
+    site: Site,
+    prefix: string = '',
+  ) {
     const configFilePath = join(this.config.nginxSitesDir, `${site.name}.conf`);
     const configFile = new NginxConfigFile(configFilePath);
-    configFile.addLines(this.getSiteConfig(site, prefix));
+    configFile.addLines(this.getSiteConfig(rootPath, site, prefix));
     await configFile.write();
   }
 
-  private getSiteConfig(site: Site, prefix: string): string {
+  private getSiteConfig(rootPath: string, site: Site, prefix: string): string {
     return `server {
       listen       8081${site.default ? ' default_server' : ''};
       server_name  ${site.hostnames.join(' ')};
@@ -53,12 +87,13 @@ export class MultisiteConfigListener {
       server_name_in_redirect off;
       error_page 500 502 503 504 /50x.html;
       error_page 404 /404/index.html;
+      root ${rootPath}${prefix};
 
       include ${this.config.nginxConfigDir}/*.conf;
       include ${this.config.nginxRedirectsDir}/${site.name}.conf;
 
       location / {
-          try_files ${prefix}$uri ${prefix}$uri.html ${prefix}$uri/index.html ${prefix}$uri/index.htm =404;
+          try_files $uri $uri.html $uri/index.html $uri/index.htm =404;
       }
       
       location = /50x.html {

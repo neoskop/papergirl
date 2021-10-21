@@ -5,15 +5,20 @@ import { ConfigService } from '../../config/config.service';
 import { Meta } from '../../meta/meta.interface';
 import { ColorPathService } from '../color-path.service';
 import { EventEmitter2 } from 'eventemitter2';
+import { RootChangedEvent } from './events/root-changed.event';
 import { ConfigReadEvent } from './events/config-read.event';
 
 @Injectable()
 export class NginxService implements OnApplicationBootstrap {
+  public currentRootPath: string;
+
   constructor(
     private config: ConfigService,
     private readonly colorPathService: ColorPathService,
     private eventEmitter: EventEmitter2,
-  ) {}
+  ) {
+    this.currentRootPath = join(this.config.nginxRootDir, config.nginxDirBlack);
+  }
 
   public async onApplicationBootstrap() {
     try {
@@ -34,36 +39,23 @@ export class NginxService implements OnApplicationBootstrap {
   public async configure(meta: Meta) {
     Logger.debug(`Processing the following config:`);
     console.dir(meta, { colors: true, depth: 4 });
-    await this.eventEmitter.emitAsync('config.read', new ConfigReadEvent(meta));
-  }
-
-  public async getActiveRootDir(): Promise<string> {
-    const configFilePath = join(this.config.nginxConfigDir, 'root.conf');
-    const configFileContents = (
-      await fs.promises.readFile(configFilePath)
-    ).toString();
-    const match = /root (.+?);/.exec(configFileContents);
-
-    if (!match) {
-      throw new Error(
-        `Root path is not correctly specified in ${configFilePath}`,
-      );
-    }
-
-    Logger.debug(
-      `Active root dir of NGINX is ${this.colorPathService.colorize(match[1])}`,
+    await this.eventEmitter.emitAsync(
+      'config.read',
+      new ConfigReadEvent(meta, this.currentRootPath),
     );
-    return match[1];
   }
 
-  public async switchRootDir(path: string) {
-    await fs.promises.writeFile(
-      join(this.config.nginxConfigDir, 'root.conf'),
-      `root ${path};`,
+  public async switchRootDir(dir: string) {
+    this.currentRootPath = join(this.config.nginxRootDir, dir);
+    await this.eventEmitter.emitAsync(
+      'root.changed',
+      new RootChangedEvent(this.currentRootPath),
     );
     await this.reload();
     Logger.debug(
-      `Switched NGINX root dir to ${this.colorPathService.colorize(path)}`,
+      `Switched NGINX root dir base path to ${this.colorPathService.colorize(
+        dir,
+      )}`,
     );
   }
 

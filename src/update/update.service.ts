@@ -61,9 +61,9 @@ export class UpdateService implements OnApplicationBootstrap {
 
   public async perform(initialBuild: boolean = false) {
     try {
-      const currentRoot = await this.nginxService.getActiveRootDir();
-
-      if (!currentRoot.endsWith(this.config.nginxDirBlack)) {
+      if (
+        !this.nginxService.currentRootPath.endsWith(this.config.nginxDirBlack)
+      ) {
         Logger.debug(
           `Replacing ${this.colorPathService.colorize(
             this.dirBlack,
