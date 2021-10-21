@@ -61,9 +61,7 @@ export class UpdateService implements OnApplicationBootstrap {
 
   public async perform(initialBuild: boolean = false) {
     try {
-      if (
-        !this.nginxService.currentRootPath.endsWith(this.config.nginxDirBlack)
-      ) {
+      if (!initialBuild) {
         Logger.debug(
           `Replacing ${this.colorPathService.colorize(
             this.dirBlack,
@@ -71,9 +69,6 @@ export class UpdateService implements OnApplicationBootstrap {
         );
         await fs.promises.rm(this.dirBlack, { recursive: true });
         await this.copyDir(this.dirRed, this.dirBlack);
-      }
-
-      if (!initialBuild) {
         await this.nginxService.switchRootDir(this.dirBlack);
       }
 

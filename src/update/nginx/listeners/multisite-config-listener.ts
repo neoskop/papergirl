@@ -45,12 +45,12 @@ export class MultisiteConfigListener {
           `(?<=root )(${join(
             this.config.nginxRootDir,
             this.config.nginxDirBlack,
-          ).replace('/', '//')}|${join(
+          )}|${join(
             this.config.nginxRootDir,
             this.config.nginxDirRed,
-          ).replace('/', '//')})(?=.*;)`,
+          )})(?=.*;)`,
         ),
-        `root ${event.rootPath}`,
+        event.rootPath,
       );
       await fs.promises.writeFile(
         join(this.config.nginxSitesDir, file),
