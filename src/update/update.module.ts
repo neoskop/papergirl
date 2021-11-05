@@ -13,6 +13,7 @@ import { RedirectsConfigListener } from './nginx/listeners/redirects-config.list
 import { SecurityConfigListener } from './nginx/listeners/security-config.listener';
 import { TrailingSlashConfigListener } from './nginx/listeners/trailing-slash-config.listener';
 import { MultisiteConfigListener } from './nginx/listeners/multisite-config-listener';
+import { LegacyRootConfigListener } from './nginx/listeners/legacy-root-config.listener';
 
 @Module({
   providers: [
@@ -26,6 +27,7 @@ import { MultisiteConfigListener } from './nginx/listeners/multisite-config-list
     SecurityConfigListener,
     TrailingSlashConfigListener,
     MultisiteConfigListener,
+    LegacyRootConfigListener
   ],
   imports: [
     ConfigModule,
