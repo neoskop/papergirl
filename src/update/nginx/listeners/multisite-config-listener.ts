@@ -89,13 +89,13 @@ export class MultisiteConfigListener {
       error_page 404 /404/index.html;
       root ${rootPath}${prefix};
 
-      include ${this.config.nginxConfigDir}/*.conf;
       include ${this.config.nginxRedirectsDir}/${site.name}.conf;
+      include ${this.config.nginxConfigDir}/*.conf;
 
       location / {
           try_files $uri $uri.html $uri/index.html $uri/index.htm =404;
       }
-      
+
       location = /50x.html {
           root   /usr/share/nginx/html;
       }

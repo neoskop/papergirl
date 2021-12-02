@@ -11,7 +11,7 @@ export class CacheConfigListener extends ConfigListener {
 
   protected getConfigLines(meta: Meta): string[] {
     const configLines = [
-      `location ~* \\.(?:manifest|appcache|html|xml|json)$ {
+      `location ~* \\.(?:manifest|appcache|xml|json)$ {
           expires -1;
         }`,
       `location ~* (serviceWorker\\.js)$ {
