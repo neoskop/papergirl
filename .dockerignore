@@ -1,5 +1,4 @@
 node_modules/
-yarn-error.log
 Dockerfile
 docker-compose.yml
 release.sh

@@ -14,7 +14,7 @@ function check_commands() {
   done
 }
 
-check_commands git yarn npm jq yq
+check_commands git npm jq yq
 
 if [[ "$#" != "1" ]] || [[ ! "$1" =~ ^(patch|minor|major)$ ]]; then
   echo -e "Usage: $0 \033[1mpatch|minor|major\033[0m"
@@ -27,8 +27,8 @@ if [[ $(git status --porcelain) ]]; then
 fi
 
 git pull --rebase
-yarn
-yarn build
+npm install
+npm run build
 npm version --no-git-tag-version $1
 version=$(cat package.json | jq -r .version)
 sed -i "s/appVersion: .*/appVersion: \"$version\"/" helm/Chart.yaml

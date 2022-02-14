@@ -1,5 +1,4 @@
 node_modules/
-yarn-error.log
 dist/
 s3-data/.minio.sys/
 s3-data/papergirl-test/*

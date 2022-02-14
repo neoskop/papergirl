@@ -57,8 +57,8 @@ get_node_lts_tags() {
   done
 }
 
-check_commands yarn-check yarn jq yq
-yarn-check -u
+check_commands ncu jq yq
+ncu -u
 echo "Will use the following new image versions:"
 NODE_LATEST_TAG=$(get_node_lts_tags | tail -n 1)
 echo "  - Node: $(bold $NODE_LATEST_TAG)"
