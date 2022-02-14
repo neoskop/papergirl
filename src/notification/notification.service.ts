@@ -10,7 +10,8 @@ import { UpdateService } from '../update/update.service';
 
 @Injectable()
 export class NotificationService
-  implements OnApplicationBootstrap, OnApplicationShutdown {
+  implements OnApplicationBootstrap, OnApplicationShutdown
+{
   private client: Client;
 
   constructor(
@@ -30,12 +31,17 @@ export class NotificationService
     }
   }
 
-  protected receiveMessage(err: Error, message: Msg) {
+  protected async receiveMessage(err: Error, message: Msg) {
     if (err) {
       Logger.error(`Receiving of message failed: ${err.message}`);
     } else {
       Logger.debug(`Received a [x]: ${JSON.stringify(message.data)}`);
-      this.updateService.perform();
+
+      try {
+        await this.updateService.perform();
+      } catch (ex) {
+        Logger.error(`The update could not be deployed: ${ex.message || ex}`);
+      }
     }
   }
 

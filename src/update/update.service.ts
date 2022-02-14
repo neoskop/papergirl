@@ -9,11 +9,13 @@ import { S3Service } from './s3/s3.service';
 import { ColorPathService } from './color-path.service';
 import { OnEvent } from '@nestjs/event-emitter';
 import { ConfigReloadedEvent } from '../config/config-reloaded.event';
+import { Meta } from 'src/meta/interfaces/meta.interface';
 
 @Injectable()
 export class UpdateService implements OnApplicationBootstrap {
   private dirBlack: string;
   private dirRed: string;
+  private workingConfig: Meta;
 
   constructor(
     private readonly s3service: S3Service,
@@ -42,7 +44,12 @@ export class UpdateService implements OnApplicationBootstrap {
   @OnEvent('config.reloaded')
   async onConfigReload(event: ConfigReloadedEvent) {
     Logger.log('Perfoming an update since the service config was reloaded');
-    await this.perform();
+
+    try {
+      await this.perform();
+    } catch (err) {
+      Logger.error(`Update failed during config reload: ${err.message || err}`);
+    }
   }
 
   private async copyDir(src: string, dest: string) {
@@ -75,12 +82,22 @@ export class UpdateService implements OnApplicationBootstrap {
       await this.nginxService.switchRootDir(this.dirBlack);
     }
 
-    await fs.promises.rm(this.dirRed, { recursive: true });
-    await fs.promises.mkdir(this.dirRed);
-    await this.s3service.download(this.dirRed, this.dirBlack);
-    Logger.debug('Download complete');
-    const meta = await this.metaService.parse(this.dirRed);
-    await this.nginxService.configure(meta);
-    await this.nginxService.switchRootDir(this.dirRed);
+    try {
+      await fs.promises.rm(this.dirRed, { recursive: true });
+      await fs.promises.mkdir(this.dirRed);
+      await this.s3service.download(this.dirRed, this.dirBlack);
+      Logger.debug('Download complete');
+      const meta = await this.metaService.parse(this.dirRed);
+      await this.nginxService.configure(meta);
+      await this.nginxService.switchRootDir(this.dirRed);
+      this.workingConfig = meta;
+    } catch (err) {
+      if (this.workingConfig) {
+        Logger.debug(`Rolling back to last working configuration`);
+        await this.nginxService.configure(this.workingConfig);
+      }
+
+      throw err;
+    }
   }
 }
