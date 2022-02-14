@@ -2,7 +2,7 @@ import { Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
 import * as fs from 'fs';
 import { join } from 'path';
 import { ConfigService } from '../../config/config.service';
-import { Meta } from '../../meta/meta.interface';
+import { Meta } from '../../meta/interfaces/meta.interface';
 import { ColorPathService } from '../color-path.service';
 import { EventEmitter2 } from 'eventemitter2';
 import { RootChangedEvent } from './events/root-changed.event';

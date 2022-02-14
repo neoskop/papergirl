@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '../../../config/config.service';
-import { Meta } from '../../../meta/meta.interface';
+import { Meta } from '../../../meta/interfaces/meta.interface';
 import { ConfigListener } from './config.listener';
 
 @Injectable()

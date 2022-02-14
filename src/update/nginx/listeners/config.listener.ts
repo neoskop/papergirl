@@ -1,7 +1,7 @@
 import { OnEvent } from '@nestjs/event-emitter';
 import { join } from 'path';
 import { ConfigService } from '../../../config/config.service';
-import { Meta } from '../../../meta/meta.interface';
+import { Meta } from '../../../meta/interfaces/meta.interface';
 import { ConfigReadEvent } from '../events/config-read.event';
 import { NginxConfigFile } from '../nginx-config-file/nginx-config-file';
 

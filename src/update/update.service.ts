@@ -31,8 +31,12 @@ export class UpdateService implements OnApplicationBootstrap {
   }
 
   async onApplicationBootstrap() {
-    await this.perform(true);
-    this.readinessService.setReady();
+    try {
+      await this.perform(true);
+      this.readinessService.setReady();
+    } catch (err) {
+      Logger.error(`The initial setup failed: ${err.message || err}`);
+    }
   }
 
   @OnEvent('config.reloaded')
@@ -60,27 +64,23 @@ export class UpdateService implements OnApplicationBootstrap {
   }
 
   public async perform(initialBuild: boolean = false) {
-    try {
-      if (!initialBuild) {
-        Logger.debug(
-          `Replacing ${this.colorPathService.colorize(
-            this.dirBlack,
-          )} with ${this.colorPathService.colorize(this.dirRed)}`,
-        );
-        await fs.promises.rm(this.dirBlack, { recursive: true });
-        await this.copyDir(this.dirRed, this.dirBlack);
-        await this.nginxService.switchRootDir(this.dirBlack);
-      }
-
-      await fs.promises.rm(this.dirRed, { recursive: true });
-      await fs.promises.mkdir(this.dirRed);
-      await this.s3service.download(this.dirRed, this.dirBlack);
-      Logger.debug('Download complete');
-      const meta = await this.metaService.parse(this.dirRed);
-      await this.nginxService.configure(meta);
-      await this.nginxService.switchRootDir(this.dirRed);
-    } catch (err) {
-      Logger.error(err.message || err);
+    if (!initialBuild) {
+      Logger.debug(
+        `Replacing ${this.colorPathService.colorize(
+          this.dirBlack,
+        )} with ${this.colorPathService.colorize(this.dirRed)}`,
+      );
+      await fs.promises.rm(this.dirBlack, { recursive: true });
+      await this.copyDir(this.dirRed, this.dirBlack);
+      await this.nginxService.switchRootDir(this.dirBlack);
     }
+
+    await fs.promises.rm(this.dirRed, { recursive: true });
+    await fs.promises.mkdir(this.dirRed);
+    await this.s3service.download(this.dirRed, this.dirBlack);
+    Logger.debug('Download complete');
+    const meta = await this.metaService.parse(this.dirRed);
+    await this.nginxService.configure(meta);
+    await this.nginxService.switchRootDir(this.dirRed);
   }
 }

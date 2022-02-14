@@ -1,11 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { ConfigService } from '../../../config/config.service';
-import { Meta } from '../../../meta/meta.interface';
+import { Meta } from '../../../meta/interfaces/meta.interface';
 import { ConfigReadEvent } from '../events/config-read.event';
 import * as fs from 'fs';
 import { join } from 'path';
-import { Redirect } from 'src/meta/redirect.interface';
+import { Redirect } from 'src/meta/interfaces/redirect.interface';
 import { NginxConfigFile } from '../nginx-config-file/nginx-config-file';
 
 @Injectable()

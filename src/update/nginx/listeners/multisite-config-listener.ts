@@ -5,7 +5,7 @@ import { ConfigService } from '../../../config/config.service';
 import { ConfigReadEvent } from '../events/config-read.event';
 import { NginxConfigFile } from '../nginx-config-file/nginx-config-file';
 import * as fs from 'fs';
-import { Site } from 'src/meta/site.interface';
+import { Site } from '../../../meta/interfaces/site.interface';
 import { RootChangedEvent } from '../events/root-changed.event';
 
 @Injectable()

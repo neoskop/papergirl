@@ -3,7 +3,11 @@ import * as deepmerge from 'deepmerge';
 import * as fs from 'fs';
 import * as yaml from 'js-yaml';
 import * as path from 'path';
-import { Meta } from './meta.interface';
+import metaTI from './interfaces/meta.interface-ti';
+import siteTI from './interfaces/site.interface-ti';
+import redirectTI from './interfaces/redirect.interface-ti';
+import { createCheckers } from 'ts-interface-checker';
+import { Meta } from './interfaces/meta.interface';
 
 @Injectable()
 export class MetaService {
@@ -34,9 +38,16 @@ export class MetaService {
     if (typeof document !== 'object') {
       throw new Error(`Invalid config file`);
     } else {
+      const meta = deepmerge(this.DEFAULT_SETTINGS, document);
+      this.validateConfig(meta);
       await fs.promises.unlink(configFile);
-      return deepmerge(this.DEFAULT_SETTINGS, document);
+      return meta;
     }
+  }
+
+  private validateConfig(meta: Meta) {
+    const checkers = createCheckers(metaTI, siteTI, redirectTI);
+    checkers.Meta.check(meta);
   }
 
   private async findConfigFile(dir: string): Promise<string> {
