@@ -25,6 +25,7 @@ export class S3Service implements OnModuleInit {
   constructor(
     private readonly config: ConfigService,
     private readonly colorPathService: ColorPathService,
+    private readonly logger: Logger,
   ) {
     this.s3Client = new S3Client(this.config.s3ClientOptions);
     this.s3 = new S3(this.config.s3ClientOptions);
@@ -39,11 +40,11 @@ export class S3Service implements OnModuleInit {
 
   public async onModuleInit() {
     if (!(await this.bucketExists())) {
-      Logger.debug(`Creating bucket '${this.config.s3BucketName}'`);
+      this.logger.debug(`Creating bucket '${this.config.s3BucketName}'`);
       try {
         await this.s3.createBucket({ Bucket: this.config.s3BucketName });
       } catch (err) {
-        Logger.error(
+        this.logger.error(
           `Creation of bucket '${this.config.s3BucketName}' failed: ${err.message}`,
         );
       }
@@ -93,7 +94,7 @@ export class S3Service implements OnModuleInit {
       throw new Error(`Bucket ${this.config.s3BucketName} does not exist.`);
     }
 
-    Logger.debug('Start download of files');
+    this.logger.debug('Start download of files');
     var startTime = process.hrtime();
     const files = await this.getAllS3Files(targetDir, oldDir);
     await new Promise<void>((resolve, reject) => {
@@ -112,7 +113,7 @@ export class S3Service implements OnModuleInit {
     });
     const hrtime = process.hrtime(startTime);
     var elapsedSeconds = (hrtime[0] + hrtime[1] / 1e9).toFixed(3);
-    Logger.debug(`Download complete after ${chalk.bold(elapsedSeconds)}s`);
+    this.logger.debug(`Download complete after ${chalk.bold(elapsedSeconds)}s`);
   }
 
   private async processFile(file: FileMeta) {
@@ -121,7 +122,7 @@ export class S3Service implements OnModuleInit {
       try {
         await fs.promises.access(baseDir);
       } catch (error) {
-        Logger.debug(
+        this.logger.debug(
           `Creating directory ${this.colorPathService.colorize(baseDir)}`,
         );
         await fs.promises.mkdir(baseDir, { recursive: true });
@@ -137,7 +138,7 @@ export class S3Service implements OnModuleInit {
   }
 
   private async takeOldFile(src: string, target: string) {
-    Logger.debug(
+    this.logger.debug(
       `Copying ${this.colorPathService.colorize(
         src,
       )} to ${this.colorPathService.colorize(target)}`,
@@ -158,7 +159,7 @@ export class S3Service implements OnModuleInit {
       }
     } catch (err) {
       if (err.code === 'ENOENT') {
-        Logger.debug(
+        this.logger.debug(
           `Directory ${this.colorPathService.colorize(
             targetDir,
           )} does not exist - creating it.`,
@@ -218,7 +219,7 @@ export class S3Service implements OnModuleInit {
       result = lastModified.getTime() !== localLastModified.getTime();
     }
 
-    Logger.debug(
+    this.logger.debug(
       `Checking ${checkType} of ${this.colorPathService.colorize(fullPath)}: ${
         result ? chalk.yellowBright('Stale') : chalk.blueBright('Up to date')
       }`,
@@ -235,7 +236,9 @@ export class S3Service implements OnModuleInit {
     name: string,
     lastModified: Date,
   ) {
-    Logger.debug(`Downloading ${this.colorPathService.colorize(fullPath)}`);
+    this.logger.debug(
+      `Downloading ${this.colorPathService.colorize(fullPath)}`,
+    );
     try {
       const data = await this.s3.getObject({
         Bucket: this.config.s3BucketName,
@@ -248,7 +251,7 @@ export class S3Service implements OnModuleInit {
       await fs.promises.utimes(fullPath, lastModified, lastModified);
     } catch (err) {
       if (err.message?.match(/Not Found/i)) {
-        Logger.warn(
+        this.logger.warn(
           `Couldn't download ${this.colorPathService.colorize(
             fullPath,
           )} since it does not exist (anymore?!)`,

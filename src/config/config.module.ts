@@ -1,9 +1,9 @@
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ConfigService } from './config.service';
 
 @Module({
-  providers: [ConfigService],
+  providers: [ConfigService, Logger],
   exports: [ConfigService],
   imports: [EventEmitterModule.forRoot()],
 })

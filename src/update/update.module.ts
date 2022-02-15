@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { ConfigModule } from '../config/config.module';
 import { HealthModule } from '../health/health.module';
 import { MetaModule } from '../meta/meta.module';
@@ -14,6 +14,7 @@ import { SecurityConfigListener } from './nginx/listeners/security-config.listen
 import { TrailingSlashConfigListener } from './nginx/listeners/trailing-slash-config.listener';
 import { MultisiteConfigListener } from './nginx/listeners/multisite-config-listener';
 import { LegacyRootConfigListener } from './nginx/listeners/legacy-root-config.listener';
+import { NginxConfigFileService } from './nginx/nginx-config-file.service';
 
 @Module({
   providers: [
@@ -27,7 +28,9 @@ import { LegacyRootConfigListener } from './nginx/listeners/legacy-root-config.l
     SecurityConfigListener,
     TrailingSlashConfigListener,
     MultisiteConfigListener,
-    LegacyRootConfigListener
+    LegacyRootConfigListener,
+    NginxConfigFileService,
+    Logger,
   ],
   imports: [
     ConfigModule,

@@ -3,12 +3,17 @@ import { join } from 'path';
 import { ConfigService } from '../../../config/config.service';
 import { Meta } from '../../../meta/interfaces/meta.interface';
 import { ConfigReadEvent } from '../events/config-read.event';
+import { NginxConfigFileService } from '../nginx-config-file.service';
 import { NginxConfigFile } from '../nginx-config-file/nginx-config-file';
 
 export abstract class ConfigListener {
   private readonly configFilePath: string;
 
-  constructor(protected readonly config: ConfigService, fileName: string) {
+  constructor(
+    protected readonly config: ConfigService,
+    protected readonly nginxConfigFileService: NginxConfigFileService,
+    fileName: string,
+  ) {
     this.configFilePath = join(this.config.nginxConfigDir, fileName);
   }
 
@@ -19,9 +24,9 @@ export abstract class ConfigListener {
     if (this.shouldCreateConfigFile(event.meta)) {
       const configLines = this.getConfigLines(event.meta);
       configFile.addLines(...configLines);
-      await configFile.write();
+      await this.nginxConfigFileService.write(configFile);
     } else {
-      await configFile.delete();
+      await this.nginxConfigFileService.delete(configFile);
     }
   }
 

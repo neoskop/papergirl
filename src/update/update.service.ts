@@ -24,6 +24,7 @@ export class UpdateService implements OnApplicationBootstrap {
     private readonly readinessService: ReadinessService,
     private readonly metaService: MetaService,
     private readonly colorPathService: ColorPathService,
+    private readonly logger: Logger,
   ) {
     this.dirBlack = path.join(
       this.config.nginxRootDir,
@@ -37,18 +38,22 @@ export class UpdateService implements OnApplicationBootstrap {
       await this.perform(true);
       this.readinessService.setReady();
     } catch (err) {
-      Logger.error(`The initial setup failed: ${err.message || err}`);
+      this.logger.error(`The initial setup failed: ${err.message || err}`);
     }
   }
 
   @OnEvent('config.reloaded')
   async onConfigReload(event: ConfigReloadedEvent) {
-    Logger.log('Perfoming an update since the service config was reloaded');
+    this.logger.log(
+      'Perfoming an update since the service config was reloaded',
+    );
 
     try {
       await this.perform();
     } catch (err) {
-      Logger.error(`Update failed during config reload: ${err.message || err}`);
+      this.logger.error(
+        `Update failed during config reload: ${err.message || err}`,
+      );
     }
   }
 
@@ -72,7 +77,7 @@ export class UpdateService implements OnApplicationBootstrap {
 
   public async perform(initialBuild: boolean = false) {
     if (!initialBuild) {
-      Logger.debug(
+      this.logger.debug(
         `Replacing ${this.colorPathService.colorize(
           this.dirBlack,
         )} with ${this.colorPathService.colorize(this.dirRed)}`,
@@ -86,14 +91,14 @@ export class UpdateService implements OnApplicationBootstrap {
       await fs.promises.rm(this.dirRed, { recursive: true });
       await fs.promises.mkdir(this.dirRed);
       await this.s3service.download(this.dirRed, this.dirBlack);
-      Logger.debug('Download complete');
+      this.logger.debug('Download complete');
       const meta = await this.metaService.parse(this.dirRed);
       await this.nginxService.configure(meta);
       await this.nginxService.switchRootDir(this.dirRed);
       this.workingConfig = meta;
     } catch (err) {
       if (this.workingConfig) {
-        Logger.debug(`Rolling back to last working configuration`);
+        this.logger.debug(`Rolling back to last working configuration`);
         await this.nginxService.configure(this.workingConfig);
       }
 

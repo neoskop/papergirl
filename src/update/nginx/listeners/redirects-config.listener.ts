@@ -7,10 +7,15 @@ import * as fs from 'fs';
 import { join } from 'path';
 import { Redirect } from 'src/meta/interfaces/redirect.interface';
 import { NginxConfigFile } from '../nginx-config-file/nginx-config-file';
+import { NginxConfigFileService } from '../nginx-config-file.service';
 
 @Injectable()
 export class RedirectsConfigListener {
-  constructor(private readonly config: ConfigService) {}
+  constructor(
+    private readonly config: ConfigService,
+    private readonly nginxConfigFileService: NginxConfigFileService,
+    private readonly logger: Logger,
+  ) {}
 
   @OnEvent('config.read')
   async handleConfig(event: ConfigReadEvent) {
@@ -37,13 +42,13 @@ export class RedirectsConfigListener {
     const configFilePath = join(this.config.nginxRedirectsDir, `${name}.conf`);
     const configFile = new NginxConfigFile(configFilePath);
     configFile.addLines(...this.getConfigLines(redirects));
-    await configFile.write();
+    await this.nginxConfigFileService.write(configFile);
   }
 
   private async clearRedirectsDirectory() {
-    await new NginxConfigFile(
-      join(this.config.nginxConfigDir, 'redirects.conf'),
-    ).delete();
+    await this.nginxConfigFileService.delete(
+      new NginxConfigFile(join(this.config.nginxConfigDir, 'redirects.conf')),
+    );
     const files = await fs.promises.readdir(this.config.nginxRedirectsDir);
 
     for (const file of files) {
@@ -56,7 +61,7 @@ export class RedirectsConfigListener {
     return (redirects || [])
       .map((redirect) => {
         if (createdLocations.has(redirect.from)) {
-          Logger.debug(
+          this.logger.debug(
             `Ignoring duplicate location ${redirect.from} in redirects`,
           );
           return null;

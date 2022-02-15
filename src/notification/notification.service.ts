@@ -17,6 +17,7 @@ export class NotificationService
   constructor(
     private configService: ConfigService,
     private updateService: UpdateService,
+    private readonly logger: Logger,
   ) {}
 
   async onApplicationBootstrap(): Promise<void> {
@@ -27,26 +28,28 @@ export class NotificationService
     try {
       await this.disconnectFromQueue();
     } catch (err) {
-      Logger.error(err);
+      this.logger.error(err);
     }
   }
 
   protected async receiveMessage(err: Error, message: Msg) {
     if (err) {
-      Logger.error(`Receiving of message failed: ${err.message}`);
+      this.logger.error(`Receiving of message failed: ${err.message}`);
     } else {
-      Logger.debug(`Received a [x]: ${JSON.stringify(message.data)}`);
+      this.logger.debug(`Received a [x]: ${JSON.stringify(message.data)}`);
 
       try {
         await this.updateService.perform();
       } catch (ex) {
-        Logger.error(`The update could not be deployed: ${ex.message || ex}`);
+        this.logger.error(
+          `The update could not be deployed: ${ex.message || ex}`,
+        );
       }
     }
   }
 
   private async connectToQueue() {
-    Logger.debug(`Connecting to ${this.configService.queueUri}`);
+    this.logger.debug(`Connecting to ${this.configService.queueUri}`);
     this.client = await connect({
       url: this.configService.queueUri,
       maxReconnectAttempts: -1,
@@ -62,7 +65,7 @@ export class NotificationService
 
   private async disconnectFromQueue(): Promise<void> {
     if (this.client) {
-      Logger.debug('Draining connections to queue');
+      this.logger.debug('Draining connections to queue');
       await this.client.drain();
     }
   }

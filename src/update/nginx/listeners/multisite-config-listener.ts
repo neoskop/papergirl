@@ -7,10 +7,14 @@ import { NginxConfigFile } from '../nginx-config-file/nginx-config-file';
 import * as fs from 'fs';
 import { Site } from '../../../meta/interfaces/site.interface';
 import { RootChangedEvent } from '../events/root-changed.event';
+import { NginxConfigFileService } from '../nginx-config-file.service';
 
 @Injectable()
 export class MultisiteConfigListener {
-  constructor(private readonly config: ConfigService) {}
+  constructor(
+    protected readonly config: ConfigService,
+    protected readonly nginxConfigFileService: NginxConfigFileService,
+  ) {}
 
   @OnEvent('config.read')
   async handleConfig(event: ConfigReadEvent) {
@@ -76,7 +80,7 @@ export class MultisiteConfigListener {
     const configFilePath = join(this.config.nginxSitesDir, `${site.name}.conf`);
     const configFile = new NginxConfigFile(configFilePath);
     configFile.addLines(this.getSiteConfig(rootPath, site, prefix));
-    await configFile.write();
+    await this.nginxConfigFileService.write(configFile);
   }
 
   private getSiteConfig(rootPath: string, site: Site, prefix: string): string {

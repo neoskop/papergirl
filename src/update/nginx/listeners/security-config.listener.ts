@@ -1,12 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '../../../config/config.service';
 import { Meta } from '../../../meta/interfaces/meta.interface';
+import { NginxConfigFileService } from '../nginx-config-file.service';
 import { ConfigListener } from './config.listener';
 
 @Injectable()
 export class SecurityConfigListener extends ConfigListener {
-  constructor(config: ConfigService) {
-    super(config, 'security.conf');
+  constructor(
+    protected readonly config: ConfigService,
+    protected readonly nginxConfigFileService: NginxConfigFileService,
+  ) {
+    super(config, nginxConfigFileService, 'security.conf');
   }
 
   protected getConfigLines(meta: Meta): string[] {

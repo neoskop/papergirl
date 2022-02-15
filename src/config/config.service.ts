@@ -14,7 +14,7 @@ export interface EnvConfig {
 export class ConfigService {
   private envConfig: EnvConfig;
 
-  constructor(eventEmitter: EventEmitter2) {
+  constructor(eventEmitter: EventEmitter2, private readonly logger: Logger) {
     const filePath = `config/${process.env.CONFIG || 'local'}.env`;
     this.readConfigFile(filePath);
     chokidar
@@ -24,7 +24,7 @@ export class ConfigService {
           this.readConfigFile(filePath);
           eventEmitter.emit('config.reloaded');
         } catch (err) {
-          Logger.error(`Could not reload Papergirl config: ${err}`);
+          this.logger.error(`Could not reload Papergirl config: ${err}`);
         }
       });
   }
