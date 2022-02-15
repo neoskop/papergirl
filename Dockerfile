@@ -27,14 +27,11 @@ COPY --from=build --chown=node /home/papergirl/app ./
 CMD npm run start:nodemon
 EXPOSE 8080
 
-FROM base as production
-RUN mkdir -p /home/papergirl/app
-WORKDIR /home/papergirl/app
-COPY --from=build --chown=node /home/papergirl/app/*.json ./
-RUN npm install --only=production --frozen-lockfile && \
-    npm cache clean --force >/dev/null 2>&1
-COPY src ./src
+FROM development as production
 RUN npm run build
-COPY config ./config
-CMD ["node", "dist/main.js"]
+USER root
+RUN npm prune --production && \
+    npm cache clean --force >/dev/null 2>&1
+USER node
+CMD ["node", "dist/main"]
 EXPOSE 8080
