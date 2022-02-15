@@ -4,7 +4,7 @@ metadata:
   name: {{ include "papergirl.fullname" . }}-config
 data:
   kubernetes.env: |
-    {{- $data := dict "s3BucketName" .Values.s3.buckets.name "s3Endpoint" (include "papergirl.s3.endpoint" .) "s3" .Values.s3 "name" (include "papergirl.fullname" .) "queueUri" (include "papergirl.nats.url" .)  "queueSubject" "papergirl" "Template" .Template -}}
+    {{- $data := dict "s3BucketName" .Values.s3.buckets.name "s3Endpoint" (include "papergirl.s3.endpoint" .) "s3" .Values.s3 "name" (include "papergirl.fullname" .) "queueUri" (include "papergirl.nats.url" .)  "queueSubject" "papergirl" "slackWebhookUrl" .Values.alerts.slackWebhook.url "slackWebhookMetaData" .Values.alerts.slackWebhook.metaData "Template" .Template -}}
     {{- tpl (.Files.Get "papergirl.env") $data | nindent 4 }}
 ---
 apiVersion: v1

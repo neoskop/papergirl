@@ -125,6 +125,10 @@ backup:
     tag: RELEASE.2021-10-07T04-19-58Z
     pullPolicy: IfNotPresent
   replicaCount: 2
+alerts:
+  slackWebhook:
+    url: ''
+    metaData: {}
 imageProxy:
   enabled: false
   image:
