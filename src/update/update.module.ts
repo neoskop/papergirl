@@ -15,6 +15,7 @@ import { TrailingSlashConfigListener } from './nginx/listeners/trailing-slash-co
 import { MultisiteConfigListener } from './nginx/listeners/multisite-config-listener';
 import { LegacyRootConfigListener } from './nginx/listeners/legacy-root-config.listener';
 import { NginxConfigFileService } from './nginx/nginx-config-file.service';
+import { AlertModule } from '../alert/alert.module';
 
 @Module({
   providers: [
@@ -37,6 +38,7 @@ import { NginxConfigFileService } from './nginx/nginx-config-file.service';
     HealthModule,
     MetaModule,
     EventEmitterModule.forRoot(),
+    AlertModule,
   ],
   exports: [UpdateService, ColorPathService],
 })

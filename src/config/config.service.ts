@@ -63,6 +63,8 @@ export class ConfigService {
       NGINX_CONFIG_DIR: Joi.string().required(),
       NGINX_SITES_DIR: Joi.string().required(),
       NGINX_REDIRECTS_DIR: Joi.string().required(),
+      SLACK_WEBHOOK_URL: Joi.string(),
+      SLACK_WEBHOOK_META_DATA: Joi.string(),
     });
 
     const { error, value: validatedEnvConfig } =
@@ -71,6 +73,16 @@ export class ConfigService {
       throw new Error(`Config validation error: ${error.message}`);
     }
     return validatedEnvConfig;
+  }
+
+  get slackWebhookUrl(): string {
+    return this.envConfig.SLACK_WEBHOOK_URL;
+  }
+
+  get slackWebhookMetaData(): { [title: string]: string } {
+    return this.envConfig.SLACK_WEBHOOK_META_DATA
+      ? JSON.parse(this.envConfig.SLACK_WEBHOOK_META_DATA)
+      : {};
   }
 
   get queueUri(): string {

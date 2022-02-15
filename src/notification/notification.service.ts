@@ -7,6 +7,8 @@ import {
 import { Client, connect, Msg, Payload } from 'ts-nats';
 import { ConfigService } from '../config/config.service';
 import { UpdateService } from '../update/update.service';
+import * as chalk from 'chalk';
+import { AlertService } from '../alert/alert.service';
 
 @Injectable()
 export class NotificationService
@@ -18,13 +20,14 @@ export class NotificationService
     private configService: ConfigService,
     private updateService: UpdateService,
     private readonly logger: Logger,
+    private readonly alertService: AlertService,
   ) {}
 
   async onApplicationBootstrap(): Promise<void> {
     await this.connectToQueue();
   }
 
-  async onApplicationShutdown(signal?: string): Promise<void> {
+  async onApplicationShutdown(_signal?: string): Promise<void> {
     try {
       await this.disconnectFromQueue();
     } catch (err) {
@@ -41,15 +44,17 @@ export class NotificationService
       try {
         await this.updateService.perform();
       } catch (ex) {
-        this.logger.error(
-          `The update could not be deployed: ${ex.message || ex}`,
-        );
+        const text = `The update could not be deployed: ${ex.message || ex}`;
+        this.alertService.alert(text);
+        this.logger.error(text);
       }
     }
   }
 
   private async connectToQueue() {
-    this.logger.debug(`Connecting to ${this.configService.queueUri}`);
+    this.logger.debug(
+      `Connecting to ${chalk.bold(this.configService.queueUri)}`,
+    );
     this.client = await connect({
       url: this.configService.queueUri,
       maxReconnectAttempts: -1,

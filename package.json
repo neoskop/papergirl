@@ -30,6 +30,7 @@
     "@nestjs/event-emitter": "1.0.0",
     "@nestjs/platform-express": "8.2.6",
     "@nestjs/terminus": "8.0.4",
+    "@slack/webhook": "6.1.0",
     "async": "3.2.3",
     "chalk": "4.1.2",
     "chokidar": "3.5.3",

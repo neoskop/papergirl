@@ -4,6 +4,7 @@ import { HealthModule } from './health/health.module';
 import { NotificationModule } from './notification/notification.module';
 import { UpdateModule } from './update/update.module';
 import { MetaModule } from './meta/meta.module';
+import { AlertModule } from './alert/alert.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { MetaModule } from './meta/meta.module';
     NotificationModule,
     UpdateModule,
     MetaModule,
+    AlertModule,
   ],
   providers: [Logger],
 })

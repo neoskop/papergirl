@@ -10,6 +10,7 @@ import { ColorPathService } from './color-path.service';
 import { OnEvent } from '@nestjs/event-emitter';
 import { ConfigReloadedEvent } from '../config/config-reloaded.event';
 import { Meta } from 'src/meta/interfaces/meta.interface';
+import { AlertService } from '../alert/alert.service';
 
 @Injectable()
 export class UpdateService implements OnApplicationBootstrap {
@@ -25,6 +26,7 @@ export class UpdateService implements OnApplicationBootstrap {
     private readonly metaService: MetaService,
     private readonly colorPathService: ColorPathService,
     private readonly logger: Logger,
+    private readonly alertService: AlertService,
   ) {
     this.dirBlack = path.join(
       this.config.nginxRootDir,
@@ -38,7 +40,9 @@ export class UpdateService implements OnApplicationBootstrap {
       await this.perform(true);
       this.readinessService.setReady();
     } catch (err) {
-      this.logger.error(`The initial setup failed: ${err.message || err}`);
+      const message = `The initial setup failed: ${err.message || err}`;
+      this.logger.error(message);
+      this.alertService.alert(message);
     }
   }
 
@@ -51,9 +55,11 @@ export class UpdateService implements OnApplicationBootstrap {
     try {
       await this.perform();
     } catch (err) {
-      this.logger.error(
-        `Update failed during config reload: ${err.message || err}`,
-      );
+      const message = `Update failed during config reload: ${
+        err.message || err
+      }`;
+      this.logger.error(message);
+      this.alertService.alert(message);
     }
   }
 
