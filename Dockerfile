@@ -32,6 +32,6 @@ RUN npm run build
 USER root
 RUN npm prune --production && \
     npm cache clean --force >/dev/null 2>&1
-USER node
+USER www-data
 CMD ["node", "dist/main"]
 EXPOSE 8080
