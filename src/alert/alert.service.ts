@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { IncomingWebhook } from '@slack/webhook';
+import stripAnsi = require('strip-ansi');
 import { ConfigService } from '../config/config.service';
 
 @Injectable()
@@ -20,6 +21,7 @@ export class AlertService {
       await webhook.send({
         attachments: [
           {
+            color: 'danger',
             pretext:
               'Papergirl experienced a critical error. We could gather the following details:',
             fields: [
@@ -37,7 +39,7 @@ export class AlertService {
                 value: this.config.slackWebhookMetaData[title],
               })),
             ),
-            text,
+            text: stripAnsi(text),
           },
         ],
       });
