@@ -6,7 +6,7 @@ import * as path from 'path';
 import { ConfigService } from '../../config/config.service';
 import * as crypto from 'crypto';
 import { ColorPathService } from '../color-path.service';
-import chalk = require('chalk');
+import * as chalk from 'chalk';
 import { pipeline } from 'stream/promises';
 
 type FileMeta = {

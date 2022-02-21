@@ -1,8 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import {
-  utilities as nestWinstonModuleUtilities,
-  WinstonModule,
-} from 'nest-winston';
+import { WinstonModule } from 'nest-winston';
 import * as winston from 'winston';
 import { AppModule } from './app.module';
 import { ConfigService } from './config/config.service';
