@@ -235,6 +235,7 @@ export class S3Service implements OnModuleInit {
     fullPath: string,
     name: string,
     lastModified: Date,
+    count = 0,
   ) {
     this.logger.debug(
       `Downloading ${this.colorPathService.colorize(fullPath)}`,
@@ -257,11 +258,20 @@ export class S3Service implements OnModuleInit {
           )} since it does not exist (anymore?!)`,
         );
       } else {
-        throw new Error(
-          `Downloading of ${this.colorPathService.colorize(
-            fullPath,
-          )} failed: ${err}`,
-        );
+        if (count >= 2) {
+          throw new Error(
+            `Downloading of ${this.colorPathService.colorize(
+              fullPath,
+            )} failed: ${err}`,
+          );
+        } else {
+          this.logger.warn(
+            `Retrying download of ${this.colorPathService.colorize(
+              fullPath,
+            )} since it failed: ${err}`,
+          );
+          await this.downloadFile(fullPath, name, lastModified, count + 1);
+        }
       }
     }
   }
