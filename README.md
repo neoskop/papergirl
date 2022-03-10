@@ -4,18 +4,10 @@ A fault-tolerant delivery tier with S3 for Kubernetes
 
 ## Quickstart
 
-### KinD
+On a machine with [Kind](https://kind.sigs.k8s.io/) set-up you can run the following script to get started:
 
 ```sh
 $ scripts/quickstart.sh
-```
-
-### Docker Compose
-
-```sh
-$ docker-compose up
-# Other terminal
-$ nats papergirl '{"foo":"bar"}'
 ```
 
 ### Helm

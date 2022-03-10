@@ -82,9 +82,6 @@ echo "  - Busybox: $(bold $BUSYBOX_LATEST_TAG)"
 sed -i "1 s/^.*$/FROM node:$NODE_LATEST_TAG as base/" Dockerfile
 CARAVAGGIO_LATEST_TAG=$(get_tags ramielcreations/caravaggio | grep '^[0-9]*\.[0-9]*\.[0-9]*$' | sort -V | tail -n 1)
 echo "  - Caravaggio: $(bold $CARAVAGGIO_LATEST_TAG)"
-yq eval -i ".services.webserver.image = \"openresty/openresty:$OPENRESTY_LATEST_TAG\"" docker-compose.yml
-yq eval -i ".services.queue.image = \"nats:$NATS_LATEST_TAG\"" docker-compose.yml
-yq eval -i ".services.s3.image = \"minio/minio:$MINIO_LATEST_TAG\"" docker-compose.yml
 yq eval -i ".dnsmasq.image.tag = \"$DNSMASQ_LATEST_TAG\"" helm/values.yaml
 yq eval -i ".nginx.image.tag = \"$OPENRESTY_LATEST_TAG\"" helm/values.yaml
 yq eval -i ".prometheus.nginxExporterImage.tag = \"$NGINX_PROMETHEUS_EXPORTER_LATEST_TAG\"" helm/values.yaml
