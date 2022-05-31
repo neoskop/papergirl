@@ -49,7 +49,7 @@ dnsmasq:
 nginx:
   image: # this image is used for the fallback service as well
     repository: openresty/openresty
-    tag: 1.19.9.1-buster
+    tag: 1.21.4.1-buster
     pullPolicy: IfNotPresent
   resources:
     limits:
@@ -110,7 +110,7 @@ minio:
       pullPolicy: IfNotPresent
   image:
     repository: minio/minio
-    tag: RELEASE.2022-03-08T22-28-51Z
+    tag: RELEASE.2022-05-26T05-48-41Z
     pullPolicy: IfNotPresent
   resources:
     limits:
@@ -122,7 +122,7 @@ backup:
   schedule: '0 5 * * *'
   image:
     repository: minio/mc
-    tag: RELEASE.2022-03-09T02-08-36Z
+    tag: RELEASE.2022-05-09T04-08-26Z
     pullPolicy: IfNotPresent
   replicaCount: 2
 alerts:
@@ -133,7 +133,7 @@ imageProxy:
   enabled: false
   image:
     repository: ramielcreations/caravaggio
-    tag: 3.7.1
+    tag: 3.7.2
     pullPolicy: IfNotPresent
   replicaCount: 2
   args:
@@ -148,7 +148,7 @@ nats:
   createCluster: true
   url: null
   size: 3
-  version: 2.7.4
+  version: 2.8.4
 imagePullSecret: {}
 nameOverride: ''
 fullnameOverride: ''
