@@ -21,7 +21,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "3.100.0",
+    "@aws-sdk/client-s3": "3.109.0",
     "@godaddy/terminus": "4.10.2",
     "@hapi/joi": "17.1.1",
     "@kubernetes/client-node": "0.16.3",
