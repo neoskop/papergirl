@@ -29,7 +29,7 @@
     "@nestjs/core": "8.4.7",
     "@nestjs/event-emitter": "1.1.1",
     "@nestjs/platform-express": "8.4.7",
-    "@nestjs/terminus": "8.0.6",
+    "@nestjs/terminus": "8.0.8",
     "@slack/webhook": "6.1.0",
     "async": "3.2.4",
     "chalk": "4.1.2",
