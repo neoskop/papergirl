@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "3.117.0",
-    "@godaddy/terminus": "4.10.2",
+    "@godaddy/terminus": "4.11.0",
     "@hapi/joi": "17.1.1",
     "@kubernetes/client-node": "0.16.3",
     "@nestjs/common": "8.4.7",
