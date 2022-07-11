@@ -39,7 +39,7 @@
     "js-yaml": "4.1.0",
     "nest-winston": "1.6.2",
     "reflect-metadata": "0.1.13",
-    "rxjs": "7.5.5",
+    "rxjs": "7.5.6",
     "strip-ansi": "7.0.1",
     "ts-interface-checker": "1.0.2",
     "ts-nats": "1.2.15",
