@@ -61,10 +61,9 @@ export class NotificationService
       waitOnFirstConnect: true,
       reconnect: true,
     });
-    this.client.subscribe(
-      this.configService.queueSubject,
-      this.receiveMessage.bind(this),
-    );
+    this.client.subscribe(this.configService.queueSubject, {
+      callback: this.receiveMessage.bind(this),
+    });
   }
 
   private async disconnectFromQueue(): Promise<void> {
