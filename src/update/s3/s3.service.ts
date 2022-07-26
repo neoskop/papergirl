@@ -103,13 +103,11 @@ export class S3Service implements OnModuleInit {
     this.logger.debug('Start download of files');
     const startTime = process.hrtime();
     const files = await this.getAllS3Files(targetDir, oldDir);
-    await new Promise<void>((rexsolve, reject) => {
-      async.eachLimit(
-        files,
-        this.config.concurrency,
-        this.processFile.bind(this),
-      );
-    });
+    await async.eachLimit(
+      files,
+      this.config.concurrency,
+      this.processFile.bind(this),
+    );
     const hrtime = process.hrtime(startTime);
     const elapsedSeconds = (hrtime[0] + hrtime[1] / 1e9).toFixed(3);
     this.logger.debug(`Download complete after ${chalk.bold(elapsedSeconds)}s`);
@@ -139,7 +137,7 @@ export class S3Service implements OnModuleInit {
           await this.takeOldFile(file.oldPath, file.path);
         }
       }
-      callback();
+      callback(null);
     } catch (error) {
       callback(error);
     }
