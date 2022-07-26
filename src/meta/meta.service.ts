@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import * as deepmerge from 'deepmerge';
+import deepmerge from 'deepmerge';
 import * as fs from 'fs';
 import * as yaml from 'js-yaml';
 import * as path from 'path';

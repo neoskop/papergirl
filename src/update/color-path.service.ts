@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import * as chalk from 'chalk';
+import chalk from 'chalk';
 import * as path from 'path';
 import { ConfigService } from '../config/config.service';
 

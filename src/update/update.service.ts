@@ -9,7 +9,7 @@ import { S3Service } from './s3/s3.service';
 import { ColorPathService } from './color-path.service';
 import { OnEvent } from '@nestjs/event-emitter';
 import { ConfigReloadedEvent } from '../config/config-reloaded.event';
-import { Meta } from 'src/meta/interfaces/meta.interface';
+import { Meta } from '../meta/interfaces/meta.interface';
 import { AlertService } from '../alert/alert.service';
 
 @Injectable()
@@ -67,7 +67,7 @@ export class UpdateService implements OnApplicationBootstrap {
     const entries = await fs.promises.readdir(src, { withFileTypes: true });
     await fs.promises.mkdir(dest);
 
-    for (let entry of entries) {
+    for (const entry of entries) {
       const srcPath = path.join(src, entry.name);
       const destPath = path.join(dest, entry.name);
 
@@ -81,7 +81,7 @@ export class UpdateService implements OnApplicationBootstrap {
     }
   }
 
-  public async perform(initialBuild: boolean = false) {
+  public async perform(initialBuild = false) {
     if (!initialBuild) {
       this.logger.debug(
         `Replacing ${this.colorPathService.colorize(

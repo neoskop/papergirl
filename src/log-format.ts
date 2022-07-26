@@ -1,10 +1,10 @@
 import { Format } from 'logform';
 import { inspect } from 'util';
 import { format } from 'winston';
-import * as chalk from 'chalk';
+import chalk, { ChalkInstance } from 'chalk';
 import safeStringify from 'fast-safe-stringify';
 
-const nestLikeColorScheme: Record<string, chalk.Chalk> = {
+const nestLikeColorScheme: Record<string, ChalkInstance> = {
   info: chalk.greenBright,
   error: chalk.red,
   warn: chalk.yellow,

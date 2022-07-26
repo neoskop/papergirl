@@ -4,17 +4,17 @@ import {
   OnApplicationBootstrap,
   OnApplicationShutdown,
 } from '@nestjs/common';
-import { Client, connect, Msg, Payload } from 'ts-nats';
+import { connect, Msg, NatsConnection } from 'nats';
 import { ConfigService } from '../config/config.service';
 import { UpdateService } from '../update/update.service';
-import * as chalk from 'chalk';
+import chalk from 'chalk';
 import { AlertService } from '../alert/alert.service';
 
 @Injectable()
 export class NotificationService
   implements OnApplicationBootstrap, OnApplicationShutdown
 {
-  private client: Client;
+  private client: NatsConnection;
 
   constructor(
     private configService: ConfigService,
@@ -56,13 +56,12 @@ export class NotificationService
       `Connecting to ${chalk.bold(this.configService.queueUri)}`,
     );
     this.client = await connect({
-      url: this.configService.queueUri,
+      servers: [this.configService.queueUri],
       maxReconnectAttempts: -1,
       waitOnFirstConnect: true,
       reconnect: true,
-      payload: Payload.JSON,
     });
-    await this.client.subscribe(
+    this.client.subscribe(
       this.configService.queueSubject,
       this.receiveMessage.bind(this),
     );

@@ -1,7 +1,7 @@
 import { HealthCheckError } from '@godaddy/terminus';
 import { Injectable } from '@nestjs/common';
 import { HealthIndicator, HealthIndicatorResult } from '@nestjs/terminus';
-import { connect } from 'ts-nats';
+import { connect } from 'nats';
 
 @Injectable()
 export class QueueHealthIndicator extends HealthIndicator {
@@ -9,11 +9,11 @@ export class QueueHealthIndicator extends HealthIndicator {
     key: string,
     queueUri: string,
   ): Promise<HealthIndicatorResult> {
-    let isHealthy: boolean = false;
+    let isHealthy = false;
     let data: any;
 
     try {
-      const client = await connect(queueUri);
+      const client = await connect({ servers: [queueUri] });
 
       if (client !== null) {
         isHealthy = true;

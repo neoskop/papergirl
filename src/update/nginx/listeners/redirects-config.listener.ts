@@ -5,7 +5,7 @@ import { Meta } from '../../../meta/interfaces/meta.interface';
 import { ConfigReadEvent } from '../events/config-read.event';
 import * as fs from 'fs';
 import { join } from 'path';
-import { Redirect } from 'src/meta/interfaces/redirect.interface';
+import { Redirect } from '../../../meta/interfaces/redirect.interface';
 import { NginxConfigFile } from '../nginx-config-file/nginx-config-file';
 import { NginxConfigFileService } from '../nginx-config-file.service';
 
@@ -57,7 +57,7 @@ export class RedirectsConfigListener {
   }
 
   protected getConfigLines(redirects?: Redirect[]): string[] {
-    let createdLocations = new Set();
+    const createdLocations = new Set();
     return (redirects || [])
       .map((redirect) => {
         if (createdLocations.has(redirect.from)) {

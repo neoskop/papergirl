@@ -4,7 +4,7 @@ import { join } from 'path';
 import { ConfigService } from '../../config/config.service';
 import { Meta } from '../../meta/interfaces/meta.interface';
 import { ColorPathService } from '../color-path.service';
-import { EventEmitter2 } from 'eventemitter2';
+import EventEmitter2 from 'eventemitter2';
 import { RootChangedEvent } from './events/root-changed.event';
 import { ConfigReadEvent } from './events/config-read.event';
 import * as k8s from '@kubernetes/client-node';
@@ -53,7 +53,7 @@ export class NginxService implements OnApplicationBootstrap {
         const kc = new k8s.KubeConfig();
         kc.loadFromCluster();
         const outputStream = new Writable();
-        let output: string = '';
+        let output = '';
         outputStream._write = function (chunk, encoding, done) {
           output += chunk.toString();
           done();

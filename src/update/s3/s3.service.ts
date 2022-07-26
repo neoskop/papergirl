@@ -6,7 +6,7 @@ import * as path from 'path';
 import { ConfigService } from '../../config/config.service';
 import * as crypto from 'crypto';
 import { ColorPathService } from '../color-path.service';
-import * as chalk from 'chalk';
+import chalk from 'chalk';
 import { pipeline } from 'stream/promises';
 
 type FileMeta = {
@@ -95,7 +95,7 @@ export class S3Service implements OnModuleInit {
     }
 
     this.logger.debug('Start download of files');
-    var startTime = process.hrtime();
+    const startTime = process.hrtime();
     const files = await this.getAllS3Files(targetDir, oldDir);
     await new Promise<void>((resolve, reject) => {
       eachLimit(
@@ -112,7 +112,7 @@ export class S3Service implements OnModuleInit {
       );
     });
     const hrtime = process.hrtime(startTime);
-    var elapsedSeconds = (hrtime[0] + hrtime[1] / 1e9).toFixed(3);
+    const elapsedSeconds = (hrtime[0] + hrtime[1] / 1e9).toFixed(3);
     this.logger.debug(`Download complete after ${chalk.bold(elapsedSeconds)}s`);
   }
 

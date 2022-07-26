@@ -10,7 +10,7 @@ export class S3HealthIndicator extends HealthIndicator {
     clientOptions: S3ClientConfig,
     bucketName?: string,
   ): Promise<HealthIndicatorResult> {
-    let isHealthy: boolean = false;
+    let isHealthy = false;
     let data: any;
 
     try {

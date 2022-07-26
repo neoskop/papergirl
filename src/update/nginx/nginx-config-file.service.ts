@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { NginxConfigFile } from './nginx-config-file/nginx-config-file';
-import * as chalk from 'chalk';
+import chalk from 'chalk';
 import * as fs from 'fs';
 
 @Injectable()

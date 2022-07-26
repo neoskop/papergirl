@@ -44,7 +44,7 @@ export class MultisiteConfigListener {
         join(this.config.nginxSitesDir, file),
         'utf8',
       );
-      var result = config.replace(
+      const result = config.replace(
         new RegExp(
           `(?<=root )(${join(
             this.config.nginxRootDir,
@@ -72,11 +72,7 @@ export class MultisiteConfigListener {
     }
   }
 
-  private async writeSiteConfig(
-    rootPath: string,
-    site: Site,
-    prefix: string = '',
-  ) {
+  private async writeSiteConfig(rootPath: string, site: Site, prefix = '') {
     const configFilePath = join(this.config.nginxSitesDir, `${site.name}.conf`);
     const configFile = new NginxConfigFile(configFilePath);
     configFile.addLines(this.getSiteConfig(rootPath, site, prefix));

@@ -7,3 +7,4 @@ dist
 s3-data
 nginx
 .deploy
+dist/

@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { IncomingWebhook } from '@slack/webhook';
-import stripAnsi = require('strip-ansi');
+import stripAnsi from 'strip-ansi';
 import { ConfigService } from '../config/config.service';
 
 @Injectable()

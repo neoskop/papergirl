@@ -1,4 +1,4 @@
-import * as Joi from '@hapi/joi';
+import Joi from 'joi';
 import { Injectable, Logger } from '@nestjs/common';
 import * as dotenv from 'dotenv';
 import * as fs from 'fs';
