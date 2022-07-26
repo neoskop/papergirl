@@ -1,13 +1,19 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import { eachLimit } from 'async';
+import async from 'async';
 import * as fs from 'fs';
-import { paginateListObjectsV2, S3Client, S3 } from '@aws-sdk/client-s3';
+import {
+  paginateListObjectsV2,
+  S3Client,
+  S3,
+  GetObjectCommand,
+} from '@aws-sdk/client-s3';
 import * as path from 'path';
 import { ConfigService } from '../../config/config.service';
 import * as crypto from 'crypto';
 import { ColorPathService } from '../color-path.service';
 import chalk from 'chalk';
 import { pipeline } from 'stream/promises';
+import stream from 'stream';
 
 type FileMeta = {
   path: string;
@@ -97,18 +103,11 @@ export class S3Service implements OnModuleInit {
     this.logger.debug('Start download of files');
     const startTime = process.hrtime();
     const files = await this.getAllS3Files(targetDir, oldDir);
-    await new Promise<void>((resolve, reject) => {
-      eachLimit(
+    await new Promise<void>((rexsolve, reject) => {
+      async.eachLimit(
         files,
         this.config.concurrency,
         this.processFile.bind(this),
-        (err) => {
-          if (err) {
-            reject(err);
-          } else {
-            resolve();
-          }
-        },
       );
     });
     const hrtime = process.hrtime(startTime);
@@ -116,24 +115,33 @@ export class S3Service implements OnModuleInit {
     this.logger.debug(`Download complete after ${chalk.bold(elapsedSeconds)}s`);
   }
 
-  private async processFile(file: FileMeta) {
-    if (!file.name.endsWith('/')) {
-      const baseDir = path.dirname(file.path);
-      try {
-        await fs.promises.access(baseDir);
-      } catch (error) {
-        this.logger.debug(
-          `Creating directory ${this.colorPathService.colorize(baseDir)}`,
-        );
-        await fs.promises.mkdir(baseDir, { recursive: true });
+  private async processFile(file: FileMeta, callback: async.ErrorCallback) {
+    try {
+      if (!file.name.endsWith('/')) {
+        const baseDir = path.dirname(file.path);
+        try {
+          await fs.promises.access(baseDir);
+        } catch (error) {
+          this.logger.debug(
+            `Creating directory ${this.colorPathService.colorize(baseDir)}`,
+          );
+          await fs.promises.mkdir(baseDir, { recursive: true });
+        }
+        if (
+          await this.downloadIsNeeded(
+            file.oldPath,
+            file.lastModified,
+            file.etag,
+          )
+        ) {
+          await this.downloadFile(file.path, file.name, file.lastModified);
+        } else {
+          await this.takeOldFile(file.oldPath, file.path);
+        }
       }
-      if (
-        await this.downloadIsNeeded(file.oldPath, file.lastModified, file.etag)
-      ) {
-        await this.downloadFile(file.path, file.name, file.lastModified);
-      } else {
-        await this.takeOldFile(file.oldPath, file.path);
-      }
+      callback();
+    } catch (error) {
+      callback(error);
     }
   }
 
@@ -241,13 +249,15 @@ export class S3Service implements OnModuleInit {
       `Downloading ${this.colorPathService.colorize(fullPath)}`,
     );
     try {
-      const data = await this.s3.getObject({
-        Bucket: this.config.s3BucketName,
-        Key: name,
-      });
+      const data = await this.s3.send(
+        new GetObjectCommand({
+          Bucket: this.config.s3BucketName,
+          Key: name,
+        }),
+      );
       const destination = fs.createWriteStream(fullPath);
       // @ts-ignore
-      const source: Readable | Blob = data.Body;
+      const source: stream.Readable = data.Body;
       await pipeline(source, destination);
       await fs.promises.utimes(fullPath, lastModified, lastModified);
     } catch (err) {
