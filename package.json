@@ -39,7 +39,7 @@
     "js-yaml": "4.1.0",
     "minipass": "3.3.5",
     "nats": "2.9.0",
-    "nest-winston": "1.7.0",
+    "nest-winston": "1.8.0",
     "reflect-metadata": "0.1.13",
     "rxjs": "7.5.6",
     "strip-ansi": "7.0.1",
