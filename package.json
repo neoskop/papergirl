@@ -31,7 +31,7 @@
     "@slack/webhook": "6.1.0",
     "async": "3.2.4",
     "axios": "0.27.2",
-    "chalk": "5.0.1",
+    "chalk": "5.1.2",
     "chokidar": "3.5.3",
     "deepmerge": "4.2.2",
     "dotenv": "16.0.1",
