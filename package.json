@@ -34,7 +34,7 @@
     "chalk": "5.1.2",
     "chokidar": "3.5.3",
     "deepmerge": "4.2.2",
-    "dotenv": "16.0.1",
+    "dotenv": "16.0.3",
     "joi": "17.7.0",
     "js-yaml": "4.1.0",
     "minipass": "3.3.5",
