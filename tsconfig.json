@@ -14,6 +14,7 @@
     "baseUrl": "./src",
     "moduleResolution": "node",
     "esModuleInterop": true,
+    "skipLibCheck": true
   },
   "include": [
     "src/**/*"
