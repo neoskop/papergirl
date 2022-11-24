@@ -67,25 +67,19 @@ kubectl config use-context kind-papergirl &>/dev/null
 if ! kubectl get ns nats &>/dev/null ; then
   helm repo add nats https://nats-io.github.io/k8s/helm/charts/
   kubectl create ns nats
-  helm install nats nats/nats --namespace nats --set cluster.enabled=true
+  helm install nats nats/nats \
+  --namespace nats \
+  --set cluster.enabled=false
 fi
 
-if ! kubectl krew list | grep -o minio &>/dev/null ; then
-    kubectl krew update
-    kubectl krew install minio
-fi
-
-if ! kubectl get ns minio-operator &>/dev/null ; then
-    kubectl minio init
-fi
-
-if ! kubectl get crd tenants.minio.min.io &>/dev/null ; then
-  echo "Waiting for MinIO CRDs to be created by operator"
-  while ! kubectl get crd tenants.minio.min.io &>/dev/null ; do
-      echo "."
-      sleep 1
-  done
-  echo
+if ! kubectl get ns minio &>/dev/null ; then
+  helm repo add minio https://charts.min.io/
+  kubectl create ns minio
+  helm install minio minio/minio \
+   --namespace minio \
+   --set rootUser=rootuser,rootPassword=rootpass123 \
+   --set replicas=3 \
+   --set resources.requests.memory=512Mi
 fi
 
 docker build --target development -t localhost:5000/papergirl:latest .

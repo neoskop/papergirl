@@ -81,12 +81,12 @@ papergirlPreview:
       kubernetes.io/ingress.class: nginx
       cert-manager.io/cluster-issuer: letsencrypt-prod
 s3:
-  endpoint: null
+  endpoint: minio.minio
   port: 9000
   ssl: false
   forcePathStyle: true # needed for MinIO
-  accesskey: minio
-  secretkey: minio123
+  accesskey: rootuser
+  secretkey: rootpass123
   buckets:
     name: papergirl
     backupName: papergirl-backup

@@ -32,13 +32,6 @@ Create a prefix for all preview instance resources
 {{- end -}}
 
 {{/*
-Create a prefix for all minio cluster resources
-*/}}
-{{- define "papergirl.minio.name" -}}
-{{- include "papergirl.fullname" . }}-minio
-{{- end -}}
-
-{{/*
 Create a prefix for backup resources
 */}}
 {{- define "papergirl.backup.name" -}}
@@ -77,7 +70,7 @@ Create a prefix for preview fallback frontend resources
 Endpoint for the S3 server to use
 */}}
 {{- define "papergirl.s3.endpoint" -}}
-{{- default (printf "%s-minio" (include "papergirl.fullname" .)) .Values.s3.endpoint -}}
+{{- .Values.s3.endpoint -}}
 {{- end -}}
 
 {{/*

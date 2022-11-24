@@ -14,14 +14,14 @@ To access the webserver execute:
 
 To access the created MinIO cluster run:
 
-  $ kubectl port-forward svc/{{ include "papergirl.minio.name" . }} 9000:9000 &>/dev/null &
+  $ kubectl -n minio port-forward svc/minio 9000:9000 &>/dev/null &
   $ google-chrome http://{{ .Values.s3.accesskey }}:{{ .Values.s3.secretkey }}@localhost:9000
 
 {{- if ge (int .Values.minio.version) 4 }}
 
 To access the MinIO console run:
 
-  $ kubectl port-forward svc/{{ include "papergirl.minio.name" . }}-console 9090:9090 &>/dev/null &
+  $ kubectl -n minio port-forward svc/minio-console 9090:9090 &>/dev/null &
   $ google-chrome http://{{ .Values.minio.console.accesskey }}:{{ .Values.minio.console.secretkey }}@localhost:9090
 {{- end -}}
 {{- end -}}
