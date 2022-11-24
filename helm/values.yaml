@@ -145,10 +145,7 @@ imageProxy:
       cpu: 100m
       memory: 512Mi
 nats:
-  createCluster: true
   url: null
-  size: 3
-  version: 2.8.4
 imagePullSecret: {}
 nameOverride: ''
 fullnameOverride: ''

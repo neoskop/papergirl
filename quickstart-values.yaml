@@ -19,3 +19,6 @@ resources:
 
 # Enable development mode
 develop: true
+
+nats:
+  url: nats://nats.nats:4222

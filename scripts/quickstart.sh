@@ -64,10 +64,10 @@ fi
 
 kubectl config use-context kind-papergirl &>/dev/null
 
-if ! kubectl get ns nats-io &>/dev/null ; then
-    kubectl create ns nats-io
-    curl -L https://github.com/nats-io/nats-operator/releases/latest/download/00-prereqs.yaml 2>/dev/null | sed 's/namespace: default/namespace: nats-io/' | kubectl apply -f -
-    curl -L https://github.com/nats-io/nats-operator/releases/latest/download/10-deployment.yaml 2>/dev/null | yq e '.spec.template.spec.containers[0].args[1] = "--feature-gates=ClusterScoped=true"' - | yq eval '.metadata.namespace = "nats-io"' - | yq eval '... comments=""' - | kubectl apply -f -
+if ! kubectl get ns nats &>/dev/null ; then
+  helm repo add nats https://nats-io.github.io/k8s/helm/charts/
+  kubectl create ns nats
+  helm install nats nats/nats --namespace nats --set cluster.enabled=true
 fi
 
 if ! kubectl krew list | grep -o minio &>/dev/null ; then
@@ -77,15 +77,6 @@ fi
 
 if ! kubectl get ns minio-operator &>/dev/null ; then
     kubectl minio init
-fi
-
-if ! kubectl get crd | grep -o -i nats.io &>/dev/null ; then
-  echo -n "Waiting for NATS CRDs to be created by operator"
-  while ! kubectl get crd | grep -o -i nats.io &>/dev/null ; do
-      echo "."
-      sleep 1
-  done
-  echo
 fi
 
 if ! kubectl get crd tenants.minio.min.io &>/dev/null ; then
@@ -106,8 +97,8 @@ if ! helm status papergirl -n papergirl &>/dev/null ; then
 else
     helm upgrade papergirl -n papergirl -f quickstart-values.yaml ./helm
     sleep 3
-    kubectl rollout restart sts/papergirl
-    kubectl rollout restart sts/papergirl-preview
+    kubectl -n papergirl rollout restart sts/papergirl
+    kubectl -n papergirl rollout restart sts/papergirl-preview
 fi
 
 kubectl config set-context --current --namespace=papergirl &>/dev/null
