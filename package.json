@@ -42,7 +42,7 @@
     "nest-winston": "1.8.0",
     "openid-client": "5.3.1",
     "reflect-metadata": "0.1.13",
-    "rxjs": "7.5.7",
+    "rxjs": "7.8.0",
     "strip-ansi": "7.0.1",
     "ts-interface-checker": "1.0.2",
     "winston": "3.8.2"
