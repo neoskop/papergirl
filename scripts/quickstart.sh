@@ -37,7 +37,7 @@ nodes:
     hostPort: 9000
     listenAddress: "127.0.0.1"
   - containerPort: 30004
-    hostPort: 9090
+    hostPort: 9001
     listenAddress: "127.0.0.1"
   - containerPort: 30005
     hostPort: 4222

@@ -21,8 +21,8 @@ To access the created MinIO cluster run:
 
 To access the MinIO console run:
 
-  $ kubectl -n minio port-forward svc/minio-console 9090:9090 &>/dev/null &
-  $ google-chrome http://{{ .Values.minio.console.accesskey }}:{{ .Values.minio.console.secretkey }}@localhost:9090
+  $ kubectl -n minio port-forward svc/minio-console 9001:9001 &>/dev/null &
+  $ google-chrome http://{{ .Values.minio.console.accesskey }}:{{ .Values.minio.console.secretkey }}@localhost:9001
 {{- end -}}
 {{- end -}}
 
