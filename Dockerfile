@@ -1,4 +1,4 @@
-FROM node:19.2.0-bullseye-slim as base
+FROM node:19.6.0-bullseye-slim as base
 RUN mkdir -p /home/papergirl && chown www-data:www-data /home/papergirl
 USER www-data
 WORKDIR /home/papergirl
