@@ -33,7 +33,7 @@ export class CacheConfigListener extends ConfigListener {
 
     if (meta.imageProcessing?.enabled) {
       configLines.push(
-        `location ~* (?!.+-(\\d+x\\d+|\\d+[wh])\\.(jpg|jpeg|gif|png|svg|svgz))(?=.+\\.(jpg|jpeg|gif|png|svg|svgz))^.+$ {
+        `location ~* (?!.+-(\\d+x\\d+|\\d+[wh])\\.(jpg|jpeg|gif|png|svg|svgz|webp))(?=.+\\.(jpg|jpeg|gif|png|svg|svgz|webp))^.+$ {
           add_header Cache-Controll "public";
           expires 1y;
           add_header Vary Accept;
