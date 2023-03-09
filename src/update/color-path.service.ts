@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import chalk from 'chalk';
 import * as path from 'path';
-import { ConfigService } from '../config/config.service';
+import { ConfigService } from '../config/config.service.js';
 
 @Injectable()
 export class ColorPathService {

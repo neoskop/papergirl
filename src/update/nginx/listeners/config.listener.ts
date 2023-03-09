@@ -1,10 +1,10 @@
 import { OnEvent } from '@nestjs/event-emitter';
 import { join } from 'path';
-import { ConfigService } from '../../../config/config.service';
-import { Meta } from '../../../meta/interfaces/meta.interface';
-import { ConfigReadEvent } from '../events/config-read.event';
-import { NginxConfigFileService } from '../nginx-config-file.service';
-import { NginxConfigFile } from '../nginx-config-file/nginx-config-file';
+import { ConfigService } from '../../../config/config.service.js';
+import { Meta } from '../../../meta/interfaces/meta.interface.js';
+import { ConfigReadEvent } from '../events/config-read.event.js';
+import { NginxConfigFileService } from '../nginx-config-file.service.js';
+import { NginxConfigFile } from '../nginx-config-file/nginx-config-file.js';
 
 export abstract class ConfigListener {
   private readonly configFilePath: string;

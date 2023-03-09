@@ -3,11 +3,11 @@ import deepmerge from 'deepmerge';
 import * as fs from 'fs';
 import * as yaml from 'js-yaml';
 import * as path from 'path';
-import metaTI from './interfaces/meta.interface-ti';
-import siteTI from './interfaces/site.interface-ti';
-import redirectTI from './interfaces/redirect.interface-ti';
+import metaTI from './interfaces/meta.interface-ti.js';
+import siteTI from './interfaces/site.interface-ti.js';
+import redirectTI from './interfaces/redirect.interface-ti.js';
 import { createCheckers } from 'ts-interface-checker';
-import { Meta } from './interfaces/meta.interface';
+import { Meta } from './interfaces/meta.interface.js';
 
 @Injectable()
 export class MetaService {

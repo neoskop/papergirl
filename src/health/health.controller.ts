@@ -1,8 +1,8 @@
 import { Controller, Get } from '@nestjs/common';
 import { HealthCheck, HealthCheckService } from '@nestjs/terminus';
-import { ConfigService } from '../config/config.service';
-import { QueueHealthIndicator } from './queue.health';
-import { S3HealthIndicator } from './s3.health';
+import { ConfigService } from '../config/config.service.js';
+import { QueueHealthIndicator } from './queue.health.js';
+import { S3HealthIndicator } from './s3.health.js';
 
 @Controller('health')
 export class HealthController {

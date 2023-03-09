@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { IncomingWebhook } from '@slack/webhook';
 import stripAnsi from 'strip-ansi';
-import { ConfigService } from '../config/config.service';
+import { ConfigService } from '../config/config.service.js';
 
 @Injectable()
 export class AlertService {

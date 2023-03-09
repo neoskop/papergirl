@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { TerminusModule } from '@nestjs/terminus';
-import { ConfigModule } from '../config/config.module';
-import { HealthController } from './health.controller';
-import { ProbeController } from './probe.controller';
-import { QueueHealthIndicator } from './queue.health';
-import { ReadinessService } from './readiness.service';
-import { S3HealthIndicator } from './s3.health';
+import { ConfigModule } from '../config/config.module.js';
+import { HealthController } from './health.controller.js';
+import { ProbeController } from './probe.controller.js';
+import { QueueHealthIndicator } from './queue.health.js';
+import { ReadinessService } from './readiness.service.js';
+import { S3HealthIndicator } from './s3.health.js';
 
 @Module({
   imports: [ConfigModule, TerminusModule],

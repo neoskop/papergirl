@@ -1,12 +1,12 @@
 import { Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
 import * as fs from 'fs';
 import { join } from 'path';
-import { ConfigService } from '../../config/config.service';
-import { Meta } from '../../meta/interfaces/meta.interface';
-import { ColorPathService } from '../color-path.service';
+import { ConfigService } from '../../config/config.service.js';
+import { Meta } from '../../meta/interfaces/meta.interface.js';
+import { ColorPathService } from '../color-path.service.js';
 import EventEmitter2 from 'eventemitter2';
-import { RootChangedEvent } from './events/root-changed.event';
-import { ConfigReadEvent } from './events/config-read.event';
+import { RootChangedEvent } from './events/root-changed.event.js';
+import { ConfigReadEvent } from './events/config-read.event.js';
 import * as k8s from '@kubernetes/client-node';
 import { Writable } from 'stream';
 

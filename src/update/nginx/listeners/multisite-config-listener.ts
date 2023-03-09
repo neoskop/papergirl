@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { join } from 'path';
-import { ConfigService } from '../../../config/config.service';
-import { ConfigReadEvent } from '../events/config-read.event';
-import { NginxConfigFile } from '../nginx-config-file/nginx-config-file';
+import { ConfigService } from '../../../config/config.service.js';
+import { ConfigReadEvent } from '../events/config-read.event.js';
+import { NginxConfigFile } from '../nginx-config-file/nginx-config-file.js';
 import * as fs from 'fs';
-import { Site } from '../../../meta/interfaces/site.interface';
-import { RootChangedEvent } from '../events/root-changed.event';
-import { NginxConfigFileService } from '../nginx-config-file.service';
+import { Site } from '../../../meta/interfaces/site.interface.js';
+import { RootChangedEvent } from '../events/root-changed.event.js';
+import { NginxConfigFileService } from '../nginx-config-file.service.js';
 
 @Injectable()
 export class MultisiteConfigListener {

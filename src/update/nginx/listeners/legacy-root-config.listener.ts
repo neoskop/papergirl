@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '../../../config/config.service';
-import { Meta } from '../../../meta/interfaces/meta.interface';
-import { NginxConfigFileService } from '../nginx-config-file.service';
-import { ConfigListener } from './config.listener';
+import { ConfigService } from '../../../config/config.service.js';
+import { Meta } from '../../../meta/interfaces/meta.interface.js';
+import { NginxConfigFileService } from '../nginx-config-file.service.js';
+import { ConfigListener } from './config.listener.js';
 
 @Injectable()
 export class LegacyRootConfigListener extends ConfigListener {

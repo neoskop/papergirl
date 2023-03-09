@@ -8,9 +8,9 @@ import {
   GetObjectCommand,
 } from '@aws-sdk/client-s3';
 import * as path from 'path';
-import { ConfigService } from '../../config/config.service';
+import { ConfigService } from '../../config/config.service.js';
 import * as crypto from 'crypto';
-import { ColorPathService } from '../color-path.service';
+import { ColorPathService } from '../color-path.service.js';
 import chalk from 'chalk';
 import { pipeline } from 'stream/promises';
 import stream from 'stream';

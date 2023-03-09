@@ -1,16 +1,16 @@
 import { Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
-import { ConfigService } from '../config/config.service';
-import { ReadinessService } from '../health/readiness.service';
-import { MetaService } from '../meta/meta.service';
-import { NginxService } from './nginx/nginx.service';
-import { S3Service } from './s3/s3.service';
-import { ColorPathService } from './color-path.service';
+import { ConfigService } from '../config/config.service.js';
+import { ReadinessService } from '../health/readiness.service.js';
+import { MetaService } from '../meta/meta.service.js';
+import { NginxService } from './nginx/nginx.service.js';
+import { S3Service } from './s3/s3.service.js';
+import { ColorPathService } from './color-path.service.js';
 import { OnEvent } from '@nestjs/event-emitter';
-import { ConfigReloadedEvent } from '../config/config-reloaded.event';
-import { Meta } from '../meta/interfaces/meta.interface';
-import { AlertService } from '../alert/alert.service';
+import { ConfigReloadedEvent } from '../config/config-reloaded.event.js';
+import { Meta } from '../meta/interfaces/meta.interface.js';
+import { AlertService } from '../alert/alert.service.js';
 
 @Injectable()
 export class UpdateService implements OnApplicationBootstrap {

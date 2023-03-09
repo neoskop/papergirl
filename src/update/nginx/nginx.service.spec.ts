@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ConfigModule } from '../../config/config.module';
-import { UpdateModule } from '../update.module';
-import { NginxService } from './nginx.service';
+import { ConfigModule } from '../../config/config.module.js';
+import { UpdateModule } from '../update.module.js';
+import { NginxService } from './nginx.service.js';
 
 describe('NginxService', () => {
   let service: NginxService;

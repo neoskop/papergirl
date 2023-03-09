@@ -1,6 +1,6 @@
 import { Controller, Get, HttpStatus, Res } from '@nestjs/common';
 import { Response } from 'express-serve-static-core';
-import { ReadinessService } from './readiness.service';
+import { ReadinessService } from './readiness.service.js';
 
 @Controller('probe')
 export class ProbeController {

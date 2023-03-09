@@ -1,21 +1,21 @@
 import { Logger, Module } from '@nestjs/common';
-import { ConfigModule } from '../config/config.module';
-import { HealthModule } from '../health/health.module';
-import { MetaModule } from '../meta/meta.module';
-import { ColorPathService } from './color-path.service';
-import { NginxService } from './nginx/nginx.service';
-import { S3Service } from './s3/s3.service';
-import { UpdateService } from './update.service';
+import { ConfigModule } from '../config/config.module.js';
+import { HealthModule } from '../health/health.module.js';
+import { MetaModule } from '../meta/meta.module.js';
+import { ColorPathService } from './color-path.service.js';
+import { NginxService } from './nginx/nginx.service.js';
+import { S3Service } from './s3/s3.service.js';
+import { UpdateService } from './update.service.js';
 import { EventEmitterModule } from '@nestjs/event-emitter';
-import { CacheConfigListener } from './nginx/listeners/cache-config.listener';
-import { ImageProcessingConfigListener } from './nginx/listeners/image-processing-config.listener';
-import { RedirectsConfigListener } from './nginx/listeners/redirects-config.listener';
-import { SecurityConfigListener } from './nginx/listeners/security-config.listener';
-import { TrailingSlashConfigListener } from './nginx/listeners/trailing-slash-config.listener';
-import { MultisiteConfigListener } from './nginx/listeners/multisite-config-listener';
-import { LegacyRootConfigListener } from './nginx/listeners/legacy-root-config.listener';
-import { NginxConfigFileService } from './nginx/nginx-config-file.service';
-import { AlertModule } from '../alert/alert.module';
+import { CacheConfigListener } from './nginx/listeners/cache-config.listener.js';
+import { ImageProcessingConfigListener } from './nginx/listeners/image-processing-config.listener.js';
+import { RedirectsConfigListener } from './nginx/listeners/redirects-config.listener.js';
+import { SecurityConfigListener } from './nginx/listeners/security-config.listener.js';
+import { TrailingSlashConfigListener } from './nginx/listeners/trailing-slash-config.listener.js';
+import { MultisiteConfigListener } from './nginx/listeners/multisite-config-listener.js';
+import { LegacyRootConfigListener } from './nginx/listeners/legacy-root-config.listener.js';
+import { NginxConfigFileService } from './nginx/nginx-config-file.service.js';
+import { AlertModule } from '../alert/alert.module.js';
 
 @Module({
   providers: [

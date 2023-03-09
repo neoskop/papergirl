@@ -1,5 +1,5 @@
-import { Redirect } from './redirect.interface';
-import { Site } from './site.interface';
+import { Redirect } from './redirect.interface.js';
+import { Site } from './site.interface.js';
 
 export interface Meta {
   imageProcessing?: {

@@ -5,10 +5,10 @@ import {
   OnApplicationShutdown,
 } from '@nestjs/common';
 import { connect, Msg, NatsConnection } from 'nats';
-import { ConfigService } from '../config/config.service';
-import { UpdateService } from '../update/update.service';
+import { ConfigService } from '../config/config.service.js';
+import { UpdateService } from '../update/update.service.js';
 import chalk from 'chalk';
-import { AlertService } from '../alert/alert.service';
+import { AlertService } from '../alert/alert.service.js';
 
 @Injectable()
 export class NotificationService

@@ -1,10 +1,10 @@
 import { Logger, Module } from '@nestjs/common';
-import { ConfigModule } from './config/config.module';
-import { HealthModule } from './health/health.module';
-import { NotificationModule } from './notification/notification.module';
-import { UpdateModule } from './update/update.module';
-import { MetaModule } from './meta/meta.module';
-import { AlertModule } from './alert/alert.module';
+import { ConfigModule } from './config/config.module.js';
+import { HealthModule } from './health/health.module.js';
+import { NotificationModule } from './notification/notification.module.js';
+import { UpdateModule } from './update/update.module.js';
+import { MetaModule } from './meta/meta.module.js';
+import { AlertModule } from './alert/alert.module.js';
 
 @Module({
   imports: [
