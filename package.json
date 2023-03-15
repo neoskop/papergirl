@@ -24,7 +24,7 @@
     "@godaddy/terminus": "4.11.2",
     "@kubernetes/client-node": "0.18.1",
     "@nestjs/common": "9.3.9",
-    "@nestjs/core": "9.3.9",
+    "@nestjs/core": "9.3.10",
     "@nestjs/event-emitter": "1.4.1",
     "@nestjs/platform-express": "9.3.10",
     "@nestjs/terminus": "9.2.1",
