@@ -23,7 +23,7 @@
     "@aws-sdk/client-s3": "3.290.0",
     "@godaddy/terminus": "4.11.2",
     "@kubernetes/client-node": "0.18.1",
-    "@nestjs/common": "9.3.9",
+    "@nestjs/common": "9.3.10",
     "@nestjs/core": "9.3.10",
     "@nestjs/event-emitter": "1.4.1",
     "@nestjs/platform-express": "9.3.10",
@@ -50,7 +50,7 @@
   "devDependencies": {
     "@nestjs/cli": "9.2.0",
     "@nestjs/schematics": "9.0.4",
-    "@nestjs/testing": "9.3.9",
+    "@nestjs/testing": "9.3.10",
     "@types/async": "3.2.18",
     "@types/express": "4.17.17",
     "@types/jest": "29.4.3",
