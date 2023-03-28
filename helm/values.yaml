@@ -106,7 +106,7 @@ minio:
     secretkey: minio456
     image:
       repository: minio/console
-      tag: v0.25.0
+      tag: v0.26.0
       pullPolicy: IfNotPresent
   image:
     repository: minio/minio
