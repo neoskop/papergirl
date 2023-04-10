@@ -20,7 +20,7 @@
     "webpack": "webpack --config webpack.config.js"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "3.309.0",
+    "@aws-sdk/client-s3": "3.310.0",
     "@godaddy/terminus": "4.11.2",
     "@kubernetes/client-node": "0.18.1",
     "@nestjs/common": "9.4.0",
