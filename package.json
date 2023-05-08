@@ -37,7 +37,7 @@
     "dotenv": "16.0.3",
     "joi": "17.9.2",
     "js-yaml": "4.1.0",
-    "minipass": "4.2.8",
+    "minipass": "5.0.0",
     "nats": "2.13.1",
     "nest-winston": "1.9.1",
     "openid-client": "5.4.2",
