@@ -25,7 +25,7 @@
     "@kubernetes/client-node": "0.18.1",
     "@nestjs/common": "9.4.2",
     "@nestjs/core": "9.4.2",
-    "@nestjs/event-emitter": "1.4.1",
+    "@nestjs/event-emitter": "1.4.2",
     "@nestjs/platform-express": "9.4.2",
     "@nestjs/terminus": "9.2.2",
     "@slack/webhook": "6.1.0",
