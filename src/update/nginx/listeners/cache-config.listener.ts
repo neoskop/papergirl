@@ -33,14 +33,14 @@ export class CacheConfigListener extends ConfigListener {
 
     if (meta.imageProcessing?.enabled) {
       configLines.push(
-        `location ~* (?!.+-(\\d+x\\d+|\\d+[wh])\\.(jpg|jpeg|gif|png|svg|svgz|webp))(?=.+\\.(jpg|jpeg|gif|png|svg|svgz|webp))^.+$ {
+        `location ~* (?!.+-(\\d+x\\d+|\\d+[wh])\\.(jpg|jpeg|gif|png|svg|svgz|webp|avif))(?=.+\\.(jpg|jpeg|gif|png|svg|svgz|webp|avif))^.+$ {
           add_header Cache-Controll "public";
           expires 1y;
           add_header Vary Accept;
           add_header Pragma "public";
           access_log off;
         }`,
-        `location ~* \\.(?:ico|cur|gz|mp4|ogg|ogv|webm|htc|webp)$ {
+        `location ~* \\.(?:ico|cur|gz|mp4|ogg|ogv|webm|htc)$ {
           add_header Cache-Controll "public";
           expires 1y;
           add_header Vary Accept;
@@ -49,7 +49,7 @@ export class CacheConfigListener extends ConfigListener {
         }`,
       );
     } else {
-      configLines.push(`location ~* \\.(?:jpg|jpeg|gif|png|ico|cur|gz|svg|svgz|mp4|ogg|ogv|webm|htc|webp)$ {
+      configLines.push(`location ~* \\.(?:jpg|jpeg|gif|png|ico|cur|gz|svg|svgz|mp4|ogg|ogv|webm|htc|webp|avif)$ {
           add_header Cache-Controll "public";
           expires 1y;
           add_header Vary Accept;
