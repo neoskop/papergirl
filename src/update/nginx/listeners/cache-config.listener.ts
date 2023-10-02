@@ -40,7 +40,7 @@ export class CacheConfigListener extends ConfigListener {
           add_header Pragma "public";
           access_log off;
         }`,
-        `location ~* \\.(?:ico|cur|gz|mp4|ogg|ogv|webm|htc)$ {
+        `location ~* \\.(?:ico|cur|gz|mp4|ogg|ogv|webm|htc|webp)$ {
           add_header Cache-Controll "public";
           expires 1y;
           add_header Vary Accept;
@@ -49,7 +49,7 @@ export class CacheConfigListener extends ConfigListener {
         }`,
       );
     } else {
-      configLines.push(`location ~* \\.(?:jpg|jpeg|gif|png|ico|cur|gz|svg|svgz|mp4|ogg|ogv|webm|htc)$ {
+      configLines.push(`location ~* \\.(?:jpg|jpeg|gif|png|ico|cur|gz|svg|svgz|mp4|ogg|ogv|webm|htc|webp)$ {
           add_header Cache-Controll "public";
           expires 1y;
           add_header Vary Accept;
