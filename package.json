@@ -51,7 +51,7 @@
     "@nestjs/cli": "10.2.1",
     "@nestjs/schematics": "10.0.3",
     "@nestjs/testing": "10.2.10",
-    "@types/async": "3.2.23",
+    "@types/async": "3.2.24",
     "@types/express": "4.17.21",
     "@types/jest": "29.5.9",
     "@types/js-yaml": "4.0.9",
