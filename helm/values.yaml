@@ -49,7 +49,7 @@ dnsmasq:
 nginx:
   image: # this image is used for the fallback service as well
     repository: openresty/openresty
-    tag: 1.21.4.3-buster
+    tag: 1.25.3.1-buster
     pullPolicy: IfNotPresent
   resources:
     limits:
