@@ -27,7 +27,7 @@
     "@nestjs/core": "10.3.2",
     "@nestjs/event-emitter": "2.0.4",
     "@nestjs/platform-express": "10.3.2",
-    "@nestjs/terminus": "10.2.1",
+    "@nestjs/terminus": "10.2.2",
     "@slack/webhook": "7.0.2",
     "async": "3.2.5",
     "axios": "1.6.7",
