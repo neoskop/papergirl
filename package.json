@@ -39,7 +39,7 @@
     "js-yaml": "4.1.0",
     "minipass": "7.1.1",
     "nats": "2.26.0",
-    "nest-winston": "1.9.6",
+    "nest-winston": "1.10.0",
     "openid-client": "5.6.5",
     "reflect-metadata": "0.1.13",
     "rxjs": "7.8.1",
