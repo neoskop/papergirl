@@ -61,7 +61,7 @@ prometheus:
   enabled: false
   nginxExporterImage:
     repository: nginx/nginx-prometheus-exporter
-    tag: 0.11.0
+    tag: 1.4.0
     pullPolicy: IfNotPresent
 papergirl:
   ingress:
