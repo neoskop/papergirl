@@ -36,7 +36,7 @@
     "deepmerge": "4.3.1",
     "dotenv": "16.6.1",
     "joi": "17.13.3",
-    "js-yaml": "4.1.0",
+    "js-yaml": "4.1.1",
     "minipass": "7.1.2",
     "nats": "2.29.3",
     "nest-winston": "1.10.2",
