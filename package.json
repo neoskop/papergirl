@@ -30,7 +30,7 @@
     "@nestjs/terminus": "10.3.0",
     "@slack/webhook": "7.0.6",
     "async": "3.2.6",
-    "axios": "1.12.0",
+    "axios": "1.13.2",
     "chalk": "5.6.2",
     "chokidar": "3.6.0",
     "deepmerge": "4.3.1",
