@@ -1,4 +1,4 @@
-FROM node:22.22.0-bullseye-slim as base
+FROM node:24.14.1-bullseye-slim@sha256:ed630fce20d985a02f53499dd469ae4d7f28183b94fcd32301e668139f1827c6 as base
 RUN mkdir -p /home/papergirl && chown www-data:www-data /home/papergirl
 USER www-data
 WORKDIR /home/papergirl
